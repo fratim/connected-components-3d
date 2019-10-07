@@ -126,38 +126,41 @@ def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, labels_
     for iz in [0, box[1]-box[0]-1]:
         for iy in range(0, box[3]-box[2]):
             for ix in range(0, box[5]-box[4]):
-                border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4])] = labels_out[iz,iy,ix]
-                if iz == 0 and bz > 0:
-                    neighbor_label_set.add((labels_out[iz,iy,ix], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4])]))
-                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4])],labels_out[iz,iy,ix]))
-                elif iz == 0 and bz == 0:
-                    neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
-                elif iz==(box[1]-box[0]-1) and bz==(n_blocks_z-1):
-                    neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                # border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4])] = labels_out[iz,iy,ix]
+                # if iz == 0 and bz > 0:
+                #     neighbor_label_set.add((labels_out[iz,iy,ix], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4])]))
+                #     neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4])],labels_out[iz,iy,ix]))
+                # elif iz == 0 and bz == 0:
+                #     neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                # elif iz==(box[1]-box[0]-1) and bz==(n_blocks_z-1):
+                #     neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
 
     for iz in range(0, box[1]-box[0]):
         for iy in [0, box[3]-box[2]-1]:
             for ix in range(0, box[5]-box[4]):
-                border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4])] = labels_out[iz,iy,ix]
-                if iy == 0 and by > 0:
-                    neighbor_label_set.add((labels_out[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4])]))
-                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4])],labels_out[iz,iy,ix]))
-                elif iy == 0 and by == 0:
-                    neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
-                elif iy==(box[3]-box[2]-1) and by==(n_blocks_y-1):
-                    neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                # border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4])] = labels_out[iz,iy,ix]
+                # if iy == 0 and by > 0:
+                #     neighbor_label_set.add((labels_out[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4])]))
+                #     neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4])],labels_out[iz,iy,ix]))
+                # elif iy == 0 and by == 0:
+                #     neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                # elif iy==(box[3]-box[2]-1) and by==(n_blocks_y-1):
+                #     neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
 
     for iz in range(0, box[1]-box[0]):
         for iy in range(0, box[3]-box[2]):
             for ix in [0, box[5]-box[4]-1]:
-                border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4])] = labels_out[iz,iy,ix]
-                if ix == 0 and bx > 0:
-                    neighbor_label_set.add((labels_out[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1)]))
-                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1)],labels_out[iz,iy,ix]))
-                elif ix == 0 and bx == 0:
-                    neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
-                elif ix==(box[5]-box[4]-1) and bx==(n_blocks_x-1):
-                    neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                # border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4])] = labels_out[iz,iy,ix]
+                # if ix == 0 and bx > 0:
+                #     neighbor_label_set.add((labels_out[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1)]))
+                #     neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1)],labels_out[iz,iy,ix]))
+                # elif ix == 0 and bx == 0:
+                #     neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                # elif ix==(box[5]-box[4]-1) and bx==(n_blocks_x-1):
+                #     neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
 
 
     return neighbor_label_set, border_comp
@@ -205,77 +208,72 @@ def getStat(box, labels_out, n_comp):
     return comp_counts, comp_mean, comp_var
 
 # create string of connected components that are a whole
-def findAssociatedLabels(neighbor_label_set, n_comp, start_label):
+def findAssociatedLabels(neighbor_label_set, n_comp):
 
     # process
     neighbor_labels = [[] for _ in range(n_comp)] # extend by 1 and leave first entry empty
     for s in range(len(neighbor_label_set)):
         temp = neighbor_label_set.pop()
         if temp[0]<0:
-            if temp[1] not in neighbor_labels[temp[0]-start_label]:
-                neighbor_labels[temp[0]-start_label].append(temp[1])
+            if temp[1] not in neighbor_labels[temp[0]]:
+                neighbor_labels[temp[0]].append(temp[1])
+
     #find connected components that are a whole
     associated_label = Dict.empty(key_type=types.int64,value_type=types.int64)
     isWhole = np.ones((n_comp,1), dtype=np.int8)*-1
 
     for c in range(-n_comp,0):
         # check that only connected to one component and that this component is not border (which is numbered as -1)
-        if isWhole[c] == 0:
-            print("HOSSA!")
-            continue
-        elif len(neighbor_labels[c]) is 1:
-            associated_label[c+start_label] = neighbor_labels[c][0]
+        if len(neighbor_labels[c])==1 and neighbor_labels[c][0]!=100000000 and neighbor_labels[c][0]>0:
+            associated_label[c] = neighbor_labels[c][0]
             isWhole[c] = 1
-        elif len(list(filter(lambda a: a > 0, neighbor_labels[c]))) is 1:
 
-            # set of nodes to explore
-            open = set()
-
-            for comp in neighbor_labels[c]:
-                if comp == 100000000:
-                    if 100000000 not in neighbor_labels[c]:
-                        neighbor_labels[c].append(100000000)
-                else:
-                    for son in neighbor_labels[comp]:
-                        if son not in neighbor_labels[c]:
-                            neighbor_labels[c].append(son)
-                            open.add(son)
-
-            while len(open)>0:
-                comp = open.pop()
-                if comp == 100000000:
-                    if 100000000 not in neighbor_labels[c]:
-                        neighbor_labels[c].append(100000000)
-                else:
-                    for son in neighbor_labels[comp]:
-                        if son not in neighbor_labels[c]:
-                            neighbor_labels[c].append(son)
-                            open.add(son)
-
-            if len(list(filter(lambda a: a > 0, neighbor_labels[c]))) is 1:
-                associated_label[c+start_label] = np.max(neighbor_labels[c])
-                isWhole[c]=1
-                print("Hole: ")
-                print(neighbor_labels[c])
-
-                # print(neighbor_labels)
-                # print("----------------------------------------------------------------")
-            else:
-                associated_label[c+start_label] = 0
-                isWhole[c] = 0
-                print("Not a hole: ")
-                print(neighbor_labels[c])
-                # print(c)
-                # print(neighbor_labels[c])
-                # print("----------------------------------------------------------------")
-
-                for element in neighbor_labels[c]:
-                    if element < 0:
-                        associated_label[element+start_label] = 0
-                        isWhole[element] = 0
+        # elif len(list(filter(lambda a: a > 0, neighbor_labels[c]))) is 1:
+        #
+        #     # set of nodes to explore
+        #     open = set()
+        #
+        #     for comp in neighbor_labels[c]:
+        #         if comp == 100000000:
+        #             if 100000000 not in neighbor_labels[c]:
+        #                 neighbor_labels[c].append(100000000)
+        #         else:
+        #             for son in neighbor_labels[comp]:
+        #                 if son not in neighbor_labels[c]:
+        #                     neighbor_labels[c].append(son)
+        #                     open.add(son)
+        #
+        #     while len(open)>0:
+        #         comp = open.pop()
+        #         if comp == 100000000:
+        #             if 100000000 not in neighbor_labels[c]:
+        #                 neighbor_labels[c].append(100000000)
+        #         else:
+        #             for son in neighbor_labels[comp]:
+        #                 if son not in neighbor_labels[c]:
+        #                     neighbor_labels[c].append(son)
+        #                     open.add(son)
+        #
+        #     if len(list(filter(lambda a: a > 0, neighbor_labels[c]))) is 1:
+        #         associated_label[c] = np.max(neighbor_labels[c])
+        #         isWhole[c]=1
+        #         print("Hole:")
+        #         print(neighbor_labels[c])
+        #         print("----------------------------------------------------------------")
+        #     else:
+        #         associated_label[c] = 0
+        #         isWhole[c] = 0
+        #         print("No Hole:")
+        #         print(neighbor_labels[c])
+        #         print("----------------------------------------------------------------")
+        #
+        #         for element in neighbor_labels[c]:
+        #             if element < 0:
+        #                 associated_label[element] = 0
+        #                 isWhole[element] = 0
 
         else:
-            associated_label[c+start_label] = 0
+            associated_label[c] = 0
             isWhole[c] = 0
             # associated_label[c] = neighbor_labels[c][0] + 5
 
@@ -364,17 +362,22 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
                     labels_cut_out, n_comp = computeConnectedComp6(labels_cut,label_start)
                     label_start = label_start-n_comp
 
+                    # print("Min: " + str(np.min(labels_cut_out)))
+                    # print("Max: " + str(np.max(labels_cut_out[labels_cut_out<0])))
+
                     labels_out[box_dyn[0]:box_dyn[1],box_dyn[2]:box_dyn[3],box_dyn[4]:box_dyn[5]] = labels_cut_out
 
                     neighbor_label_set, border_comp_added = findAdjLabelSet(box_dyn, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, labels_cut_out, n_comp_total, border_comp_added)
                     neighbor_label_set_added = neighbor_label_set_added.union(neighbor_label_set)
 
+                    # print(len(neighbor_label_set_added))
+                    # print(len(border_comp_added))
+
+
                     n_comp_total += n_comp
                     cell_counter += 1
 
-        print(len(neighbor_label_set_added))
-
-        associated_label, isWhole = findAssociatedLabels(neighbor_label_set_added, n_comp_total,0)
+        associated_label, isWhole = findAssociatedLabels(neighbor_label_set_added, n_comp_total)
 
         labels = fillWholes(box, labels, labels_out, associated_label)
 
@@ -421,6 +424,8 @@ def processFile(box, data_path, sample_name, ID, saveStatistics, vizWholes, rel_
     output_name = "filled_" + ID
     writeData(output_path+output_name, labels)
 
+    print(labels.dtype)
+
     # compute negative to visualize filled wholes
     if vizWholes:
         labels_inp = readData(box, data_path+sample_name+".h5")
@@ -462,47 +467,62 @@ def evaluateWholes(folder_path,ID,sample_name,n_wholes):
     box = getBoxAll(inBlocks_wholes_filepath)
     wholes_inBlocks = readData(box, inBlocks_wholes_filepath)
 
-    # check that both can be converted to int16
-    if np.max(wholes_gt)>32767 or np.max(wholes_inBlocks)>32767:
-        raise ValueError("Cannot convert wholes to int16 (max is >32767)")
+    diff = np.subtract(wholes_gt, wholes_inBlocks)
 
-    wholes_gt = wholes_gt.astype(np.int16)
-    wholes_inBlocks = wholes_inBlocks.astype(np.int16)
-    wholes_gt = np.subtract(wholes_gt, wholes_inBlocks)
-    diff = wholes_gt
-    # free some RAM
-    del wholes_gt, wholes_inBlocks
+    if np.count_nonzero(diff)==0:
+        print("No FP and no FN classifications!")
 
-    print("Freed memory")
-
-    if np.min(diff)<0:
-        FP = diff.copy()
-        FP[FP>0]=0
-        print(FP.shape)
-        n_points_FP = np.count_nonzero(FP)
-        n_comp_FP = computeConnectedComp26(FP)-1
-        unique_values = np.unique(FP)
-        for u in unique_values:
-            if u!=0:
-                print("Coordinates of component " + str(u))
-                coods = np.argwhere(FP==u)
-                for i in range(coods.shape[0]):
-                    print(str(coods[i,0]) + ", " + str(coods[i,1]) + ", " + str(coods[i,2]))
-        print("FP classifications (points/components): " + str(n_points_FP) + "/ " +str(n_comp_FP))
-        del FP
     else:
-        print("No FP classification")
+        # check that both can be converted to int16
+        if np.max(wholes_gt)>32767 or np.max(wholes_inBlocks)>32767:
+            raise ValueError("Cannot convert wholes to int16 (max is >32767)")
 
-    if np.max(diff)>0:
-        FN = diff.copy()
-        FN[FN<0]=0
-        n_points_FN = np.count_nonzero(FN)
-        n_comp_FN = computeConnectedComp26(FN)-1
-        print("FN classifications (points/components): " + str(n_points_FN) + "/ " +str(n_comp_FN))
-        print("Percentage (total wholes is "+str(n_wholes)+"): "+str(float(n_comp_FN)/float(n_wholes)))
-        del FN
-    else:
-        print("No FN calssifications")
+        del diff
+
+        wholes_gt = np.subtract(wholes_gt, wholes_inBlocks)
+        diff = wholes_gt
+
+        wholes_gt = wholes_gt.astype(np.int16)
+        wholes_inBlocks = wholes_inBlocks.astype(np.int16)
+        wholes_gt = np.subtract(wholes_gt, wholes_inBlocks)
+        diff = wholes_gt
+        # free some RAM
+        del wholes_gt, wholes_inBlocks
+
+        print("Freed memory")
+
+        if np.min(diff)<0:
+            FP = diff.copy()
+            FP[FP>0]=0
+            print(FP.shape)
+            n_points_FP = np.count_nonzero(FP)
+            n_comp_FP = computeConnectedComp26(FP)-1
+            unique_values = np.unique(FP)
+            print("FP classifications (points/components): " + str(n_points_FP) + "/ " +str(n_comp_FP))
+
+            # # print ids of individual FP components
+            for u in unique_values:
+                if u!=0:
+                    print("Coordinates of component " + str(u))
+                    coods = np.argwhere(FP==u)
+                    print(str(coods[0,0]) + ", " + str(coods[0,1]) + ", " + str(coods[0,2]))
+                    # for i in range(coods.shape[0]):
+                    #     print(str(coods[i,0]) + ", " + str(coods[i,1]) + ", " + str(coods[i,2]))
+
+            del FP
+        else:
+            print("No FP classification")
+
+        if np.max(diff)>0:
+            FN = diff.copy()
+            FN[FN<0]=0
+            n_points_FN = np.count_nonzero(FN)
+            n_comp_FN = computeConnectedComp26(FN)-1
+            print("FN classifications (points/components): " + str(n_points_FN) + "/ " +str(n_comp_FN))
+            print("Percentage (total wholes is "+str(n_wholes)+"): "+str(float(n_comp_FN)/float(n_wholes)))
+            del FN
+        else:
+            print("No FN calssifications")
 
     output_name = 'diff_wholes_'+ID
     writeData(folder_path+"/"+ID+"/"+output_name, diff)
