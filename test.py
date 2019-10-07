@@ -129,6 +129,7 @@ def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, labels_
                 border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4])] = labels_out[iz,iy,ix]
                 if iz == 0 and bz > 0:
                     neighbor_label_set.add((labels_out[iz,iy,ix], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4])]))
+                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4])],labels_out[iz,iy,ix]))
                 elif iz == 0 and bz == 0:
                     neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
                 elif iz==(box[1]-box[0]-1) and bz==(n_blocks_z-1):
@@ -140,6 +141,7 @@ def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, labels_
                 border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4])] = labels_out[iz,iy,ix]
                 if iy == 0 and by > 0:
                     neighbor_label_set.add((labels_out[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4])]))
+                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4])],labels_out[iz,iy,ix]))
                 elif iy == 0 and by == 0:
                     neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
                 elif iy==(box[3]-box[2]-1) and by==(n_blocks_y-1):
@@ -151,6 +153,7 @@ def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, labels_
                 border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4])] = labels_out[iz,iy,ix]
                 if ix == 0 and bx > 0:
                     neighbor_label_set.add((labels_out[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1)]))
+                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1)],labels_out[iz,iy,ix]))
                 elif ix == 0 and bx == 0:
                     neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
                 elif ix==(box[5]-box[4]-1) and bx==(n_blocks_x-1):
@@ -217,7 +220,10 @@ def findAssociatedLabels(neighbor_label_set, n_comp, start_label):
 
     for c in range(-n_comp,0):
         # check that only connected to one component and that this component is not border (which is numbered as -1)
-        if len(neighbor_labels[c]) is 1:
+        if isWhole[c] == 0:
+            print("HOSSA!")
+            continue
+        elif len(neighbor_labels[c]) is 1:
             associated_label[c+start_label] = neighbor_labels[c][0]
             isWhole[c] = 1
         elif len(list(filter(lambda a: a > 0, neighbor_labels[c]))) is 1:
@@ -227,7 +233,8 @@ def findAssociatedLabels(neighbor_label_set, n_comp, start_label):
 
             for comp in neighbor_labels[c]:
                 if comp == 100000000:
-                    neighbor_labels[c].append(son)
+                    if 100000000 not in neighbor_labels[c]:
+                        neighbor_labels[c].append(100000000)
                 else:
                     for son in neighbor_labels[comp]:
                         if son not in neighbor_labels[c]:
@@ -237,7 +244,8 @@ def findAssociatedLabels(neighbor_label_set, n_comp, start_label):
             while len(open)>0:
                 comp = open.pop()
                 if comp == 100000000:
-                    neighbor_labels[c].append(son)
+                    if 100000000 not in neighbor_labels[c]:
+                        neighbor_labels[c].append(100000000)
                 else:
                     for son in neighbor_labels[comp]:
                         if son not in neighbor_labels[c]:
@@ -247,10 +255,24 @@ def findAssociatedLabels(neighbor_label_set, n_comp, start_label):
             if len(list(filter(lambda a: a > 0, neighbor_labels[c]))) is 1:
                 associated_label[c+start_label] = np.max(neighbor_labels[c])
                 isWhole[c]=1
+                print("Hole: ")
+                print(neighbor_labels[c])
 
+                # print(neighbor_labels)
+                # print("----------------------------------------------------------------")
             else:
                 associated_label[c+start_label] = 0
                 isWhole[c] = 0
+                print("Not a hole: ")
+                print(neighbor_labels[c])
+                # print(c)
+                # print(neighbor_labels[c])
+                # print("----------------------------------------------------------------")
+
+                for element in neighbor_labels[c]:
+                    if element < 0:
+                        associated_label[element+start_label] = 0
+                        isWhole[element] = 0
 
         else:
             associated_label[c+start_label] = 0
@@ -362,6 +384,9 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
         print("Cells processed: " + str(cell_counter))
         print("Wholes filled (total): " + str(total_wholes_found))
 
+        print(np.max(labels))
+        print(np.min(labels))
+
         del labels_cut, labels_cut_out, associated_label, isWhole, neighbor_label_set
 
         return labels, total_wholes_found
@@ -437,7 +462,7 @@ def evaluateWholes(folder_path,ID,sample_name,n_wholes):
     box = getBoxAll(inBlocks_wholes_filepath)
     wholes_inBlocks = readData(box, inBlocks_wholes_filepath)
 
-# check that both can be converted to int16
+    # check that both can be converted to int16
     if np.max(wholes_gt)>32767 or np.max(wholes_inBlocks)>32767:
         raise ValueError("Cannot convert wholes to int16 (max is >32767)")
 
@@ -456,6 +481,13 @@ def evaluateWholes(folder_path,ID,sample_name,n_wholes):
         print(FP.shape)
         n_points_FP = np.count_nonzero(FP)
         n_comp_FP = computeConnectedComp26(FP)-1
+        unique_values = np.unique(FP)
+        for u in unique_values:
+            if u!=0:
+                print("Coordinates of component " + str(u))
+                coods = np.argwhere(FP==u)
+                for i in range(coods.shape[0]):
+                    print(str(coods[i,0]) + ", " + str(coods[i,1]) + ", " + str(coods[i,2]))
         print("FP classifications (points/components): " + str(n_points_FP) + "/ " +str(n_comp_FP))
         del FP
     else:
