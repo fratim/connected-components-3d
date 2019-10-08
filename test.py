@@ -123,24 +123,6 @@ def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, labels_
                     neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz,iy,ix+1]))
                     neighbor_label_set.add((labels_out[iz,iy,ix+1],labels_out[iz,iy,ix]))
 
-                if curr_comp == -42638:
-
-                    print(labels_out[iz+1,iy,ix])
-                    print(labels_out[iz,iy+1,ix])
-                    print(labels_out[iz,iy,ix+1])
-
-                    if curr_comp != labels_out[iz+1,iy,ix]:
-                        neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz+1,iy,ix]))
-                        neighbor_label_set.add((labels_out[iz+1,iy,ix],labels_out[iz,iy,ix]))
-
-                    if curr_comp != labels_out[iz,iy+1,ix]:
-                        neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz,iy+1,ix]))
-                        neighbor_label_set.add((labels_out[iz,iy+1,ix],labels_out[iz,iy,ix]))
-
-                    if curr_comp != labels_out[iz,iy,ix+1]:
-                        neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz,iy,ix+1]))
-                        neighbor_label_set.add((labels_out[iz,iy,ix+1],labels_out[iz,iy,ix]))
-
     for iz in [0, box[1]-box[0]-1]:
         for iy in range(0, box[3]-box[2]):
             for ix in range(0, box[5]-box[4]):
@@ -314,21 +296,12 @@ def findAssociatedLabels(neighbor_label_set, n_comp, ):
             associated_label[query_comp] = np.max(neighbor_labels[query_comp])
             isWhole[query_comp]=1
 
-            if query_comp == -42638:
-                print("Hole:")
-                print(neighbor_labels[query_comp])
-                print("Component, Associated label: " + str(query_comp) + "," + str(associated_label[query_comp]))
-                print("-----------------------------------------------")
 
         else:
             associated_label[query_comp] = 0
             isWhole[query_comp] = 0
 
-            # print("Nohole:")
-            # print(neighbor_labels[query_comp])
-            # print("-----------------------------------------------")
-
-            del open
+        del open
 
     return associated_label, isWhole
 
@@ -426,21 +399,21 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
                     n_comp_total += n_comp
                     cell_counter += 1
 
-        # write filled data to H5
-        if n_blocks_z > 1:
-            output_name = "CC3D"
-            labels_ccd_out = labels_out.copy()
-            labels_ccd_out[labels_ccd_out>0]=0
-            labels_ccd_out[labels_ccd_out<-65500]=0
-
-            min_label = np.min(labels_out)
-
-            labels_ccd_out = labels_ccd_out - min_label
-            labels_ccd_out = labels_ccd_out.astype(np.uint16)
-            print("converted cc3d labels, max is:" + str(np.max(labels_ccd_out)))
-            print("Labels cc3d saved, added: " + str(min_label))
-            writeData(output_path+output_name, labels_ccd_out)
-            print(labels_ccd_out.shape)
+        # # write filled data to H5
+        # if n_blocks_z > 1:
+        #     output_name = "CC3D"
+        #     labels_ccd_out = labels_out.copy()
+        #     labels_ccd_out[labels_ccd_out>0]=0
+        #     labels_ccd_out[labels_ccd_out<-65500]=0
+        #
+        #     min_label = np.min(labels_out)
+        #
+        #     labels_ccd_out = labels_ccd_out - min_label
+        #     labels_ccd_out = labels_ccd_out.astype(np.uint16)
+        #     print("converted cc3d labels, max is:" + str(np.max(labels_ccd_out)))
+        #     print("Labels cc3d saved, added: " + str(min_label))
+        #     writeData(output_path+output_name, labels_ccd_out)
+        #     print(labels_ccd_out.shape)
 
 
         associated_label, isWhole = findAssociatedLabels(neighbor_label_set_added, n_comp_total)
@@ -488,8 +461,6 @@ def processFile(box, data_path, sample_name, ID, saveStatistics, vizWholes, rel_
     # write filled data to H5
     output_name = "filled_" + ID
     writeData(output_path+output_name, labels)
-
-    print(labels.dtype)
 
     # compute negative to visualize filled wholes
     if vizWholes:
@@ -548,18 +519,17 @@ def evaluateWholes(folder_path,ID,sample_name,n_wholes):
     if np.min(diff)<0:
         FP = diff.copy()
         FP[FP>0]=0
-        print(FP.shape)
         n_points_FP = np.count_nonzero(FP)
         n_comp_FP = computeConnectedComp26(FP)-1
         print("FP classifications (points/components): " + str(n_points_FP) + "/ " +str(n_comp_FP))
 
-        unique_values = np.unique(FP)
-        for u in unique_values:
-            if u!=0:
-                print("Coordinates of component " + str(u))
-                coods = np.argwhere(FP==u)
-                for i in range(coods.shape[0]):
-                    print(str(coods[i,0]) + ", " + str(coods[i,1]) + ", " + str(coods[i,2]))
+        # unique_values = np.unique(FP)
+        # for u in unique_values:
+        #     if u!=0:
+        #         print("Coordinates of component " + str(u))
+        #         coods = np.argwhere(FP==u)
+        #         for i in range(coods.shape[0]):
+        #             print(str(coods[i,0]) + ", " + str(coods[i,1]) + ", " + str(coods[i,2]))
 
         del FP
     else:
@@ -573,6 +543,9 @@ def evaluateWholes(folder_path,ID,sample_name,n_wholes):
         print("FN classifications (points/components): " + str(n_points_FN) + "/ " +str(n_comp_FN))
         print("Percentage (total wholes is "+str(n_wholes)+"): "+str(float(n_comp_FN)/float(n_wholes)))
         del FN
+
+    else:
+        print("No FN classification")
 
     output_name = 'diff_wholes_'+ID
     writeData(folder_path+"/"+ID+"/"+output_name, diff)
