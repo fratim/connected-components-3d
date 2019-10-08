@@ -602,8 +602,8 @@ def main():
     vizWholes = True
     saveStatistics = False
     box_concat = [0,128,0,1280,0,1280]
-    slices_start = 0
-    slices_end = 9
+    slices_start = 11
+    slices_end = 20
 
     xres = box_concat[5]
     yres = box_concat[3]
