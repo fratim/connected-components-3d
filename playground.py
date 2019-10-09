@@ -1,6 +1,19 @@
 import numpy as np
 
-print(np.int64(10).itemsize)
+
+
+neighbor = [[]]
+
+print(is neighbor[0])
+# try:
+#   print(x)
+# except:
+#   print("Something went wrong")
+#
+# print("The 'try except' is finished")
+#
+#
+# print(np.int64(10).itemsize)
 
 # x = [0,1,2,3,4,-5]
 # b = list(filter(lambda a: a > 0, x))

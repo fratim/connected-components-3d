@@ -252,9 +252,9 @@ def getStat(box, labels_out, n_comp):
     return comp_counts, comp_mean, comp_var
 
 # create string of connected components that are a whole
-def findAssociatedLabels(neighbor_label_set, n_comp, ):
+def findAssociatedLabels(neighbor_label_set, n_comp):
     # process
-    neighbor_labels = [[] for _ in range(n_comp)] # extend by 1 and leave first entry empty
+    neighbor_labels = [[] for _ in range(n_comp)]
     for s in range(len(neighbor_label_set)):
         temp = neighbor_label_set.pop()
         if temp[0]<0:
@@ -266,21 +266,33 @@ def findAssociatedLabels(neighbor_label_set, n_comp, ):
     isWhole = np.ones((n_comp,1), dtype=np.int8)*-1
 
     count_iterations = 0
+    count_empty = 0
 
     for query_comp in range(-n_comp,0):
-        if isWhole[query_comp] == -1:
 
+        # check if this able was assigned (hence it has a neighbor)
+        if not neighbor_labels[query_comp]:
+            isWhole[query_comp] = 0
+
+        # check if this point was already processed
+        elif isWhole[query_comp]!= -1:
+            continue
+        # else process this component
+        else:
             count_iterations = count_iterations + 1
             open = []
 
+            #check if it has only one neighbor and this neighbor is a neuron
             if len(neighbor_labels[query_comp])==1 and neighbor_labels[query_comp][0]!=100000000 and neighbor_labels[query_comp][0]>0:
                 associated_label[query_comp] = neighbor_labels[query_comp][0]
                 isWhole[query_comp]=1
 
+            # check it has at least two neurons as its neighbors
             elif len(list(filter(lambda a: a>0, neighbor_labels[query_comp])))>1:
                 associated_label[query_comp] = 0
                 isWhole[query_comp] = 0
 
+            # otherwise unroll neighbors to identify
             else:
                 # iterate over all neighbots and add them to the open set, if they are a background componente (i.e. are negative)
                 for elem in neighbor_labels[query_comp]:
@@ -326,7 +338,7 @@ def findAssociatedLabels(neighbor_label_set, n_comp, ):
 
                 del open
 
-    print("FindAssocLabel - Iterations/Components/Percentage: "+str(count_iterations)+"/"+str(n_comp)+"/"+str(round(float(count_iterations)/float(n_comp),2)))
+    # print("FindAssocLabel - It/Comp/%: "+str(count_iterations)+"/"+str(n_comp)+"/"+str(round(float(count_iterations)/float(n_comp),2)))
 
     return associated_label, isWhole
 
@@ -387,7 +399,8 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
         #counters
         cell_counter = 0
         n_comp_total = 0
-        label_start = 0
+        label_start = -1
+        n_comp_max = 0
 
         border_comp_added = Dict.empty(key_type=types.int64,value_type=types.int64)
         neighbor_label_set_added = set()
@@ -406,7 +419,11 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
                     labels_cut = labels[box_dyn[0]:box_dyn[1],box_dyn[2]:box_dyn[3],box_dyn[4]:box_dyn[5]]
 
                     labels_cut_out, n_comp = computeConnectedComp6(labels_cut,label_start,max_labels)
-                    label_start = label_start-n_comp
+
+                    n_comp_max = n_comp if n_comp > n_comp_max else n_comp_max
+                    label_start = label_start-max_labels
+
+                    if np.min(labels_cut_out)<=label_start: raise ValueError("LabelsperBlock too small!")
 
                     if n_blocks_z > 1:
                         labels_out[box_dyn[0]:box_dyn[1],box_dyn[2]:box_dyn[3],box_dyn[4]:box_dyn[5]] = labels_cut_out
@@ -421,8 +438,12 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
                     n_comp_total += n_comp
                     cell_counter += 1
 
+        max_cc3d_label = max_labels*n_blocks_x*n_blocks_y*n_blocks_z + 1
+        print("CC3Dcomp/CC3dmaxlabelsum/%: " + str(n_comp_total)+"/"+str(max_cc3d_label)+"/"+str(round(float(n_comp_total)/float(max_cc3d_label),2)))
+        print("CC3DcpmMax/CC3Dmaxlabel/%: " + str(n_comp_max)+"/"+str(max_labels)+"/"+str(round(float(n_comp_max)/float(max_labels),2)))
+
         print("Find associated labels...")
-        associated_label, isWhole = findAssociatedLabels(neighbor_label_set_added, n_comp_total)
+        associated_label, isWhole = findAssociatedLabels(neighbor_label_set_added, max_labels*n_blocks_x*n_blocks_y*n_blocks_z)
 
         print("Fill wholes...")
         labels = fillWholes(box, labels, labels_out, associated_label)
@@ -576,7 +597,7 @@ def main():
     slices_start = 2
     slices_end = 11
 
-    max_labels_block = 1000000
+    max_labels_block = 500000
 
     xres = box_concat[5]
     yres = box_concat[3]
@@ -601,11 +622,11 @@ def main():
     # n_wholes = processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt",
     #                     saveStatistics=saveStatistics, vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
-    ID="MaxLabels"
+    ID="27blocks1"
     # # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
     n_wholes = processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, saveStatistics=saveStatistics,
-                                vizWholes=vizWholes, rel_block_size=0.25, yres=yres, xres=xres, max_labels=max_labels_block)
+                                vizWholes=vizWholes, rel_block_size=0.33, yres=yres, xres=xres, max_labels=max_labels_block)
 
     # evaluate wholes
     evaluateWholes(folder_path=folder_path,ID=ID,sample_name=sample_name,n_wholes=n_wholes)
