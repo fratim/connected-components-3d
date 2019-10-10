@@ -85,9 +85,7 @@ def computeConnectedComp6(labels, start_label, max_labels):
 
 # find sets of adjacent components
 @njit
-def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, labels_out, n_comp_total, border_comp, yres, xres):
-
-    neighbor_label_set = set()
+def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, labels_out, n_comp_total, neighbor_label_set, border_comp, yres, xres):
 
     for iz in range(0, box[1]-box[0]-1):
         for iy in range(0, box[3]-box[2]-1):
@@ -352,8 +350,8 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
         max_labels_total = max_labels_block*n_blocks_z*n_blocks_y*n_blocks_x
         print("Max labels per block: " + str(max_labels_block))
 
-        border_comp_added = Dict.empty(key_type=types.int64,value_type=types.int64)
-        neighbor_label_set_added = set()
+        border_comp = Dict.empty(key_type=types.int64,value_type=types.int64)
+        neighbor_label_set = {(1,1)}
 
         if n_blocks_z > 1:
             labels_out = np.zeros((labels.shape[0],labels.shape[1],labels.shape[2]),dtype=np.int64)
@@ -374,22 +372,21 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
 
                     if n_blocks_z > 1:
                         labels_out[box_dyn[0]:box_dyn[1],box_dyn[2]:box_dyn[3],box_dyn[4]:box_dyn[5]] = labels_cut_out
+                        output_name = "labels_out_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+                        writeData(output_path+output_name, labels_out)
                     else:
                         labels_out = labels_cut_out
 
-                    # output_name = "labels_out_"+ID+"_z"+str(bz).zfill(4)+"z"+str(bz).zfill(4)+"x"+str(bx).zfill(4)
-                    # writeData(output_path+output_name, labels_out)
-
-                    neighbor_label_set, border_comp_added = findAdjLabelSet(box_dyn, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x,
-                                                                            labels_cut_out, n_comp_total, border_comp_added, yres, xres)
-
-                    neighbor_label_set_added = neighbor_label_set_added.union(neighbor_label_set)
+                    neighbor_label_set, border_comp = findAdjLabelSet(box_dyn, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x,
+                                                                            labels_cut_out, n_comp_total, neighbor_label_set, border_comp, yres, xres)
 
                     n_comp_total += n_comp
                     cell_counter += 1
 
+        neighbor_label_set.remove((1,1))
+
         print("Find associated labels...")
-        associated_label = findAssociatedLabels(neighbor_label_set_added)
+        associated_label = findAssociatedLabels(neighbor_label_set)
 
         print("Fill wholes...")
         labels = fillWholes(box, labels_out, associated_label)
@@ -534,35 +531,35 @@ def main():
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/"
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     vizWholes = True
-    box_concat = [0,128,0,2048,0,2048]
+    box_concat = [0,128,0,512,0,512]
     slices_start = 2
-    slices_end = 5
+    slices_end = 2
 
     xres = box_concat[5]
     yres = box_concat[3]
 
-    sample_name = "ZF_concat_2to5_2048_2048"
-    folder_path = output_path + sample_name + "/"
+    # sample_name = "ZF_concat_2to5_2048_2048"
+    # folder_path = output_path + sample_name + "/"
 
-    # sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
-    # folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
-    # os.mkdir(folder_path)
+    sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
+    folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
+    os.mkdir(folder_path)
 
     # timestr0 = time.strftime("%Y%m%d_%H_%M_%S")
     # f = open(folder_path + timestr0 + '.txt','w')
     # sys.stdout = f
 
-    # # # concat files
-    # concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
-    #
-    # # # compute groundtruth (in one block)
-    # box = getBoxAll(folder_path+sample_name+".h5")
-    # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
+    # # concat files
+    concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
+
+    # # compute groundtruth (in one block)
+    box = getBoxAll(folder_path+sample_name+".h5")
+    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
     ID="test8kblocks"
     # # # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.05, yres=yres, xres=xres)
+    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.3, yres=yres, xres=xres)
 
     # evaluate wholes
     evaluateWholes(folder_path=folder_path,ID=ID,sample_name=sample_name)
