@@ -327,7 +327,7 @@ def getBoxDyn(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_block
         return box_dyn
 
 # process whole filling process for chung of data
-def processData(output_path, sample_name, labels, rel_block_size, yres, xres):
+def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID):
 
         # read in chunk size
         box = [0,labels.shape[0],0,labels.shape[1],0,labels.shape[2]]
@@ -360,7 +360,7 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres):
 
         # process blocks by iterating over all bloks
         for bz in range(n_blocks_z):
-            print("processing z block " + str(bz+1))
+            print("processing z block " + str(bz))
             for by in range(n_blocks_y):
                 for bx in range(n_blocks_x):
 
@@ -376,6 +376,9 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres):
                         labels_out[box_dyn[0]:box_dyn[1],box_dyn[2]:box_dyn[3],box_dyn[4]:box_dyn[5]] = labels_cut_out
                     else:
                         labels_out = labels_cut_out
+
+                    # output_name = "labels_out_"+ID+"_z"+str(bz).zfill(4)+"z"+str(bz).zfill(4)+"x"+str(bx).zfill(4)
+                    # writeData(output_path+output_name, labels_out)
 
                     neighbor_label_set, border_comp_added = findAdjLabelSet(box_dyn, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x,
                                                                             labels_cut_out, n_comp_total, border_comp_added, yres, xres)
@@ -418,7 +421,7 @@ def processFile(box, data_path, sample_name, ID, vizWholes, rel_block_size, yres
     print("-----------------------------------------------------------------")
 
     labels = processData(output_path=output_path, sample_name=ID,
-                labels=labels, rel_block_size=rel_block_size, yres=yres, xres=xres)
+                labels=labels, rel_block_size=rel_block_size, yres=yres, xres=xres, ID=ID)
 
     print("-----------------------------------------------------------------")
     print("Time elapsed: " + str(time.time() - start_time))
@@ -556,10 +559,10 @@ def main():
     # box = getBoxAll(folder_path+sample_name+".h5")
     # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
-    ID="testFillwholes3"
+    ID="test8kblocks"
     # # # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.01, yres=yres, xres=xres)
+    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.05, yres=yres, xres=xres)
 
     # evaluate wholes
     evaluateWholes(folder_path=folder_path,ID=ID,sample_name=sample_name)
