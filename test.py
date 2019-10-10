@@ -291,7 +291,7 @@ def findAssociatedLabels(neighbor_label_set):
 
 # fill detedted wholes and give non_wholes their ID (for visualization)
 @njit
-def fillWholes(box_dyn, labels, labels_cut_out, associated_label):
+def fillWholes(box_dyn, labels_cut_out, associated_label):
 
     box = box_dyn
 
@@ -299,15 +299,15 @@ def fillWholes(box_dyn, labels, labels_cut_out, associated_label):
         for iy in range(box[2], box[3]):
             for ix in range(box[4], box[5]):
 
-                if labels[iz,iy,ix] == 0:
+                if labels_cut_out[iz,iy,ix] < 0:
 
                     ic = iz - box[0]
                     ib = iy - box[2]
                     ia = ix - box[4]
 
-                    labels[iz,iy,ix] = associated_label[labels_cut_out[ic,ib,ia]]
+                    labels_cut_out[iz,iy,ix] = associated_label[labels_cut_out[ic,ib,ia]]
 
-    return labels
+    return labels_cut_out
 
 # compute extended boxes
 @njit
@@ -347,6 +347,7 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres):
         cell_counter = 0
         n_comp_total = 0
         label_start = -1
+
         max_labels_block = int(bs_z*bs_y*bs_x)
         max_labels_total = max_labels_block*n_blocks_z*n_blocks_y*n_blocks_x
         print("Max labels per block: " + str(max_labels_block))
@@ -388,7 +389,7 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres):
         associated_label = findAssociatedLabels(neighbor_label_set_added)
 
         print("Fill wholes...")
-        labels = fillWholes(box, labels, labels_out, associated_label)
+        labels = fillWholes(box, labels_out, associated_label)
 
         # print out total of found wholes
 
@@ -537,28 +538,28 @@ def main():
     xres = box_concat[5]
     yres = box_concat[3]
 
-    # sample_name = "ZF_concat_2to5_2048_2048"
-    # folder_path = output_path + sample_name + "/"
+    sample_name = "ZF_concat_2to5_2048_2048"
+    folder_path = output_path + sample_name + "/"
 
-    sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
-    folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
-    os.mkdir(folder_path)
+    # sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
+    # folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
+    # os.mkdir(folder_path)
 
     # timestr0 = time.strftime("%Y%m%d_%H_%M_%S")
     # f = open(folder_path + timestr0 + '.txt','w')
     # sys.stdout = f
 
-    # # concat files
-    concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
+    # # # concat files
+    # concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
+    #
+    # # # compute groundtruth (in one block)
+    # box = getBoxAll(folder_path+sample_name+".h5")
+    # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
-    # # compute groundtruth (in one block)
-    box = getBoxAll(folder_path+sample_name+".h5")
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
-
-    ID="testdict"
+    ID="testFillwholes3"
     # # # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.33, yres=yres, xres=xres)
+    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.01, yres=yres, xres=xres)
 
     # evaluate wholes
     evaluateWholes(folder_path=folder_path,ID=ID,sample_name=sample_name)
