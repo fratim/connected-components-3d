@@ -193,9 +193,11 @@ def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, labels_
     return neighbor_label_set, border_comp
 
 # create string of connected components that are a whole
-def findAssociatedLabels(neighbor_label_set, n_comp):
+def findAssociatedLabels(neighbor_label_set):
     # process
     neighbor_labels = dict()
+
+    time_start = time.time()
 
     for s in range(len(neighbor_label_set)):
         pair = neighbor_label_set.pop()
@@ -210,9 +212,13 @@ def findAssociatedLabels(neighbor_label_set, n_comp):
         else:
             continue
 
+    print("time to get neighbor_labels dict: " + str(time.time()-time_start))
+
     #find connected components that are a whole
     associated_label = Dict.empty(key_type=types.int64,value_type=types.int64)
     processed = set()
+
+    time_start = time.time()
 
     for query_comp in neighbor_labels.keys():
 
@@ -266,7 +272,7 @@ def findAssociatedLabels(neighbor_label_set, n_comp):
                     for elem in neighbor_labels[query_comp]:
                         if elem < 0:
                             associated_label[elem]=np.max(neighbor_labels[query_comp])
-                            processed.add(query_comp)
+                            processed.add(elem)
 
                 else:
                     associated_label[query_comp] = 0
@@ -275,11 +281,11 @@ def findAssociatedLabels(neighbor_label_set, n_comp):
                     for elem in neighbor_labels[query_comp]:
                         if elem < 0:
                             associated_label[elem]=0
-                            processed.add(query_comp)
+                            processed.add(elem)
 
                 del open
 
-    # print("FindAssocLabel - It/Comp/%: "+str(count_iterations)+"/"+str(n_comp)+"/"+str(round(float(count_iterations)/float(n_comp),2)))
+    print("time to get associated label dict: " + str(time.time()-time_start))
 
     return associated_label
 
@@ -321,7 +327,7 @@ def getBoxDyn(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_block
         return box_dyn
 
 # process whole filling process for chung of data
-def processData(saveStatistics, output_path, sample_name, labels, rel_block_size, yres, xres):
+def processData(output_path, sample_name, labels, rel_block_size, yres, xres):
 
         # read in chunk size
         box = [0,labels.shape[0],0,labels.shape[1],0,labels.shape[2]]
@@ -341,7 +347,7 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
         cell_counter = 0
         n_comp_total = 0
         label_start = -1
-        max_labels_block = int(bs_z*bs_y*bs_x*0.005)
+        max_labels_block = int(bs_z*bs_y*bs_x)
         max_labels_total = max_labels_block*n_blocks_z*n_blocks_y*n_blocks_x
         print("Max labels per block: " + str(max_labels_block))
 
@@ -379,7 +385,7 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
                     cell_counter += 1
 
         print("Find associated labels...")
-        associated_label = findAssociatedLabels(neighbor_label_set_added, max_labels_total)
+        associated_label = findAssociatedLabels(neighbor_label_set_added)
 
         print("Fill wholes...")
         labels = fillWholes(box, labels, labels_out, associated_label)
@@ -393,7 +399,7 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
 
         return labels
 
-def processFile(box, data_path, sample_name, ID, saveStatistics, vizWholes, rel_block_size, yres, xres):
+def processFile(box, data_path, sample_name, ID, vizWholes, rel_block_size, yres, xres):
 
     output_path = data_path + ID + "/"
     if os.path.exists(output_path):
@@ -410,7 +416,7 @@ def processFile(box, data_path, sample_name, ID, saveStatistics, vizWholes, rel_
 
     print("-----------------------------------------------------------------")
 
-    labels = processData(saveStatistics=saveStatistics, output_path=output_path, sample_name=ID,
+    labels = processData(output_path=output_path, sample_name=ID,
                 labels=labels, rel_block_size=rel_block_size, yres=yres, xres=xres)
 
     print("-----------------------------------------------------------------")
@@ -524,7 +530,6 @@ def main():
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/"
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     vizWholes = True
-    saveStatistics = False
     box_concat = [0,128,0,2048,0,2048]
     slices_start = 2
     slices_end = 5
@@ -532,12 +537,12 @@ def main():
     xres = box_concat[5]
     yres = box_concat[3]
 
-    sample_name = "ZF_concat_2to5_2048_2048"
-    folder_path = output_path + sample_name + "/"
+    # sample_name = "ZF_concat_2to5_2048_2048"
+    # folder_path = output_path + sample_name + "/"
 
-    # sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
-    # folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
-    # os.mkdir(folder_path)
+    sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
+    folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
+    os.mkdir(folder_path)
 
     # timestr0 = time.strftime("%Y%m%d_%H_%M_%S")
     # f = open(folder_path + timestr0 + '.txt','w')
@@ -548,14 +553,12 @@ def main():
 
     # # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gtnew3",
-                        saveStatistics=saveStatistics, vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
+    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
-    ID="gtnew3"
+    ID="testdict"
     # # # compute groundtruth (in one block)
-    # box = getBoxAll(folder_path+sample_name+".h5")
-    # n_wholes = processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, saveStatistics=saveStatistics,
-    #                             vizWholes=vizWholes, rel_block_size=0.33, yres=yres, xres=xres)
+    box = getBoxAll(folder_path+sample_name+".h5")
+    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.33, yres=yres, xres=xres)
 
     # evaluate wholes
     evaluateWholes(folder_path=folder_path,ID=ID,sample_name=sample_name)
