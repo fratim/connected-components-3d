@@ -74,11 +74,11 @@ def computeConnectedComp26(labels):
 #compute the connected Com ponent labels
 def computeConnectedComp6(labels, start_label, max_labels):
     connectivity = 6 # only 26, 18, and 6 are allowed
-    labels_out = cc3d.connected_components(labels, connectivity=connectivity, max_labels=max_labels*3)
+    labels_out = cc3d.connected_components(labels, connectivity=connectivity, max_labels=max_labels)
 
     n_comp = (np.min(labels_out)*-1)
 
-    if start_label!=0:
+    if start_label!=-1:
         labels_out[labels_out<0] = labels_out[labels_out<0] + start_label
 
     return labels_out, n_comp
@@ -380,7 +380,7 @@ def getBoxDyn(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_block
         return box_dyn
 
 # process whole filling process for chung of data
-def processData(saveStatistics, output_path, sample_name, labels, rel_block_size, yres, xres, max_labels_total):
+def processData(saveStatistics, output_path, sample_name, labels, rel_block_size, yres, xres):
 
         # read in chunk size
         box = [0,labels.shape[0],0,labels.shape[1],0,labels.shape[2]]
@@ -399,9 +399,9 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
         #counters
         cell_counter = 0
         n_comp_total = 0
-        label_start = 0
-        n_comp_max = 0
-        max_labels_block = int(math.floor(max_labels_total/(n_blocks_z*n_blocks_y*n_blocks_x)))
+        label_start = -1
+        max_labels_block = int(bs_z*bs_y*bs_x*0.005)
+        max_labels_total = max_labels_block*n_blocks_z*n_blocks_y*n_blocks_x
         print("Max labels per block: " + str(max_labels_block))
 
         border_comp_added = Dict.empty(key_type=types.int64,value_type=types.int64)
@@ -422,10 +422,7 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
 
                     labels_cut_out, n_comp = computeConnectedComp6(labels_cut,label_start,max_labels_block)
 
-                    n_comp_max = n_comp if n_comp > n_comp_max else n_comp_max
                     label_start = label_start-max_labels_block
-
-                    if np.min(labels_cut_out)<=label_start: raise ValueError("LabelsperBlock too small!")
 
                     if n_blocks_z > 1:
                         labels_out[box_dyn[0]:box_dyn[1],box_dyn[2]:box_dyn[3],box_dyn[4]:box_dyn[5]] = labels_cut_out
@@ -439,9 +436,6 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
 
                     n_comp_total += n_comp
                     cell_counter += 1
-
-        print("CC3Dcomp/CC3dmaxlabelsum/%: " + str(n_comp_total)+"/"+str(max_labels_total)+"/"+str(round(float(n_comp_total)/float(max_labels_total),2)))
-        print("CC3DcpmMax/CC3Dmaxlabel/%: " + str(n_comp_max)+"/"+str(max_labels_block)+"/"+str(round(float(n_comp_max)/float(max_labels_block),2)))
 
         print("Find associated labels...")
         associated_label, isWhole = findAssociatedLabels(neighbor_label_set_added, max_labels_total)
@@ -460,7 +454,7 @@ def processData(saveStatistics, output_path, sample_name, labels, rel_block_size
 
         return labels, total_wholes_found
 
-def processFile(box, data_path, sample_name, ID, saveStatistics, vizWholes, rel_block_size, yres, xres, max_labels_total):
+def processFile(box, data_path, sample_name, ID, saveStatistics, vizWholes, rel_block_size, yres, xres):
 
     output_path = data_path + ID + "/"
     if os.path.exists(output_path):
@@ -478,7 +472,7 @@ def processFile(box, data_path, sample_name, ID, saveStatistics, vizWholes, rel_
     print("-----------------------------------------------------------------")
 
     labels, n_wholes = processData(saveStatistics=saveStatistics, output_path=output_path, sample_name=ID,
-                labels=labels, rel_block_size=rel_block_size, yres=yres, xres=xres, max_labels_total=max_labels_total)
+                labels=labels, rel_block_size=rel_block_size, yres=yres, xres=xres)
 
     print("-----------------------------------------------------------------")
     print("Time elapsed: " + str(time.time() - start_time))
@@ -598,8 +592,6 @@ def main():
     slices_start = 2
     slices_end = 5
 
-    max_labels_rel = 0.005
-    max_labels_total = int(math.floor((slices_end-slices_start+1)*box_concat[1]*box_concat[3]*box_concat[5]*max_labels_rel))
     xres = box_concat[5]
     yres = box_concat[3]
 
@@ -621,13 +613,13 @@ def main():
     # # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
     n_wholes = processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt",
-                        saveStatistics=saveStatistics, vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres, max_labels_total=max_labels_total)
+                        saveStatistics=saveStatistics, vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
     ID="27blocks1"
     # # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
     n_wholes = processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, saveStatistics=saveStatistics,
-                                vizWholes=vizWholes, rel_block_size=0.33, yres=yres, xres=xres, max_labels_total=max_labels_total)
+                                vizWholes=vizWholes, rel_block_size=0.33, yres=yres, xres=xres)
 
     # evaluate wholes
     evaluateWholes(folder_path=folder_path,ID=ID,sample_name=sample_name,n_wholes=n_wholes)

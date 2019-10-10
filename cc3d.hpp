@@ -700,8 +700,6 @@ int64_t* connected_components3d_6(
     }
   }
 
-  // printf("Max label in CC3D step one is: %ld\n", (long)(next_label-1));
-
   return relabel(out_labels, voxels, next_label, equivalences);
 }
 
