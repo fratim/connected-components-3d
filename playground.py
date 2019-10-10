@@ -1,10 +1,14 @@
 import numpy as np
 
 
-
-neighbor = [[]]
-
-print(is neighbor[0])
+neighbot_labels = dict()
+neighbot_labels[-10] = [4,5,6]
+print(neighbot_labels[-10])
+neighbot_labels[-10].append(100)
+print(neighbot_labels[-10])
+# neighbor = [[]]
+#
+# print(is neighbor[0])
 # try:
 #   print(x)
 # except:
