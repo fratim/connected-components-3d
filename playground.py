@@ -1,12 +1,29 @@
 import numpy as np
 from numba import njit
 
-@njit
-def test():
-    a = set([1,2,3])
-    if 10 in a:
-        print("HOSSA")
-test()
+
+a = {}
+
+print(len(a))
+
+# a = dict()
+# a[1]=2
+# a[5]=3
+
+# key_set = set(a.keys())
+# # print(key_set.pop())
+# # print(key_set.pop())
+# key_set.add(6)
+#
+# for a in key_set:
+#     print(a)
+
+# @njit
+# def test():
+#     a = set([1,2,3])
+#     if 10 in a:
+#         print("HOSSA")
+# test()
 
 #
 # neighbot_labels = dict()

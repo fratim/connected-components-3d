@@ -214,6 +214,19 @@ def findAdjLabelSetLocal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc
 
     return neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist
 
+# set dict value undetermined set to 0
+def setUndeterminedtoNonHole(undetermined, associated_label):
+
+    for _ in range(len(undetermined)):
+
+        elem = undetermined.pop()
+        associated_label[elem] = 0
+
+    if len(undetermined)>0:
+        raise ValueError("Uknown Error")
+
+    return associated_label
+
 # get neighbor label dict from neighbor label set
 def getNeighborLabelDict(neighbor_label_set):
 
@@ -240,82 +253,81 @@ def getNeighborLabelDict(neighbor_label_set):
     return neighbor_labels
 
 # create string of connected components that are a whole
-def findAssociatedLabels(neighbor_labels):
-
-    #find connected components that are a whole
-    associated_label = Dict.empty(key_type=types.int64,value_type=types.int64)
-    processed = set()
+def findAssociatedLabels(neighbor_labels, undetermined, associated_label):
 
     time_start = time.time()
+    border_contact = set()
 
-    for query_comp in neighbor_labels.keys():
+    while len(undetermined)>0:
 
-        # check if this point was already processed
-        if query_comp in processed:
-            continue
-        # else process this component
+        query_comp = undetermined.pop()
+
+        #check if it has only one neighbor and this neighbor is a neuron
+        if len(neighbor_labels[query_comp])==1 and neighbor_labels[query_comp][0]!=100000000 and neighbor_labels[query_comp][0]>0:
+            associated_label[query_comp] = neighbor_labels[query_comp][0]
+
+        # otherwise unroll neighbors to identify
         else:
+
+            # list of nodes to expand
             open = []
+            # iterate over all neighbots and add them to the open set, if they are a background componente (i.e. are negative)
+            for elem in neighbor_labels[query_comp]:
+                if elem == 100000000:
+                    continue
+                elif elem < 0:
+                    for son in neighbor_labels[elem]:
+                        if son not in neighbor_labels[query_comp]:
+                            neighbor_labels[query_comp].append(son)
+                            if son<0:
+                                open.insert(0,son)
+            # appen all negative background components that are neighbors or ancestors
+            while len(open)>0:
+                elem = open.pop()
+                if elem == 100000000:
+                    if 100000000 not in neighbor_labels[query_comp]:
+                        neighbor_labels[query_comp].append(100000000)
+                else:
+                    for son in neighbor_labels[elem]:
+                        if son not in neighbor_labels[query_comp]:
+                            neighbor_labels[query_comp].append(son)
+                            if son<0:
+                                open.insert(0,son)
 
-            #check if it has only one neighbor and this neighbor is a neuron
-            if len(neighbor_labels[query_comp])==1 and neighbor_labels[query_comp][0]!=100000000 and neighbor_labels[query_comp][0]>0:
-                associated_label[query_comp] = neighbor_labels[query_comp][0]
-                processed.add(query_comp)
-
-            # check it has at least two neurons as its neighbors
-            elif len(list(filter(lambda a: a>0, neighbor_labels[query_comp])))>1:
-                associated_label[query_comp] = 0
-                processed.add(query_comp)
-
-            # otherwise unroll neighbors to identify
-            else:
-                # iterate over all neighbots and add them to the open set, if they are a background componente (i.e. are negative)
+            # check if there is a bordercontact, then add to bordercontact but remove all elemnts from undetermined (will be added again later)
+            if 100000000 in neighbor_labels[query_comp]:
+                border_contact.add(query_comp)
                 for elem in neighbor_labels[query_comp]:
-                    if elem == 100000000:
-                        continue
-                    elif elem < 0:
-                        for son in neighbor_labels[elem]:
-                            if son not in neighbor_labels[query_comp]:
-                                neighbor_labels[query_comp].append(son)
-                                if son<0:
-                                    open.insert(0,son)
-                # appen all negative background components that are neighbors or ancestors
-                while len(open)>0:
-                    elem = open.pop()
-                    if elem == 100000000:
-                        if 100000000 not in neighbor_labels[query_comp]:
-                            neighbor_labels[query_comp].append(100000000)
-                    else:
-                        for son in neighbor_labels[elem]:
-                            if son not in neighbor_labels[query_comp]:
-                                neighbor_labels[query_comp].append(son)
-                                if son<0:
-                                    open.insert(0,son)
+                    if elem < 0:
+                        border_contact.add(elem)
+                        undetermined.discard(elem)
 
-                # check again if there is only one positive neighbor and that it is not boundary and it is a neuron, if so, it is a hole
-                if len(list(filter(lambda a: a>0, neighbor_labels[query_comp])))==1 and np.max(neighbor_labels[query_comp])!=100000000 and np.max(neighbor_labels[query_comp])>0:
+            # if component does not have border contact, it can now be definitley determined if it is a hole or not
+            else:
+            # check again if there is only one positive neighbor and that it is not boundary and it is a neuron, if so, it is a hole #TODO: second check could be removed
+                if len(list(filter(lambda a: a>0, neighbor_labels[query_comp])))==1 and np.max(neighbor_labels[query_comp])>0:
                     associated_label[query_comp] = np.max(neighbor_labels[query_comp])
-                    processed.add(query_comp)
-
                     for elem in neighbor_labels[query_comp]:
                         if elem < 0:
                             associated_label[elem]=np.max(neighbor_labels[query_comp])
-                            processed.add(elem)
-
+                            undetermined.discard(elem)
                 else:
                     associated_label[query_comp] = 0
-                    processed.add(query_comp)
-
                     for elem in neighbor_labels[query_comp]:
                         if elem < 0:
                             associated_label[elem]=0
-                            processed.add(elem)
-
-                del open
+                            undetermined.discard(elem)
+            # delte open set
+            del open
 
     print("time to get associated label dict: " + str(time.time()-time_start))
 
-    return associated_label
+    if len(undetermined)>0:
+        raise ValueError("Unknown Error")
+
+    undetermined = undetermined.union(border_contact)
+
+    return associated_label, undetermined
 
 # fill detedted wholes and give non_wholes their ID (for visualization)
 def fillWholes(output_path,bz,by,bx,associated_label,ID):
@@ -442,11 +454,18 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
         neighbor_label_set_border.remove((1,1))
         neighbor_label_set = neighbor_label_set_inside.union(neighbor_label_set_border)
 
-        print(len(neighbor_label_set))
-
         print("Find associated labels...")
         neighbor_label_dict = getNeighborLabelDict(neighbor_label_set)
-        associated_label = findAssociatedLabels(neighbor_label_dict)
+
+        undetermined = set(neighbor_label_dict.keys())
+
+        print(len(undetermined))
+
+        associated_label = Dict.empty(key_type=types.int64,value_type=types.int64)
+        associated_label, undetermined = findAssociatedLabels(neighbor_label_dict, undetermined, associated_label)
+
+        associated_label = setUndeterminedtoNonHole(undetermined, associated_label)
+        print(len(associated_label.keys()))
 
         print("Fill wholes...")
         # process blocks by iterating over all bloks
@@ -624,32 +643,32 @@ def main():
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/"
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     vizWholes = True
-    box_concat = [0,128,0,2048,0,2048]
+    box_concat = [0,128,0,512,0,512]
     slices_start = 13
-    slices_end = 16
+    slices_end = 14
 
     xres = box_concat[5]
     yres = box_concat[3]
 
-    sample_name = "ZF_concat_2to4_512_512"
-    folder_path = output_path + sample_name + "/"
+    # sample_name = "ZF_concat_2to4_512_512"
+    # folder_path = output_path + sample_name + "/"
 
-    # sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
-    # folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
-    # os.mkdir(folder_path)
+    sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
+    folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
+    os.mkdir(folder_path)
 
     # timestr0 = time.strftime("%Y%m%d_%H_%M_%S")
     # f = open(folder_path + timestr0 + '.txt','w')
     # sys.stdout = f
 
-    # # # concat files
-    # concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
-    #
-    # # compute groundtruth (in one block)
-    # box = getBoxAll(folder_path+sample_name+".h5")
-    # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
+    # # concat files
+    concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
 
-    ID="newNeighborLabels12"
+    # compute groundtruth (in one block)
+    box = getBoxAll(folder_path+sample_name+".h5")
+    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
+
+    ID="newNeighborLabels14"
     # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
     processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.25, yres=yres, xres=xres)
