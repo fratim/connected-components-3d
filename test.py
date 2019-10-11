@@ -56,16 +56,16 @@ def writeData(filename,labels):
 #compute the connected Com ponent labels
 def computeConnectedComp26(labels):
     connectivity = 26 # only 26, 18, and 6 are allowed
-    labels_out = cc3d.connected_components(labels, connectivity=connectivity, max_labels=45000000)
+    cc_labels = cc3d.connected_components(labels, connectivity=connectivity, max_labels=45000000)
 
     # You can extract individual components like so:
-    n_comp = np.max(labels_out) + 1
+    n_comp = np.max(cc_labels) + 1
 
-    del labels_out
+    del cc_labels
     # print("Conntected Regions found: " + str(n_comp))
 
     # determine indices, numbers and counts for the connected regions
-    # unique, counts = np.unique(labels_out, return_counts=True)
+    # unique, counts = np.unique(cc_labels, return_counts=True)
     # print("Conntected regions and associated points: ")
     # print(dict(zip(unique, counts)))
 
@@ -74,119 +74,119 @@ def computeConnectedComp26(labels):
 #compute the connected Com ponent labels
 def computeConnectedComp6(labels, start_label, max_labels):
     connectivity = 6 # only 26, 18, and 6 are allowed
-    labels_out = cc3d.connected_components(labels, connectivity=connectivity, max_labels=max_labels)
+    cc_labels = cc3d.connected_components(labels, connectivity=connectivity, max_labels=max_labels)
 
-    n_comp = (np.min(labels_out)*-1)
+    n_comp = (np.min(cc_labels)*-1)
 
     if start_label!=-1:
-        labels_out[labels_out<0] = labels_out[labels_out<0] + start_label
+        cc_labels[cc_labels<0] = cc_labels[cc_labels<0] + start_label
 
-    return labels_out, n_comp
+    return cc_labels, n_comp
 
 # find sets of adjacent components
 @njit
-def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, labels_out, n_comp_total, neighbor_label_set, border_comp, yres, xres):
+def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total, neighbor_label_set, border_comp, yres, xres):
 
     for iz in range(0, box[1]-box[0]-1):
         for iy in range(0, box[3]-box[2]-1):
             for ix in range(0, box[5]-box[4]-1):
 
-                curr_comp = labels_out[iz,iy,ix]
+                curr_comp = cc_labels[iz,iy,ix]
 
-                if curr_comp != labels_out[iz+1,iy,ix]:
-                    neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz+1,iy,ix]))
-                    neighbor_label_set.add((labels_out[iz+1,iy,ix],labels_out[iz,iy,ix]))
+                if curr_comp != cc_labels[iz+1,iy,ix]:
+                    neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz+1,iy,ix]))
+                    neighbor_label_set.add((cc_labels[iz+1,iy,ix],cc_labels[iz,iy,ix]))
 
-                if curr_comp != labels_out[iz,iy+1,ix]:
-                    neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz,iy+1,ix]))
-                    neighbor_label_set.add((labels_out[iz,iy+1,ix],labels_out[iz,iy,ix]))
+                if curr_comp != cc_labels[iz,iy+1,ix]:
+                    neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz,iy+1,ix]))
+                    neighbor_label_set.add((cc_labels[iz,iy+1,ix],cc_labels[iz,iy,ix]))
 
-                if curr_comp != labels_out[iz,iy,ix+1]:
-                    neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz,iy,ix+1]))
-                    neighbor_label_set.add((labels_out[iz,iy,ix+1],labels_out[iz,iy,ix]))
+                if curr_comp != cc_labels[iz,iy,ix+1]:
+                    neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz,iy,ix+1]))
+                    neighbor_label_set.add((cc_labels[iz,iy,ix+1],cc_labels[iz,iy,ix]))
 
     for iz in [0, box[1]-box[0]-1]:
         for iy in range(0, box[3]-box[2]):
             for ix in range(0, box[5]-box[4]):
 
                 #interconnect in plane
-                curr_comp = labels_out[iz,iy,ix]
+                curr_comp = cc_labels[iz,iy,ix]
 
                 if (iy+1) < box[3]-box[2]:
-                    if curr_comp != labels_out[iz,iy+1,ix]:
-                        neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz,iy+1,ix]))
-                        neighbor_label_set.add((labels_out[iz,iy+1,ix],labels_out[iz,iy,ix]))
+                    if curr_comp != cc_labels[iz,iy+1,ix]:
+                        neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz,iy+1,ix]))
+                        neighbor_label_set.add((cc_labels[iz,iy+1,ix],cc_labels[iz,iy,ix]))
 
                 if (ix+1) < box[5]-box[4]:
-                    if curr_comp != labels_out[iz,iy,ix+1]:
-                        neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz,iy,ix+1]))
-                        neighbor_label_set.add((labels_out[iz,iy,ix+1],labels_out[iz,iy,ix]))
+                    if curr_comp != cc_labels[iz,iy,ix+1]:
+                        neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz,iy,ix+1]))
+                        neighbor_label_set.add((cc_labels[iz,iy,ix+1],cc_labels[iz,iy,ix]))
 
                 # write dict of border components
-                border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = labels_out[iz,iy,ix]
+                border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = cc_labels[iz,iy,ix]
 
                 # connect to adjacent blocks
                 if iz == 0 and bz > 0:
-                    neighbor_label_set.add((labels_out[iz,iy,ix], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)]))
-                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)],labels_out[iz,iy,ix]))
+                    neighbor_label_set.add((cc_labels[iz,iy,ix], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)]))
+                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)],cc_labels[iz,iy,ix]))
 
                 # connect to boundary
                 elif iz == 0 and bz == 0:
-                    neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                    neighbor_label_set.add((cc_labels[iz,iy,ix], 100000000))
                 elif iz==(box[1]-box[0]-1) and bz==(n_blocks_z-1):
-                    neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                    neighbor_label_set.add((cc_labels[iz,iy,ix], 100000000))
 
     for iz in range(0, box[1]-box[0]):
         for iy in [0, box[3]-box[2]-1]:
             for ix in range(0, box[5]-box[4]):
 
                 #interconnect in plane
-                curr_comp = labels_out[iz,iy,ix]
+                curr_comp = cc_labels[iz,iy,ix]
 
                 if (iz+1) < box[1]-box[0]:
-                    if curr_comp != labels_out[iz+1,iy,ix]:
-                        neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz+1,iy,ix]))
-                        neighbor_label_set.add((labels_out[iz+1,iy,ix],labels_out[iz,iy,ix]))
+                    if curr_comp != cc_labels[iz+1,iy,ix]:
+                        neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz+1,iy,ix]))
+                        neighbor_label_set.add((cc_labels[iz+1,iy,ix],cc_labels[iz,iy,ix]))
 
                 if (ix+1) < box[5]-box[4]:
-                    if curr_comp != labels_out[iz,iy,ix+1]:
-                        neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz,iy,ix+1]))
-                        neighbor_label_set.add((labels_out[iz,iy,ix+1],labels_out[iz,iy,ix]))
+                    if curr_comp != cc_labels[iz,iy,ix+1]:
+                        neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz,iy,ix+1]))
+                        neighbor_label_set.add((cc_labels[iz,iy,ix+1],cc_labels[iz,iy,ix]))
 
-                border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = labels_out[iz,iy,ix]
+                border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = cc_labels[iz,iy,ix]
                 if iy == 0 and by > 0:
-                    neighbor_label_set.add((labels_out[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)]))
-                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)],labels_out[iz,iy,ix]))
+                    neighbor_label_set.add((cc_labels[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)]))
+                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)],cc_labels[iz,iy,ix]))
                 elif iy == 0 and by == 0:
-                    neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                    neighbor_label_set.add((cc_labels[iz,iy,ix], 100000000))
                 elif iy==(box[3]-box[2]-1) and by==(n_blocks_y-1):
-                    neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                    neighbor_label_set.add((cc_labels[iz,iy,ix], 100000000))
 
     for iz in range(0, box[1]-box[0]):
         for iy in range(0, box[3]-box[2]):
             for ix in [0, box[5]-box[4]-1]:
 
                 #interconnect in plane
-                curr_comp = labels_out[iz,iy,ix]
+                curr_comp = cc_labels[iz,iy,ix]
 
                 if (iz+1) < box[1]-box[0]:
-                    if curr_comp != labels_out[iz+1,iy,ix]:
-                        neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz+1,iy,ix]))
-                        neighbor_label_set.add((labels_out[iz+1,iy,ix],labels_out[iz,iy,ix]))
+                    if curr_comp != cc_labels[iz+1,iy,ix]:
+                        neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz+1,iy,ix]))
+                        neighbor_label_set.add((cc_labels[iz+1,iy,ix],cc_labels[iz,iy,ix]))
 
                 if (iy+1) < box[3]-box[2]:
-                    if curr_comp != labels_out[iz,iy+1,ix]:
-                        neighbor_label_set.add((labels_out[iz,iy,ix],labels_out[iz,iy+1,ix]))
-                        neighbor_label_set.add((labels_out[iz,iy+1,ix],labels_out[iz,iy,ix]))
+                    if curr_comp != cc_labels[iz,iy+1,ix]:
+                        neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz,iy+1,ix]))
+                        neighbor_label_set.add((cc_labels[iz,iy+1,ix],cc_labels[iz,iy,ix]))
 
-                border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = labels_out[iz,iy,ix]
+                border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = cc_labels[iz,iy,ix]
                 if ix == 0 and bx > 0:
-                    neighbor_label_set.add((labels_out[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)]))
-                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)],labels_out[iz,iy,ix]))
+                    neighbor_label_set.add((cc_labels[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)]))
+                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)],cc_labels[iz,iy,ix]))
                 elif ix == 0 and bx == 0:
-                    neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                    neighbor_label_set.add((cc_labels[iz,iy,ix], 100000000))
                 elif ix==(box[5]-box[4]-1) and bx==(n_blocks_x-1):
-                    neighbor_label_set.add((labels_out[iz,iy,ix], 100000000))
+                    neighbor_label_set.add((cc_labels[iz,iy,ix], 100000000))
 
     return neighbor_label_set, border_comp
 
@@ -288,24 +288,35 @@ def findAssociatedLabels(neighbor_label_set):
     return associated_label
 
 # fill detedted wholes and give non_wholes their ID (for visualization)
+def fillWholes(output_path,bz,by,bx,associated_label,ID):
+
+    # create filename
+    input_name = "cc_labels_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+    box = getBoxAll(output_path+input_name+".h5")
+
+    # read in data
+    cc_labels = readData(box, output_path+input_name+".h5")
+
+    # use nopython to do actual computation
+    cc_labels = fillwholesNoPython(box,cc_labels,associated_label)
+
+    output_name = "seg_filled_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+    writeData(output_path+output_name, cc_labels)
+
+    return cc_labels
+
 @njit
-def fillWholes(box_dyn, labels_cut_out, associated_label):
-
-    box = box_dyn
-
+def fillwholesNoPython(box,cc_labels,associated_label):
     for iz in range(box[0], box[1]):
         for iy in range(box[2], box[3]):
             for ix in range(box[4], box[5]):
 
-                if labels_cut_out[iz,iy,ix] < 0:
+                if cc_labels[iz,iy,ix] < 0:
+                    cc_labels[iz,iy,ix] = associated_label[cc_labels[iz,iy,ix]]
+                else:
+                    continue
 
-                    ic = iz - box[0]
-                    ib = iy - box[2]
-                    ia = ix - box[4]
-
-                    labels_cut_out[iz,iy,ix] = associated_label[labels_cut_out[ic,ib,ia]]
-
-    return labels_cut_out
+    return cc_labels
 
 # compute extended boxes
 @njit
@@ -346,15 +357,12 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
         n_comp_total = 0
         label_start = -1
 
-        max_labels_block = int(bs_z*bs_y*bs_x)
+        max_labels_block = bs_z*bs_y*bs_x
         max_labels_total = max_labels_block*n_blocks_z*n_blocks_y*n_blocks_x
         print("Max labels per block: " + str(max_labels_block))
 
         border_comp = Dict.empty(key_type=types.int64,value_type=types.int64)
         neighbor_label_set = {(1,1)}
-
-        if n_blocks_z > 1:
-            labels_out = np.zeros((labels.shape[0],labels.shape[1],labels.shape[2]),dtype=np.int64)
 
         # process blocks by iterating over all bloks
         for bz in range(n_blocks_z):
@@ -362,24 +370,21 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
             for by in range(n_blocks_y):
                 for bx in range(n_blocks_x):
 
+                    print(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_blocks_x)
                     box_dyn = getBoxDyn(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_blocks_x)
+                    print(box_dyn)
 
                     labels_cut = labels[box_dyn[0]:box_dyn[1],box_dyn[2]:box_dyn[3],box_dyn[4]:box_dyn[5]]
 
-                    labels_cut_out, n_comp = computeConnectedComp6(labels_cut,label_start,max_labels_block)
+                    cc_labels, n_comp = computeConnectedComp6(labels_cut,label_start,max_labels_block)
 
                     label_start = label_start-max_labels_block
 
-                    if n_blocks_z > 1:
-                        labels_out[box_dyn[0]:box_dyn[1],box_dyn[2]:box_dyn[3],box_dyn[4]:box_dyn[5]] = labels_cut_out
-                        output_name = "labels_out_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
-                        writeData(output_path+output_name, labels_out)
-                    else:
-                        labels_out = labels_cut_out
+                    output_name = "cc_labels_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+                    writeData(output_path+output_name, cc_labels)
 
                     neighbor_label_set, border_comp = findAdjLabelSet(box_dyn, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x,
-                                                                            labels_cut_out, n_comp_total, neighbor_label_set, border_comp, yres, xres)
-
+                                                                            cc_labels, n_comp_total, neighbor_label_set, border_comp, yres, xres)
                     n_comp_total += n_comp
                     cell_counter += 1
 
@@ -389,16 +394,26 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
         associated_label = findAssociatedLabels(neighbor_label_set)
 
         print("Fill wholes...")
-        labels = fillWholes(box, labels_out, associated_label)
+        # process blocks by iterating over all bloks
+        for bz in range(n_blocks_z):
+            print("processing z block " + str(bz))
+            for by in range(n_blocks_y):
+                for bx in range(n_blocks_x):
+
+                    labels_filled  = fillWholes(output_path,bz,by,bx,associated_label,ID)
 
         # print out total of found wholes
 
         print("Cells processed: " + str(cell_counter))
         print("CC3D components total: " + str(n_comp_total))
 
-        del labels_cut, labels_cut_out, associated_label, neighbor_label_set
+        del labels_cut, cc_labels, associated_label, neighbor_label_set
 
-        return labels
+        blocks_concat = concatBlocks(n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID)
+
+        print(np.count_nonzero(np.subtract(blocks_concat,labels_filled)))
+
+        return labels_filled
 
 def processFile(box, data_path, sample_name, ID, vizWholes, rel_block_size, yres, xres):
 
@@ -455,6 +470,30 @@ def concatFiles(box, slices_s, slices_e, output_path, data_path):
 
     del labels_concat
 
+def concatBlocks(n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID):
+
+    for bz in range(n_blocks_z):
+        print("processing z block " + str(bz))
+        for by in range(n_blocks_y):
+            for bx in range(n_blocks_x):
+
+                input_name = "seg_filled_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+
+                if bz==by==bx==0:
+                    box = getBoxAll(filename=output_path+input_name+".h5")
+                    bs_z = box[1]
+                    bs_y = box[3]
+                    bs_x = box[5]
+                    labels_concat =  np.zeros((bs_z*n_blocks_z,bs_y*n_blocks_y,bs_x*n_blocks_x),dtype=np.uint16)
+
+                labels_concat[bz*bs_z:(bz+1)*bs_z,by*bs_y:(by+1)*bs_y,bx*bs_x:(bx+1)*bs_x] = readData(box=[1], filename=output_path+input_name+".h5")
+
+    print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape))
+    output_name = "blocks_concat_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+    writeData(output_path+output_name, labels_concat)
+
+    return labels_concat
+
 def evaluateWholes(folder_path,ID,sample_name):
     print("Evaluating wholes...")
     # load gt wholes
@@ -467,9 +506,11 @@ def evaluateWholes(folder_path,ID,sample_name):
     box = getBoxAll(inBlocks_wholes_filepath)
     wholes_inBlocks = readData(box, inBlocks_wholes_filepath)
 
-# check that both can be converted to int16
-    if np.max(wholes_gt)>32767 or np.max(wholes_inBlocks)>32767:
-        raise ValueError("Cannot convert wholes to int16 (max is >32767)")
+    try:# check that both can be converted to int16
+        if np.max(wholes_gt)>32767 or np.max(wholes_inBlocks)>32767:
+            raise ValueError("Cannot convert wholes to int16 (max is >32767)")
+    except:
+        print("Cannot convert wholes to int16 (max is >32767) -  ignored this Error")
 
     wholes_gt = wholes_gt.astype(np.int16)
     wholes_inBlocks = wholes_inBlocks.astype(np.int16)
@@ -531,35 +572,36 @@ def main():
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/"
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     vizWholes = True
-    box_concat = [0,128,0,512,0,512]
+    box_concat = [0,128,0,2048,0,2048]
     slices_start = 2
-    slices_end = 2
+    slices_end = 5
 
     xres = box_concat[5]
     yres = box_concat[3]
 
-    # sample_name = "ZF_concat_2to5_2048_2048"
-    # folder_path = output_path + sample_name + "/"
+    sample_name = "ZF_concat_2to5_2048_2048"
+    folder_path = output_path + sample_name + "/"
 
-    sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
-    folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
-    os.mkdir(folder_path)
+    # sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
+    # folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
+    # os.mkdir(folder_path)
 
     # timestr0 = time.strftime("%Y%m%d_%H_%M_%S")
     # f = open(folder_path + timestr0 + '.txt','w')
     # sys.stdout = f
 
     # # concat files
-    concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
+    # concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
 
-    # # compute groundtruth (in one block)
+    # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
+    print(box)
+    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gttim5", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
-    ID="test8kblocks"
-    # # # compute groundtruth (in one block)
-    box = getBoxAll(folder_path+sample_name+".h5")
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.3, yres=yres, xres=xres)
+    ID="gttim5"
+    # compute groundtruth (in one block)
+    # box = getBoxAll(folder_path+sample_name+".h5")
+    # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.5, yres=yres, xres=xres)
 
     # evaluate wholes
     evaluateWholes(folder_path=folder_path,ID=ID,sample_name=sample_name)

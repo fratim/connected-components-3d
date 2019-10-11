@@ -34,7 +34,10 @@ def ReadH5File(filename,box):
         d = hf[keys[0]]
         # print("Data shape: ", str(d.shape))
         # load selected part of data
-        data = np.array(d[box[0]:box[1],box[2]:box[3],box[4]:box[5]])
+        if box[0]==1:
+            data=np.array(d)
+        else:
+            data = np.array(d[box[0]:box[1],box[2]:box[3],box[4]:box[5]])
 # ,dtype=np.dtype(np.bool_)
     return data
 
