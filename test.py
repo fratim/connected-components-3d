@@ -459,14 +459,10 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
 
         undetermined = set(neighbor_label_dict.keys())
 
-        print(len(undetermined))
-
         associated_label = Dict.empty(key_type=types.int64,value_type=types.int64)
         associated_label, undetermined = findAssociatedLabels(neighbor_label_dict, undetermined, associated_label)
 
         associated_label = setUndeterminedtoNonHole(undetermined, associated_label)
-        print(len(associated_label.keys()))
-
         print("Fill wholes...")
         # process blocks by iterating over all bloks
         for bz in range(n_blocks_z):
@@ -650,25 +646,25 @@ def main():
     xres = box_concat[5]
     yres = box_concat[3]
 
-    # sample_name = "ZF_concat_2to4_512_512"
-    # folder_path = output_path + sample_name + "/"
+    sample_name = "ZF_concat_2to4_512_512"
+    folder_path = output_path + sample_name + "/"
 
-    sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
-    folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
-    os.mkdir(folder_path)
+    # sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
+    # folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
+    # os.mkdir(folder_path)
 
     # timestr0 = time.strftime("%Y%m%d_%H_%M_%S")
     # f = open(folder_path + timestr0 + '.txt','w')
     # sys.stdout = f
 
     # # concat files
-    concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
+    # concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
+    #
+    # # compute groundtruth (in one block)
+    # box = getBoxAll(folder_path+sample_name+".h5")
+    # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
-    # compute groundtruth (in one block)
-    box = getBoxAll(folder_path+sample_name+".h5")
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
-
-    ID="newNeighborLabels14"
+    ID="newNeighborLabels15"
     # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
     processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.25, yres=yres, xres=xres)
