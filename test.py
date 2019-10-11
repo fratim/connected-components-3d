@@ -303,8 +303,6 @@ def fillWholes(output_path,bz,by,bx,associated_label,ID):
     output_name = "seg_filled_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
     writeData(output_path+output_name, cc_labels)
 
-    return cc_labels
-
 @njit
 def fillwholesNoPython(box,cc_labels,associated_label):
     for iz in range(box[0], box[1]):
@@ -370,9 +368,7 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
             for by in range(n_blocks_y):
                 for bx in range(n_blocks_x):
 
-                    print(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_blocks_x)
                     box_dyn = getBoxDyn(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_blocks_x)
-                    print(box_dyn)
 
                     labels_cut = labels[box_dyn[0]:box_dyn[1],box_dyn[2]:box_dyn[3],box_dyn[4]:box_dyn[5]]
 
@@ -400,7 +396,7 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
             for by in range(n_blocks_y):
                 for bx in range(n_blocks_x):
 
-                    labels_filled  = fillWholes(output_path,bz,by,bx,associated_label,ID)
+                    fillWholes(output_path,bz,by,bx,associated_label,ID)
 
         # print out total of found wholes
 
@@ -411,9 +407,7 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
 
         blocks_concat = concatBlocks(n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID)
 
-        print(np.count_nonzero(np.subtract(blocks_concat,labels_filled)))
-
-        return labels_filled
+        return blocks_concat
 
 def processFile(box, data_path, sample_name, ID, vizWholes, rel_block_size, yres, xres):
 
@@ -486,7 +480,10 @@ def concatBlocks(n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID):
                     bs_x = box[5]
                     labels_concat =  np.zeros((bs_z*n_blocks_z,bs_y*n_blocks_y,bs_x*n_blocks_x),dtype=np.uint16)
 
-                labels_concat[bz*bs_z:(bz+1)*bs_z,by*bs_y:(by+1)*bs_y,bx*bs_x:(bx+1)*bs_x] = readData(box=[1], filename=output_path+input_name+".h5")
+                if box != getBoxAll(filename=output_path+input_name+".h5"):
+                    raise ValueError("Cannot Concat Blocks of different size!")
+                else:
+                    labels_concat[bz*bs_z:(bz+1)*bs_z,by*bs_y:(by+1)*bs_y,bx*bs_x:(bx+1)*bs_x] = readData(box=[1], filename=output_path+input_name+".h5")
 
     print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape))
     output_name = "blocks_concat_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
@@ -594,14 +591,13 @@ def main():
     # concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
 
     # compute groundtruth (in one block)
-    box = getBoxAll(folder_path+sample_name+".h5")
-    print(box)
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gttim5", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
-
-    ID="gttim5"
-    # compute groundtruth (in one block)
     # box = getBoxAll(folder_path+sample_name+".h5")
-    # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.5, yres=yres, xres=xres)
+    # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
+
+    ID="inBlock3"
+    # compute groundtruth (in one block)
+    box = getBoxAll(folder_path+sample_name+".h5")
+    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.5, yres=yres, xres=xres)
 
     # evaluate wholes
     evaluateWholes(folder_path=folder_path,ID=ID,sample_name=sample_name)
