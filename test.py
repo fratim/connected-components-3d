@@ -16,7 +16,6 @@ from numba.typed import Dict
 import os
 import psutil
 import sys
-import numba
 
 # set will be deprecated soon on numba, but until now an alternative has not been implemented
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
@@ -85,7 +84,41 @@ def computeConnectedComp6(labels, start_label, max_labels):
 
 # find sets of adjacent components
 @njit
-def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total, neighbor_label_set, border_comp, yres, xres):
+def findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total, neighbor_label_set_border, border_comp, yres, xres):
+
+    for iz in [0, box[1]-box[0]-1]:
+        for iy in range(0, box[3]-box[2]):
+            for ix in range(0, box[5]-box[4]):
+
+                # connect to adjacent blocks
+                if IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist:
+                    neighbor_label_set_border.add((cc_labels[iz,iy,ix], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)]))
+                else:
+                    neighbor_label_set_border.add((cc_labels[iz,iy,ix], 100000000))
+
+    for iz in range(0, box[1]-box[0]):
+        for iy in [0, box[3]-box[2]-1]:
+            for ix in range(0, box[5]-box[4]):
+
+                if IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres) in border_comp_exist:
+                    neighbor_label_set_border.add((cc_labels[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)]))
+                else:
+                    neighbor_label_set_border.add((cc_labels[iz,iy,ix], 100000000))
+
+    for iz in range(0, box[1]-box[0]):
+        for iy in range(0, box[3]-box[2]):
+            for ix in [0, box[5]-box[4]-1]:
+
+                if IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres) in border_comp_exist:
+                    neighbor_label_set_border.add((cc_labels[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)]))
+                else:
+                    neighbor_label_set_border.add((cc_labels[iz,iy,ix], 100000000))
+
+    return neighbor_label_set_border
+
+# find sets of adjacent components
+@njit
+def findAdjLabelSetLocal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total, neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres):
 
     for iz in range(0, box[1]-box[0]-1):
         for iy in range(0, box[3]-box[2]-1):
@@ -94,16 +127,16 @@ def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labe
                 curr_comp = cc_labels[iz,iy,ix]
 
                 if curr_comp != cc_labels[iz+1,iy,ix]:
-                    neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz+1,iy,ix]))
-                    neighbor_label_set.add((cc_labels[iz+1,iy,ix],cc_labels[iz,iy,ix]))
+                    neighbor_label_set_inside.add((cc_labels[iz,iy,ix],cc_labels[iz+1,iy,ix]))
+                    neighbor_label_set_inside.add((cc_labels[iz+1,iy,ix],cc_labels[iz,iy,ix]))
 
                 if curr_comp != cc_labels[iz,iy+1,ix]:
-                    neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz,iy+1,ix]))
-                    neighbor_label_set.add((cc_labels[iz,iy+1,ix],cc_labels[iz,iy,ix]))
+                    neighbor_label_set_inside.add((cc_labels[iz,iy,ix],cc_labels[iz,iy+1,ix]))
+                    neighbor_label_set_inside.add((cc_labels[iz,iy+1,ix],cc_labels[iz,iy,ix]))
 
                 if curr_comp != cc_labels[iz,iy,ix+1]:
-                    neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz,iy,ix+1]))
-                    neighbor_label_set.add((cc_labels[iz,iy,ix+1],cc_labels[iz,iy,ix]))
+                    neighbor_label_set_inside.add((cc_labels[iz,iy,ix],cc_labels[iz,iy,ix+1]))
+                    neighbor_label_set_inside.add((cc_labels[iz,iy,ix+1],cc_labels[iz,iy,ix]))
 
     for iz in [0, box[1]-box[0]-1]:
         for iy in range(0, box[3]-box[2]):
@@ -114,27 +147,19 @@ def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labe
 
                 if (iy+1) < box[3]-box[2]:
                     if curr_comp != cc_labels[iz,iy+1,ix]:
-                        neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz,iy+1,ix]))
-                        neighbor_label_set.add((cc_labels[iz,iy+1,ix],cc_labels[iz,iy,ix]))
+                        neighbor_label_set_inside.add((cc_labels[iz,iy,ix],cc_labels[iz,iy+1,ix]))
+                        neighbor_label_set_inside.add((cc_labels[iz,iy+1,ix],cc_labels[iz,iy,ix]))
 
                 if (ix+1) < box[5]-box[4]:
                     if curr_comp != cc_labels[iz,iy,ix+1]:
-                        neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz,iy,ix+1]))
-                        neighbor_label_set.add((cc_labels[iz,iy,ix+1],cc_labels[iz,iy,ix]))
+                        neighbor_label_set_inside.add((cc_labels[iz,iy,ix],cc_labels[iz,iy,ix+1]))
+                        neighbor_label_set_inside.add((cc_labels[iz,iy,ix+1],cc_labels[iz,iy,ix]))
 
                 # write dict of border components
                 border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = cc_labels[iz,iy,ix]
+                border_comp_exist.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
-                # connect to adjacent blocks
-                if iz == 0 and bz > 0:
-                    neighbor_label_set.add((cc_labels[iz,iy,ix], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)]))
-                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)],cc_labels[iz,iy,ix]))
-
-                # connect to boundary
-                elif iz == 0 and bz == 0:
-                    neighbor_label_set.add((cc_labels[iz,iy,ix], 100000000))
-                elif iz==(box[1]-box[0]-1) and bz==(n_blocks_z-1):
-                    neighbor_label_set.add((cc_labels[iz,iy,ix], 100000000))
+                neighbor_label_set_border.add((cc_labels[iz,iy,ix], 100000000))
 
     for iz in range(0, box[1]-box[0]):
         for iy in [0, box[3]-box[2]-1]:
@@ -145,22 +170,18 @@ def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labe
 
                 if (iz+1) < box[1]-box[0]:
                     if curr_comp != cc_labels[iz+1,iy,ix]:
-                        neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz+1,iy,ix]))
-                        neighbor_label_set.add((cc_labels[iz+1,iy,ix],cc_labels[iz,iy,ix]))
+                        neighbor_label_set_inside.add((cc_labels[iz,iy,ix],cc_labels[iz+1,iy,ix]))
+                        neighbor_label_set_inside.add((cc_labels[iz+1,iy,ix],cc_labels[iz,iy,ix]))
 
                 if (ix+1) < box[5]-box[4]:
                     if curr_comp != cc_labels[iz,iy,ix+1]:
-                        neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz,iy,ix+1]))
-                        neighbor_label_set.add((cc_labels[iz,iy,ix+1],cc_labels[iz,iy,ix]))
+                        neighbor_label_set_inside.add((cc_labels[iz,iy,ix],cc_labels[iz,iy,ix+1]))
+                        neighbor_label_set_inside.add((cc_labels[iz,iy,ix+1],cc_labels[iz,iy,ix]))
 
                 border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = cc_labels[iz,iy,ix]
-                if iy == 0 and by > 0:
-                    neighbor_label_set.add((cc_labels[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)]))
-                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)],cc_labels[iz,iy,ix]))
-                elif iy == 0 and by == 0:
-                    neighbor_label_set.add((cc_labels[iz,iy,ix], 100000000))
-                elif iy==(box[3]-box[2]-1) and by==(n_blocks_y-1):
-                    neighbor_label_set.add((cc_labels[iz,iy,ix], 100000000))
+                border_comp_exist.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
+
+                neighbor_label_set_border.add((cc_labels[iz,iy,ix], 100000000))
 
     for iz in range(0, box[1]-box[0]):
         for iy in range(0, box[3]-box[2]):
@@ -171,24 +192,20 @@ def findAdjLabelSet(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labe
 
                 if (iz+1) < box[1]-box[0]:
                     if curr_comp != cc_labels[iz+1,iy,ix]:
-                        neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz+1,iy,ix]))
-                        neighbor_label_set.add((cc_labels[iz+1,iy,ix],cc_labels[iz,iy,ix]))
+                        neighbor_label_set_inside.add((cc_labels[iz,iy,ix],cc_labels[iz+1,iy,ix]))
+                        neighbor_label_set_inside.add((cc_labels[iz+1,iy,ix],cc_labels[iz,iy,ix]))
 
                 if (iy+1) < box[3]-box[2]:
                     if curr_comp != cc_labels[iz,iy+1,ix]:
-                        neighbor_label_set.add((cc_labels[iz,iy,ix],cc_labels[iz,iy+1,ix]))
-                        neighbor_label_set.add((cc_labels[iz,iy+1,ix],cc_labels[iz,iy,ix]))
+                        neighbor_label_set_inside.add((cc_labels[iz,iy,ix],cc_labels[iz,iy+1,ix]))
+                        neighbor_label_set_inside.add((cc_labels[iz,iy+1,ix],cc_labels[iz,iy,ix]))
 
                 border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = cc_labels[iz,iy,ix]
-                if ix == 0 and bx > 0:
-                    neighbor_label_set.add((cc_labels[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)]))
-                    neighbor_label_set.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)],cc_labels[iz,iy,ix]))
-                elif ix == 0 and bx == 0:
-                    neighbor_label_set.add((cc_labels[iz,iy,ix], 100000000))
-                elif ix==(box[5]-box[4]-1) and bx==(n_blocks_x-1):
-                    neighbor_label_set.add((cc_labels[iz,iy,ix], 100000000))
+                border_comp_exist.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
-    return neighbor_label_set, border_comp
+                neighbor_label_set_border.add((cc_labels[iz,iy,ix], 100000000))
+
+    return neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist
 
 # create string of connected components that are a whole
 def findAssociatedLabels(neighbor_label_set):
@@ -360,7 +377,8 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
         print("Max labels per block: " + str(max_labels_block))
 
         border_comp = Dict.empty(key_type=types.int64,value_type=types.int64)
-        neighbor_label_set = {(1,1)}
+        neighbor_label_set_inside = {(1,1)}
+        neighbor_label_set_border = {(1,1)}
 
         # process blocks by iterating over all bloks
         for bz in range(n_blocks_z):
@@ -379,12 +397,30 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
                     output_name = "cc_labels_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
                     writeData(output_path+output_name, cc_labels)
 
-                    neighbor_label_set, border_comp = findAdjLabelSet(box_dyn, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x,
-                                                                            cc_labels, n_comp_total, neighbor_label_set, border_comp, yres, xres)
+                    neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist = findAdjLabelSetLocal(box, bz, by, bx,
+                                    n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total,
+                                    neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres)
+
+                    # TODO: findAdjLabelSet in block
+                    # TODO: findAssociatedLabel in blocks and return components that could not be identified
+
                     n_comp_total += n_comp
                     cell_counter += 1
 
-        neighbor_label_set.remove((1,1))
+        neighbor_label_set_inside.remove((1,1))
+        neighbor_label_set_border.remove((1,1))
+
+        del neighbor_label_set_border
+
+        for bz in range(n_blocks_z):
+            print("processing z block " + str(bz))
+            for by in range(n_blocks_y):
+                for bx in range(n_blocks_x):
+
+                    neighbor_label_set_border = findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total,
+                            neighbor_label_set_border, border_comp, yres, xres)
+
+        neighbot_label_set = neighbor_label_set_inside.union(neighbor_label_set_border)
 
         print("Find associated labels...")
         associated_label = findAssociatedLabels(neighbor_label_set)

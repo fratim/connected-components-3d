@@ -1,11 +1,19 @@
 import numpy as np
+from numba import njit
 
+@njit
+def test():
+    a = set([1,2,3])
+    if 10 in a:
+        print("HOSSA")
+test()
 
-neighbot_labels = dict()
-neighbot_labels[-10] = [4,5,6]
-print(neighbot_labels[-10])
-neighbot_labels[-10].append(100)
-print(neighbot_labels[-10])
+#
+# neighbot_labels = dict()
+# neighbot_labels[-10] = [4,5,6]
+# print(neighbot_labels[-10])
+# neighbot_labels[-10].append(100)
+# print(neighbot_labels[-10])
 # neighbor = [[]]
 #
 # print(is neighbor[0])
