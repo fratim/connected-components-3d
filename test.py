@@ -84,7 +84,7 @@ def computeConnectedComp6(labels, start_label, max_labels):
 
 # find sets of adjacent components
 @njit
-def findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total, neighbor_label_set_border, border_comp, yres, xres):
+def findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres):
 
     for iz in [0, box[1]-box[0]-1]:
         for iy in range(0, box[3]-box[2]):
@@ -92,27 +92,27 @@ def findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, c
 
                 # connect to adjacent blocks
                 if IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist:
-                    neighbor_label_set_border.add((cc_labels[iz,iy,ix], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)]))
+                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)]))
                 else:
-                    neighbor_label_set_border.add((cc_labels[iz,iy,ix], 100000000))
+                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
 
     for iz in range(0, box[1]-box[0]):
         for iy in [0, box[3]-box[2]-1]:
             for ix in range(0, box[5]-box[4]):
 
                 if IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres) in border_comp_exist:
-                    neighbor_label_set_border.add((cc_labels[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)]))
+                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)]))
                 else:
-                    neighbor_label_set_border.add((cc_labels[iz,iy,ix], 100000000))
+                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
 
     for iz in range(0, box[1]-box[0]):
         for iy in range(0, box[3]-box[2]):
             for ix in [0, box[5]-box[4]-1]:
 
                 if IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres) in border_comp_exist:
-                    neighbor_label_set_border.add((cc_labels[iz,iy,ix], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)]))
+                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)]))
                 else:
-                    neighbor_label_set_border.add((cc_labels[iz,iy,ix], 100000000))
+                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
 
     return neighbor_label_set_border
 
@@ -379,6 +379,7 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
         border_comp = Dict.empty(key_type=types.int64,value_type=types.int64)
         neighbor_label_set_inside = {(1,1)}
         neighbor_label_set_border = {(1,1)}
+        border_comp_exist = {(2**30)}
 
         # process blocks by iterating over all bloks
         for bz in range(n_blocks_z):
@@ -397,10 +398,9 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
                     output_name = "cc_labels_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
                     writeData(output_path+output_name, cc_labels)
 
-                    neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist = findAdjLabelSetLocal(box, bz, by, bx,
+                    neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist = findAdjLabelSetLocal(box_dyn, bz, by, bx,
                                     n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total,
                                     neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres)
-
                     # TODO: findAdjLabelSet in block
                     # TODO: findAssociatedLabel in blocks and return components that could not be identified
 
@@ -409,18 +409,22 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
 
         neighbor_label_set_inside.remove((1,1))
         neighbor_label_set_border.remove((1,1))
+        border_comp_exist.remove((2**30))
 
         del neighbor_label_set_border
+        neighbor_label_set_border = {(1,1)}
 
         for bz in range(n_blocks_z):
             print("processing z block " + str(bz))
             for by in range(n_blocks_y):
                 for bx in range(n_blocks_x):
 
-                    neighbor_label_set_border = findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total,
-                            neighbor_label_set_border, border_comp, yres, xres)
+                    box_dyn = getBoxDyn(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_blocks_x)
 
-        neighbot_label_set = neighbor_label_set_inside.union(neighbor_label_set_border)
+                    neighbor_label_set_border = findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total,
+                        neighbor_label_set_border, border_comp, border_comp_exist, yres, xres)
+
+        neighbor_label_set = neighbor_label_set_inside.union(neighbor_label_set_border)
 
         print("Find associated labels...")
         associated_label = findAssociatedLabels(neighbor_label_set)
@@ -608,25 +612,25 @@ def main():
     xres = box_concat[5]
     yres = box_concat[3]
 
-    # sample_name = "ZF_concat_2to5_2048_2048"
-    # folder_path = output_path + sample_name + "/"
+    sample_name = "ZF_concat_2to4_512_512"
+    folder_path = output_path + sample_name + "/"
 
-    sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
-    folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
-    os.mkdir(folder_path)
+    # sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
+    # folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
+    # os.mkdir(folder_path)
 
     # timestr0 = time.strftime("%Y%m%d_%H_%M_%S")
     # f = open(folder_path + timestr0 + '.txt','w')
     # sys.stdout = f
 
-    # # concat files
-    concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
+    # # # concat files
+    # concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
+    #
+    # # compute groundtruth (in one block)
+    # box = getBoxAll(folder_path+sample_name+".h5")
+    # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
-    # compute groundtruth (in one block)
-    box = getBoxAll(folder_path+sample_name+".h5")
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
-
-    ID="inBlock3"
+    ID="newNeighborLabels16"
     # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
     processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.5, yres=yres, xres=xres)
