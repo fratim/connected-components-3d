@@ -125,7 +125,10 @@ def findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, n
 
 # find sets of adjacent components
 @njit
-def findAdjLabelSetLocal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total, neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres):
+def findAdjLabelSetLocal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total, border_comp, border_comp_exist, yres, xres):
+
+    neighbor_label_set_inside = set()
+    neighbor_label_set_border = set()
 
     for iz in range(0, box[1]-box[0]-1):
         for iy in range(0, box[3]-box[2]-1):
@@ -228,34 +231,32 @@ def setUndeterminedtoNonHole(undetermined, associated_label):
     return associated_label
 
 # get neighbor label dict from neighbor label set
-def getNeighborLabelDict(neighbor_label_set):
+def writeNeighborLabelDict(neighbor_label_set):
 
-    # process
-    neighbor_labels = dict()
-
-    time_start = time.time()
+    neighbor_label_dict = dict()
+    # time_start = time.time()
 
     for s in range(len(neighbor_label_set)):
         pair = neighbor_label_set.pop()
         if pair[0]<0:
-            if pair[0] in neighbor_labels.keys():
-                if pair[1] not in neighbor_labels[pair[0]]:
-                    neighbor_labels[pair[0]].append(pair[1])
+            if pair[0] in neighbor_label_dict.keys():
+                if pair[1] not in neighbor_label_dict[pair[0]]:
+                    neighbor_label_dict[pair[0]].append(pair[1])
                 else:
                     continue
             else:
-                neighbor_labels[pair[0]] = [pair[1]]
+                neighbor_label_dict[pair[0]] = [pair[1]]
         else:
             continue
 
-    print("time to get neighbor_labels dict: " + str(time.time()-time_start))
+    # print("time to get neighbor_label_dict dict: " + str(time.time()-time_start))
 
-    return neighbor_labels
+    return neighbor_label_dict
 
 # create string of connected components that are a whole
-def findAssociatedLabels(neighbor_labels, undetermined, associated_label):
+def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
 
-    time_start = time.time()
+    # time_start = time.time()
     border_contact = set()
 
     while len(undetermined)>0:
@@ -263,41 +264,41 @@ def findAssociatedLabels(neighbor_labels, undetermined, associated_label):
         query_comp = undetermined.pop()
 
         #check if it has only one neighbor and this neighbor is a neuron
-        if len(neighbor_labels[query_comp])==1 and neighbor_labels[query_comp][0]!=100000000 and neighbor_labels[query_comp][0]>0:
-            associated_label[query_comp] = neighbor_labels[query_comp][0]
+        if len(neighbor_label_dict[query_comp])==1 and neighbor_label_dict[query_comp][0]!=100000000 and neighbor_label_dict[query_comp][0]>0:
+            associated_label[query_comp] = neighbor_label_dict[query_comp][0]
 
         # otherwise unroll neighbors to identify
         else:
 
             # list of nodes to expand
             open = []
-            # iterate over all neighbots and add them to the open set, if they are a background componente (i.e. are negative)
-            for elem in neighbor_labels[query_comp]:
+            # iterate over all neighbors and add them to the open set, if they are a background componente (i.e. are negative)
+            for elem in neighbor_label_dict[query_comp]:
                 if elem == 100000000:
                     continue
                 elif elem < 0:
-                    for son in neighbor_labels[elem]:
-                        if son not in neighbor_labels[query_comp]:
-                            neighbor_labels[query_comp].append(son)
+                    for son in neighbor_label_dict[elem]:
+                        if son not in neighbor_label_dict[query_comp]:
+                            neighbor_label_dict[query_comp].append(son)
                             if son<0:
                                 open.insert(0,son)
             # appen all negative background components that are neighbors or ancestors
             while len(open)>0:
                 elem = open.pop()
                 if elem == 100000000:
-                    if 100000000 not in neighbor_labels[query_comp]:
-                        neighbor_labels[query_comp].append(100000000)
+                    if 100000000 not in neighbor_label_dict[query_comp]:
+                        neighbor_label_dict[query_comp].append(100000000)
                 else:
-                    for son in neighbor_labels[elem]:
-                        if son not in neighbor_labels[query_comp]:
-                            neighbor_labels[query_comp].append(son)
+                    for son in neighbor_label_dict[elem]:
+                        if son not in neighbor_label_dict[query_comp]:
+                            neighbor_label_dict[query_comp].append(son)
                             if son<0:
                                 open.insert(0,son)
 
             # check if there is a bordercontact, then add to bordercontact but remove all elemnts from undetermined (will be added again later)
-            if 100000000 in neighbor_labels[query_comp]:
+            if 100000000 in neighbor_label_dict[query_comp]:
                 border_contact.add(query_comp)
-                for elem in neighbor_labels[query_comp]:
+                for elem in neighbor_label_dict[query_comp]:
                     if elem < 0:
                         border_contact.add(elem)
                         undetermined.discard(elem)
@@ -305,22 +306,22 @@ def findAssociatedLabels(neighbor_labels, undetermined, associated_label):
             # if component does not have border contact, it can now be definitley determined if it is a hole or not
             else:
             # check again if there is only one positive neighbor and that it is not boundary and it is a neuron, if so, it is a hole #TODO: second check could be removed
-                if len(list(filter(lambda a: a>0, neighbor_labels[query_comp])))==1 and np.max(neighbor_labels[query_comp])>0:
-                    associated_label[query_comp] = np.max(neighbor_labels[query_comp])
-                    for elem in neighbor_labels[query_comp]:
+                if len(list(filter(lambda a: a>0, neighbor_label_dict[query_comp])))==1 and np.max(neighbor_label_dict[query_comp])>0:
+                    associated_label[query_comp] = np.max(neighbor_label_dict[query_comp])
+                    for elem in neighbor_label_dict[query_comp]:
                         if elem < 0:
-                            associated_label[elem]=np.max(neighbor_labels[query_comp])
+                            associated_label[elem]=np.max(neighbor_label_dict[query_comp])
                             undetermined.discard(elem)
                 else:
                     associated_label[query_comp] = 0
-                    for elem in neighbor_labels[query_comp]:
+                    for elem in neighbor_label_dict[query_comp]:
                         if elem < 0:
                             associated_label[elem]=0
                             undetermined.discard(elem)
             # delte open set
             del open
 
-    print("time to get associated label dict: " + str(time.time()-time_start))
+    # print("time to get associated label dict: " + str(time.time()-time_start))
 
     if len(undetermined)>0:
         raise ValueError("Unknown Error")
@@ -402,9 +403,12 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
         print("Max labels per block: " + str(max_labels_block))
 
         border_comp = Dict.empty(key_type=types.int64,value_type=types.int64)
-        neighbor_label_set_inside = {(1,1)}
-        neighbor_label_set_border = {(1,1)}
+        associated_label = Dict.empty(key_type=types.int64,value_type=types.int64)
+
         border_comp_exist = {(2**30)}
+
+        undetermined_global = set()
+        neighbor_label_set_inside_added = set()
 
         # process blocks by iterating over all bloks
         for bz in range(n_blocks_z):
@@ -423,22 +427,28 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
                     output_name = "cc_labels_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
                     writeData(output_path+output_name, cc_labels)
 
-                    neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist = findAdjLabelSetLocal(box_dyn, bz, by, bx,
-                                    n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total,
-                                    neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres)
+                    neighbor_label_set_inside, neighbor_label_set_border_local, border_comp, border_comp_exist = findAdjLabelSetLocal(box_dyn, bz, by, bx,
+                                    n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total, border_comp, border_comp_exist, yres, xres)
 
-                    # TODO: findAdjLabelSet in block
-                    # TODO: findAssociatedLabel in blocks and return components that could not be identified
+                    neighbor_label_set_inside_added = neighbor_label_set_inside_added.union(neighbor_label_set_inside)
+
+                    neighbor_label_set = neighbor_label_set_inside.union(neighbor_label_set_border_local)
+
+                    #TODO split this dict up into local and global to be able to pass it on
+                    neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
+                    undetermined_local = set(neighbor_label_dict.keys())
+                    associated_label, undetermined_local = findAssociatedLabels(neighbor_label_dict, undetermined_local, associated_label)
+
+                    undetermined_global = undetermined_global.union(undetermined_local)
 
                     n_comp_total += n_comp
                     cell_counter += 1
 
-        neighbor_label_set_inside.remove((1,1))
-        neighbor_label_set_border.remove((1,1))
+                    del neighbor_label_set, neighbor_label_set_inside, neighbor_label_set_border_local, neighbor_label_dict, undetermined_local
+
         border_comp_exist.remove((2**30))
 
-        del neighbor_label_set_border
-        neighbor_label_set_border = {(1,1)}
+        neighbor_label_set_border_global = {(1,1)}
 
         for bz in range(n_blocks_z):
             print("processing z block " + str(bz))
@@ -447,22 +457,18 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
 
                     box_dyn = getBoxDyn(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_blocks_x)
 
-                    neighbor_label_set_border = findAdjLabelSetGlobal(box_dyn, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, n_comp_total,
-                        neighbor_label_set_border, border_comp, border_comp_exist, yres, xres)
+                    neighbor_label_set_border_global = findAdjLabelSetGlobal(box_dyn, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, n_comp_total,
+                        neighbor_label_set_border_global, border_comp, border_comp_exist, yres, xres)
 
 
-        neighbor_label_set_border.remove((1,1))
-        neighbor_label_set = neighbor_label_set_inside.union(neighbor_label_set_border)
+        neighbor_label_set_border_global.remove((1,1))
+        neighbor_label_set = neighbor_label_set_inside_added.union(neighbor_label_set_border_global)
 
         print("Find associated labels...")
-        neighbor_label_dict = getNeighborLabelDict(neighbor_label_set)
+        neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
+        associated_label, undetermined_global = findAssociatedLabels(neighbor_label_dict, undetermined_global, associated_label)
+        associated_label = setUndeterminedtoNonHole(undetermined_global, associated_label)
 
-        undetermined = set(neighbor_label_dict.keys())
-
-        associated_label = Dict.empty(key_type=types.int64,value_type=types.int64)
-        associated_label, undetermined = findAssociatedLabels(neighbor_label_dict, undetermined, associated_label)
-
-        associated_label = setUndeterminedtoNonHole(undetermined, associated_label)
         print("Fill wholes...")
         # process blocks by iterating over all bloks
         for bz in range(n_blocks_z):
@@ -664,7 +670,7 @@ def main():
     # box = getBoxAll(folder_path+sample_name+".h5")
     # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
-    ID="newNeighborLabels15"
+    ID="newNeighborLabels23"
     # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
     processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.25, yres=yres, xres=xres)
