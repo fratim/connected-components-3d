@@ -300,7 +300,7 @@ def fillWholes(output_path,bz,by,bx,associated_label,ID):
     # use nopython to do actual computation
     cc_labels = fillwholesNoPython(box,cc_labels,associated_label)
 
-    output_name = "seg_filled_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+    output_name = "block_filled_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
     writeData(output_path+output_name, cc_labels)
 
 @njit
@@ -432,10 +432,6 @@ def processFile(box, data_path, sample_name, ID, vizWholes, rel_block_size, yres
     print("-----------------------------------------------------------------")
     print("Time elapsed: " + str(time.time() - start_time))
 
-    # write filled data to H5
-    output_name = "filled_" + ID
-    writeData(output_path+output_name, labels)
-
     # compute negative to visualize filled wholes
     if vizWholes:
         labels_inp = readData(box, data_path+sample_name+".h5")
@@ -471,7 +467,7 @@ def concatBlocks(n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID):
         for by in range(n_blocks_y):
             for bx in range(n_blocks_x):
 
-                input_name = "seg_filled_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+                input_name = "block_filled_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
                 if bz==by==bx==0:
                     box = getBoxAll(filename=output_path+input_name+".h5")
@@ -486,7 +482,7 @@ def concatBlocks(n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID):
                     labels_concat[bz*bs_z:(bz+1)*bs_z,by*bs_y:(by+1)*bs_y,bx*bs_x:(bx+1)*bs_x] = readData(box=[1], filename=output_path+input_name+".h5")
 
     print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape))
-    output_name = "blocks_concat_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+    output_name = "filled_" + ID
     writeData(output_path+output_name, labels_concat)
 
     return labels_concat
@@ -570,29 +566,29 @@ def main():
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     vizWholes = True
     box_concat = [0,128,0,2048,0,2048]
-    slices_start = 2
-    slices_end = 5
+    slices_start = 13
+    slices_end = 16
 
     xres = box_concat[5]
     yres = box_concat[3]
 
-    sample_name = "ZF_concat_2to5_2048_2048"
-    folder_path = output_path + sample_name + "/"
+    # sample_name = "ZF_concat_2to5_2048_2048"
+    # folder_path = output_path + sample_name + "/"
 
-    # sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
-    # folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
-    # os.mkdir(folder_path)
+    sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
+    folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
+    os.mkdir(folder_path)
 
     # timestr0 = time.strftime("%Y%m%d_%H_%M_%S")
     # f = open(folder_path + timestr0 + '.txt','w')
     # sys.stdout = f
 
     # # concat files
-    # concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
+    concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
 
     # compute groundtruth (in one block)
-    # box = getBoxAll(folder_path+sample_name+".h5")
-    # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
+    box = getBoxAll(folder_path+sample_name+".h5")
+    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
     ID="inBlock3"
     # compute groundtruth (in one block)

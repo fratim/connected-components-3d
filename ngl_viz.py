@@ -69,8 +69,8 @@ def loadViz(box, path, caption, res, printIDs, idRes, printCoods):
 idRes = 1 #which resolution to use to search for IDs
 res=[20,18,18]; # resolution of the data
 data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-sample_name= "ZF_concat_2to11_1280_1280"
-compare= "64blocks"
+sample_name= "ZF_concat_13to16_2048_2048"
+compare= "inBlock3"
 
 # box = [0,1152,0,1000,0,1000]
 box = [1]
@@ -89,7 +89,7 @@ print(viewer)
 loadViz(box=box, path=fn_org,                   caption="original",             res=res, printIDs = True, idRes=4*idRes,    printCoods=False)
 # loadViz(box=box, path=fn_filled_gt,           caption="filled_gt",            res=res, printIDs = True, idRes=4*idRes,    printCoods=False)
 loadViz(box=box, path=fn_wholes_gt,             caption="wholes_gt",            res=res, printIDs = True, idRes=idRes,      printCoods=False)
-# loadViz(box=box, path=fn_filled_compare,        caption="filled_comp",          res=res, printIDs = True, idRes=idRes,      printCoods=False)
+loadViz(box=box, path=fn_filled_compare,        caption="filled_comp",          res=res, printIDs = True, idRes=idRes,      printCoods=False)
 loadViz(box=box, path=fn_wholes_compare,        caption="wholes_comp",          res=res, printIDs = True, idRes=idRes,      printCoods=False)
 # loadViz(box=box, path=fn_diff_wholes_compare,   caption="diff_wholes_comp",     res=res, printIDs = True, idRes=idRes,      printCoods=False)
 
