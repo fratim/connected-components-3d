@@ -84,35 +84,47 @@ def computeConnectedComp6(labels, start_label, max_labels):
 
 # find sets of adjacent components
 @njit
-def findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres):
+def findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, n_comp_total, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres):
+
+    trigger = 0
 
     for iz in [0, box[1]-box[0]-1]:
         for iy in range(0, box[3]-box[2]):
             for ix in range(0, box[5]-box[4]):
 
                 # connect to adjacent blocks
-                if IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist:
+                if iz == 0 and IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)]))
+                elif iz == box[1]-box[0]-1 and IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist:
+                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres)]))
                 else:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
+                    trigger = 1
 
     for iz in range(0, box[1]-box[0]):
         for iy in [0, box[3]-box[2]-1]:
             for ix in range(0, box[5]-box[4]):
 
-                if IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres) in border_comp_exist:
+                if iy == 0 and IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres) in border_comp_exist:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)]))
+                elif iy == box[3]-box[2]-1 and IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres) in border_comp_exist:
+                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres)]))
                 else:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
+                    trigger = 1
 
     for iz in range(0, box[1]-box[0]):
         for iy in range(0, box[3]-box[2]):
             for ix in [0, box[5]-box[4]-1]:
 
-                if IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres) in border_comp_exist:
+                if ix == 0 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres) in border_comp_exist:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)]))
+                elif ix == box[5]-box[4]-1 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres) in border_comp_exist:
+                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres)]))
                 else:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
+                    trigger = 1
+    print(bz,by,bx,trigger)
 
     return neighbor_label_set_border
 
@@ -401,6 +413,8 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
                     neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist = findAdjLabelSetLocal(box_dyn, bz, by, bx,
                                     n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total,
                                     neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres)
+
+                    print(len(border_comp_exist))
                     # TODO: findAdjLabelSet in block
                     # TODO: findAssociatedLabel in blocks and return components that could not be identified
 
@@ -421,10 +435,14 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
 
                     box_dyn = getBoxDyn(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_blocks_x)
 
-                    neighbor_label_set_border = findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total,
+                    neighbor_label_set_border = findAdjLabelSetGlobal(box_dyn, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, n_comp_total,
                         neighbor_label_set_border, border_comp, border_comp_exist, yres, xres)
 
+
+        neighbor_label_set_border.remove((1,1))
         neighbor_label_set = neighbor_label_set_inside.union(neighbor_label_set_border)
+
+        print(len(neighbor_label_set))
 
         print("Find associated labels...")
         associated_label = findAssociatedLabels(neighbor_label_set)
@@ -630,10 +648,10 @@ def main():
     # box = getBoxAll(folder_path+sample_name+".h5")
     # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
-    ID="newNeighborLabels16"
+    ID="newNeighborLabels9"
     # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.5, yres=yres, xres=xres)
+    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.25, yres=yres, xres=xres)
 
     # evaluate wholes
     evaluateWholes(folder_path=folder_path,ID=ID,sample_name=sample_name)
