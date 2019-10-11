@@ -99,7 +99,6 @@ def findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, n
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres)]))
                 else:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
-                    trigger = 1
 
     for iz in range(0, box[1]-box[0]):
         for iy in [0, box[3]-box[2]-1]:
@@ -111,8 +110,6 @@ def findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, n
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres)]))
                 else:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
-                    trigger = 1
-
     for iz in range(0, box[1]-box[0]):
         for iy in range(0, box[3]-box[2]):
             for ix in [0, box[5]-box[4]-1]:
@@ -123,8 +120,6 @@ def findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, n
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres)]))
                 else:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
-                    trigger = 1
-    print(bz,by,bx,trigger)
 
     return neighbor_label_set_border
 
@@ -219,8 +214,9 @@ def findAdjLabelSetLocal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc
 
     return neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist
 
-# create string of connected components that are a whole
-def findAssociatedLabels(neighbor_label_set):
+# get neighbor label dict from neighbor label set
+def getNeighborLabelDict(neighbor_label_set):
+
     # process
     neighbor_labels = dict()
 
@@ -240,6 +236,11 @@ def findAssociatedLabels(neighbor_label_set):
             continue
 
     print("time to get neighbor_labels dict: " + str(time.time()-time_start))
+
+    return neighbor_labels
+
+# create string of connected components that are a whole
+def findAssociatedLabels(neighbor_labels):
 
     #find connected components that are a whole
     associated_label = Dict.empty(key_type=types.int64,value_type=types.int64)
@@ -414,7 +415,6 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
                                     n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, n_comp_total,
                                     neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres)
 
-                    print(len(border_comp_exist))
                     # TODO: findAdjLabelSet in block
                     # TODO: findAssociatedLabel in blocks and return components that could not be identified
 
@@ -445,7 +445,8 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
         print(len(neighbor_label_set))
 
         print("Find associated labels...")
-        associated_label = findAssociatedLabels(neighbor_label_set)
+        neighbor_label_dict = getNeighborLabelDict(neighbor_label_set)
+        associated_label = findAssociatedLabels(neighbor_label_dict)
 
         print("Fill wholes...")
         # process blocks by iterating over all bloks
@@ -648,7 +649,7 @@ def main():
     # box = getBoxAll(folder_path+sample_name+".h5")
     # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
-    ID="newNeighborLabels9"
+    ID="newNeighborLabels12"
     # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
     processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.25, yres=yres, xres=xres)
