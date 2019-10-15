@@ -1,11 +1,25 @@
 import numpy as np
-from numba import njit
+from numba import njit, types
+from numba.typed import Dict
 
 
-a = {}
 
-print(len(a))
+@njit
+def test(dict_a):
+    print(dict_a[10])
+    print(dict_a[11])
 
+
+a = Dict.empty(key_type=types.int64,value_type=types.int64)
+b = Dict.empty(key_type=types.int64,value_type=types.int64)
+
+a[10]=10
+b[11]=12
+
+a.update(b)
+# a = {**a, **b}
+
+test(a)
 # a = dict()
 # a[1]=2
 # a[5]=3

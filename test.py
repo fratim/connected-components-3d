@@ -83,7 +83,7 @@ def computeConnectedComp6(labels, start_label, max_labels):
     return cc_labels, n_comp
 
 # find sets of adjacent components
-# @njit
+@njit
 def findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres):
 
     for iz in [0, box[1]-box[0]-1]:
@@ -122,7 +122,7 @@ def findAdjLabelSetGlobal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, n
     return neighbor_label_set_border
 
 # find sets of adjacent components
-# @njit
+@njit
 def findAdjLabelSetLocal(box, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, border_comp, border_comp_exist, yres, xres):
 
     neighbor_label_set_inside = set()
@@ -344,7 +344,7 @@ def fillWholes(output_path,bz,by,bx,associated_label,ID):
     output_name = "block_filled_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
     writeData(output_path+output_name, cc_labels)
 
-# @njit
+@njit
 def fillwholesNoPython(box,cc_labels,associated_label):
     for iz in range(box[0], box[1]):
         for iy in range(box[2], box[3]):
@@ -402,17 +402,19 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
 
         border_comp_global = Dict.empty(key_type=types.int64,value_type=types.int64)
         associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
-
         border_comp_exist_global = {(2**30)}
-
         undetermined_global = set()
-        neighbor_label_set_inside_added = set()
+        neighbor_label_set_inside_global = set()
 
         # process blocks by iterating over all bloks
         for bz in range(n_blocks_z):
             print("processing z block " + str(bz))
             for by in range(n_blocks_y):
                 for bx in range(n_blocks_x):
+
+                    border_comp_local = Dict.empty(key_type=types.int64,value_type=types.int64)
+                    border_comp_exist_local = {(2**30)}
+                    associated_label_local = Dict.empty(key_type=types.int64,value_type=types.int64)
 
                     box_dyn = getBoxDyn(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_blocks_x)
 
@@ -425,31 +427,26 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
                     output_name = "cc_labels_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
                     writeData(output_path+output_name, cc_labels)
 
-                    border_comp_local = Dict.empty(key_type=types.int64,value_type=types.int64)
-                    border_comp_exist_local = {(2**30)}
-
-                    neighbor_label_set_inside, neighbor_label_set_border_local, border_comp_local, border_comp_exist_local = findAdjLabelSetLocal(box_dyn, bz, by, bx,
+                    neighbor_label_set_inside_local, neighbor_label_set_border_local, border_comp_local, border_comp_exist_local = findAdjLabelSetLocal(box_dyn, bz, by, bx,
                                     n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, border_comp_local, border_comp_exist_local, yres, xres)
 
-                    border_comp_global = {**border_comp_global, **border_comp_local}
+                    border_comp_global.update(border_comp_local)
                     border_comp_exist_global = border_comp_exist_global.union(border_comp_exist_local)
-                    neighbor_label_set_inside_added = neighbor_label_set_inside_added.union(neighbor_label_set_inside)
+                    neighbor_label_set_inside_global = neighbor_label_set_inside_global.union(neighbor_label_set_inside_local)
 
-                    neighbor_label_set = neighbor_label_set_inside.union(neighbor_label_set_border_local)
-
-                    #TODO split this dict up into local and global to be able to pass it on
+                    neighbor_label_set = neighbor_label_set_inside_local.union(neighbor_label_set_border_local)
                     neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
+
                     undetermined_local = set(neighbor_label_dict.keys())
-                    associated_label_local = Dict.empty(key_type=types.int64,value_type=types.int64)
                     associated_label_local, undetermined_local = findAssociatedLabels(neighbor_label_dict=neighbor_label_dict, undetermined=undetermined_local, associated_label=associated_label_local)
-                    associated_label_global = {**associated_label_global, **associated_label_local}
+                    associated_label_global.update(associated_label_local)
 
                     undetermined_global = undetermined_global.union(undetermined_local)
 
                     n_comp_total += n_comp
                     cell_counter += 1
 
-                    del neighbor_label_set, neighbor_label_set_inside, neighbor_label_set_border_local, neighbor_label_dict, undetermined_local, associated_label_local, border_comp_exist_local
+                    del neighbor_label_set, neighbor_label_set_inside_local, neighbor_label_set_border_local, neighbor_label_dict, undetermined_local, associated_label_local, border_comp_exist_local
 
         border_comp_exist_global.remove((2**30))
 
@@ -467,7 +464,7 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
 
 
         neighbor_label_set_border_global.remove((1,1))
-        neighbor_label_set = neighbor_label_set_inside_added.union(neighbor_label_set_border_global)
+        neighbor_label_set = neighbor_label_set_inside_global.union(neighbor_label_set_border_global)
 
         print("Find associated labels...")
         neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
