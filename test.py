@@ -570,15 +570,15 @@ def concatBlocks(n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID):
 
     return labels_concat
 
-def evaluateWholes(folder_path,ID,sample_name):
+def evaluateWholes(folder_path, ID_A, ID_B, sample_name):
     print("Evaluating wholes...")
     # load gt wholes
-    gt_wholes_filepath = folder_path+"/gt/wholes_gt"+".h5"
+    gt_wholes_filepath = folder_path+"/"+ID_A+"/"+"wholes_"+ID+".h5"
     box = getBoxAll(gt_wholes_filepath)
     wholes_gt = readData(box, gt_wholes_filepath)
 
     # load block wholes
-    inBlocks_wholes_filepath = folder_path+"/"+ID+"/"+"wholes_"+ID+".h5"
+    inBlocks_wholes_filepath = folder_path+"/"+ID_B+"/"+"wholes_"+ID+".h5"
     box = getBoxAll(inBlocks_wholes_filepath)
     wholes_inBlocks = readData(box, inBlocks_wholes_filepath)
 
@@ -643,44 +643,176 @@ def IdxToIdi(iv, yres, xres):
 def IdiToIdx(ix, iy, iz, yres, xres):
     return iz * yres * xres + iy * xres + ix
 
+class dataBlock:
+
+    def __init__(self,viz_wholes):
+        self.vizWholes = viz_wholes
+
+    def setDataPath(self, data_path):
+        self.data_path = data_path
+
+    def setOutputPath(self, output_path):
+        self.output_path = output_path
+
+    def createOutputFolder(self):
+        self.folder_path = self.output_path + self.sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
+        os.mkdir(self.folder_path)
+
+    def createNewBlock(self, data_path, output_path, slices_start, slices_end, box_concat):
+        self.slices_start = slices_start
+        self.slices_end = slices_end
+        self.sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(self.box_concat[3]).zfill(4)+"_"+str(self.box_concat[5].zfill(4))
+        self.xres = box_concat[5]
+        self.yres = box_concat[3]
+        self.box_concat = box_concat
+        self.setDataPath(data_path)
+        self.setOutputPath(output_path)
+        self.createOutputFolder()
+
+    def useExistingFolder(self, output_path, sample_name):
+        self.folder_path = output_path + sample_name + "/"
+        self.sample_name = sample_name
+        self.yres = int(sample_name[-9:-5])
+        self.xres = int(sample_name[-4:])
+
+    def concatFiles(self):
+
+        for i in range(self.slices_start,self.slices_end+1):
+            sample_name = str(i*128).zfill(4)
+            print(str("Processing file " + sample_name).format(sample_name), end='\r')
+            if i is self.slices_start:
+                labels_concat = readData(self.box_concat, self.data_path+sample_name+".h5")
+            else:
+                labels_temp = readData(self.box_concat, self.data_path+sample_name+".h5")
+                labels_old = labels_concat.copy()
+                del labels_concat
+                labels_concat = np.concatenate((labels_old,labels_temp),axis=0)
+                del labels_temp
+
+        print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape))
+        writeData(self.folder_path+self.sample_name, labels_concat)
+
+        del labels_concat
+
+    def processFile(self, ID, rel_block_size):
+
+        box = getBoxAll(self.folder_path+self.sample_name+".h5")
+
+        output_path = self.folder_path + ID + "/"
+        if os.path.exists(output_path):
+            raise ValueError("Folderpath " + self.folder_path + " already exists!")
+        else:
+            os.mkdir(output_path)
+
+        print("-----------------------------------------------------------------")
+
+        # read in data
+        labels = readData(box, self.folder_path+self.sample_name+".h5")
+
+        start_time = time.time()
+
+        print("-----------------------------------------------------------------")
+
+        labels = processData(output_path=output_path, sample_name=ID,
+                    labels=labels, rel_block_size=rel_block_size, yres=self.yres, xres=self.xres, ID=ID)
+
+        print("-----------------------------------------------------------------")
+        print("Time elapsed: " + str(time.time() - start_time))
+
+        # compute negative to visualize filled wholes
+        if self.vizWholes:
+            labels_inp = readData(box, self.folder_path+self.sample_name+".h5")
+            neg = np.subtract(labels, labels_inp)
+            output_name = "wholes_" + ID
+            writeData(output_path+output_name, neg)
+
+        del labels_inp, neg, labels
+
+    def evaluateWholes(self, ID_A, ID_B):
+        print("Evaluating wholes...")
+        # load gt wholes
+        gt_wholes_filepath = self.folder_path+"/"+ID_A+"/"+"wholes_"+ID_A+".h5"
+        box = getBoxAll(gt_wholes_filepath)
+        wholes_gt = readData(box, gt_wholes_filepath)
+
+        # load block wholes
+        inBlocks_wholes_filepath = self.folder_path+"/"+ID_B+"/"+"wholes_"+ID_B+".h5"
+        box = getBoxAll(inBlocks_wholes_filepath)
+        wholes_inBlocks = readData(box, inBlocks_wholes_filepath)
+
+        try:# check that both can be converted to int16
+            if np.max(wholes_gt)>32767 or np.max(wholes_inBlocks)>32767:
+                raise ValueError("Cannot convert wholes to int16 (max is >32767)")
+        except:
+            print("Cannot convert wholes to int16 (max is >32767) -  ignored this Error")
+
+        wholes_gt = wholes_gt.astype(np.int16)
+        wholes_inBlocks = wholes_inBlocks.astype(np.int16)
+        wholes_gt = np.subtract(wholes_gt, wholes_inBlocks)
+        diff = wholes_gt
+        # free some RAM
+        del wholes_gt, wholes_inBlocks
+
+        print("Freed memory")
+
+        if np.min(diff)<0:
+            FP = diff.copy()
+            FP[FP>0]=0
+            n_points_FP = np.count_nonzero(FP)
+            n_comp_FP = computeConnectedComp26(FP)-1
+            print("FP classifications (points/components): " + str(n_points_FP) + "/ " +str(n_comp_FP))
+
+            # unique_values = np.unique(FP)
+            # for u in unique_values:
+            #     if u!=0:
+            #         print("Coordinates of component " + str(u))
+            #         coods = np.argwhere(FP==u)
+            #         for i in range(coods.shape[0]):
+            #             print(str(coods[i,0]) + ", " + str(coods[i,1]) + ", " + str(coods[i,2]))
+
+            del FP
+        else:
+            print("No FP classification")
+
+        if np.max(diff)>0:
+            FN = diff.copy()
+            FN[FN<0]=0
+            n_points_FN = np.count_nonzero(FN)
+            n_comp_FN = computeConnectedComp26(FN)-1
+            print("FN classifications (points/components): " + str(n_points_FN) + "/ " +str(n_comp_FN))
+            del FN
+
+        else:
+            print("No FN classification")
+
+        output_name = 'diff_wholes_'+ID_A+ID_B
+        writeData(self.folder_path+"/"+ID_B+"/"+output_name, diff)
+
+        del diff
+
+
 def main():
 
-    data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/"
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     vizWholes = True
-    box_concat = [0,128,0,2048,0,2048]
-    slices_start = 2
-    slices_end = 5
 
-    xres = box_concat[5]
-    yres = box_concat[3]
+    blockA = dataBlock(viz_wholes=vizWholes)
 
-    sample_name = "ZF_concat_2to5_2048_2048"
-    folder_path = output_path + sample_name + "/"
+    # blockA.createNewBlock(  data_path="/home/frtim/wiring/raw_data/segmentations/Zebrafinch/",
+    #                         output_path=output_path,
+    #                         slices_start=2,
+    #                         slices_end=3,
+    #                         box_concat=[0,128,0,512,0,512])
 
-    # sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
-    # folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
-    # os.mkdir(folder_path)
-    #
-    # # timestr0 = time.strftime("%Y%m%d_%H_%M_%S")
-    # # f = open(folder_path + timestr0 + '.txt','w')
-    # # sys.stdout = f
-    #
-    # # concat files
-    # concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
-    #
-    # # compute groundtruth (in one block)
-    # box = getBoxAll(folder_path+sample_name+".h5")
-    # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
+    blockA.useExistingFolder(output_path=output_path, sample_name="ZF_concat_2to5_2048_2048")
 
-    ID="localglobal"
-    # compute groundtruth (in one block)
-    box = getBoxAll(folder_path+sample_name+".h5")
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.25, yres=yres, xres=xres)
+    # blockA.concatFiles()
 
-    # evaluate wholes
-    evaluateWholes(folder_path=folder_path,ID=ID,sample_name=sample_name)
+    # blockA.processFile(ID="gt",rel_block_size=1)
 
+    blockA.processFile(ID="testnew8",rel_block_size=0.25)
+
+    blockA.evaluateWholes(ID_A="gt", ID_B="testnew8")
 
 
 if __name__== "__main__":

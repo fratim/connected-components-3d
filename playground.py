@@ -4,22 +4,27 @@ from numba.typed import Dict
 
 
 
-@njit
-def test(dict_a):
-    print(dict_a[10])
-    print(dict_a[11])
+sample_name = "ZF_concat_2to4_512_512"
 
+print(sample_name[-3:])
+print(sample_name[-7:-4])
 
-a = Dict.empty(key_type=types.int64,value_type=types.int64)
-b = Dict.empty(key_type=types.int64,value_type=types.int64)
-
-a[10]=10
-b[11]=12
-
-a.update(b)
-# a = {**a, **b}
-
-test(a)
+# @njit
+# def test(dict_a):
+#     print(dict_a[10])
+#     print(dict_a[11])
+#
+#
+# a = Dict.empty(key_type=types.int64,value_type=types.int64)
+# b = Dict.empty(key_type=types.int64,value_type=types.int64)
+#
+# a[10]=10
+# b[11]=12
+#
+# a.update(b)
+# # a = {**a, **b}
+#
+# test(a)
 # a = dict()
 # a[1]=2
 # a[5]=3
