@@ -69,8 +69,8 @@ def loadViz(box, path, caption, res, printIDs, idRes, printCoods):
 idRes = 1 #which resolution to use to search for IDs
 res=[20,18,18]; # resolution of the data
 data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-sample_name= "ZF_concat_13to16_2048_2048"
-compare= "inBlock3"
+sample_name= "ZF_concat_2to3_0256_0256"
+compare= "test_newx"
 
 # box = [0,1152,0,1000,0,1000]
 box = [1]

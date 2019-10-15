@@ -420,6 +420,9 @@ def processData(output_path, sample_name, labels, rel_block_size, yres, xres, ID
 
                     labels_cut = labels[box_dyn[0]:box_dyn[1],box_dyn[2]:box_dyn[3],box_dyn[4]:box_dyn[5]]
 
+                    output_name = "labels_cut"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+                    writeData(output_path+output_name, labels_cut)
+
                     cc_labels, n_comp = computeConnectedComp6(labels_cut,label_start,max_labels_block)
 
                     label_start = label_start-max_labels_block
@@ -798,19 +801,19 @@ def main():
 
     blockA = dataBlock(viz_wholes=vizWholes)
 
-    # blockA.createNewBlock(  data_path="/home/frtim/wiring/raw_data/segmentations/Zebrafinch/",
-    #                         output_path=output_path,
-    #                         slices_start=2,
-    #                         slices_end=3,
-    #                         box_concat=[0,128,0,256,0,256])
-    #
-    # blockA.concatFiles()
-    #
-    # blockA.processFile(ID="gt",rel_block_size=1)
+    blockA.createNewBlock(  data_path="/home/frtim/wiring/raw_data/segmentations/Zebrafinch/",
+                            output_path=output_path,
+                            slices_start=2,
+                            slices_end=3,
+                            box_concat=[0,128,0,256,0,256])
 
-    blockA.useExistingFolder(output_path=output_path, sample_name="ZF_concat_2to3_0256_0256")
+    blockA.concatFiles()
 
-    ID_B="test_newx2"
+    blockA.processFile(ID="gt",rel_block_size=1)
+
+    # blockA.useExistingFolder(output_path=output_path, sample_name="ZF_concat_2to3_0256_0256")
+
+    ID_B="64blocks"
 
     blockA.processFile(ID=ID_B,rel_block_size=0.25)
 
