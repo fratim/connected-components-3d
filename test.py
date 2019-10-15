@@ -648,32 +648,32 @@ def main():
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/"
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     vizWholes = True
-    box_concat = [0,128,0,256,0,256]
-    slices_start = 10
-    slices_end = 11
+    box_concat = [0,128,0,2048,0,2048]
+    slices_start = 2
+    slices_end = 5
 
     xres = box_concat[5]
     yres = box_concat[3]
 
-    # sample_name = "ZF_concat_2to4_512_512"
-    # folder_path = output_path + sample_name + "/"
+    sample_name = "ZF_concat_2to5_2048_2048"
+    folder_path = output_path + sample_name + "/"
 
-    sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
-    folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
-    os.mkdir(folder_path)
+    # sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3])+"_"+str(box_concat[5])
+    # folder_path = output_path + sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
+    # os.mkdir(folder_path)
+    #
+    # # timestr0 = time.strftime("%Y%m%d_%H_%M_%S")
+    # # f = open(folder_path + timestr0 + '.txt','w')
+    # # sys.stdout = f
+    #
+    # # concat files
+    # concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
+    #
+    # # compute groundtruth (in one block)
+    # box = getBoxAll(folder_path+sample_name+".h5")
+    # processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
 
-    # timestr0 = time.strftime("%Y%m%d_%H_%M_%S")
-    # f = open(folder_path + timestr0 + '.txt','w')
-    # sys.stdout = f
-
-    # concat files
-    concatFiles(box=box_concat, slices_s=slices_start, slices_e=slices_end, output_path=folder_path+sample_name, data_path=data_path)
-
-    # compute groundtruth (in one block)
-    box = getBoxAll(folder_path+sample_name+".h5")
-    processFile(box=box, data_path=folder_path, sample_name=sample_name, ID="gt", vizWholes=vizWholes, rel_block_size=1, yres=yres, xres=xres)
-
-    ID="newNeighborLabels23"
+    ID="localglobal"
     # compute groundtruth (in one block)
     box = getBoxAll(folder_path+sample_name+".h5")
     processFile(box=box, data_path=folder_path, sample_name=sample_name, ID=ID, vizWholes=vizWholes, rel_block_size=0.25, yres=yres, xres=xres)
