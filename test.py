@@ -661,7 +661,7 @@ class dataBlock:
     def createNewBlock(self, data_path, output_path, slices_start, slices_end, box_concat):
         self.slices_start = slices_start
         self.slices_end = slices_end
-        self.sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(self.box_concat[3]).zfill(4)+"_"+str(self.box_concat[5].zfill(4))
+        self.sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3]).zfill(4)+"_"+str(box_concat[5]).zfill(4)
         self.xres = box_concat[5]
         self.yres = box_concat[3]
         self.box_concat = box_concat
@@ -802,17 +802,19 @@ def main():
     #                         output_path=output_path,
     #                         slices_start=2,
     #                         slices_end=3,
-    #                         box_concat=[0,128,0,512,0,512])
-
-    blockA.useExistingFolder(output_path=output_path, sample_name="ZF_concat_2to5_2048_2048")
-
+    #                         box_concat=[0,128,0,256,0,256])
+    #
     # blockA.concatFiles()
-
+    #
     # blockA.processFile(ID="gt",rel_block_size=1)
 
-    blockA.processFile(ID="testnew8",rel_block_size=0.25)
+    blockA.useExistingFolder(output_path=output_path, sample_name="ZF_concat_2to3_0256_0256")
 
-    blockA.evaluateWholes(ID_A="gt", ID_B="testnew8")
+    ID_B="test_newx2"
+
+    blockA.processFile(ID=ID_B,rel_block_size=0.25)
+
+    blockA.evaluateWholes(ID_A="gt", ID_B=ID_B)
 
 
 if __name__== "__main__":
