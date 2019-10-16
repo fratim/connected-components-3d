@@ -679,21 +679,21 @@ def main():
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     sample_name = "ZF_concat_6to7_0512_0512"
-    outp_ID = "new5"
+    outp_ID = "new8"
 
-    output_path = data_path + "/" + sample_name + "/" + outp_ID + "/"
+    output_path = data_path + sample_name + "/" + outp_ID + "/"
     if os.path.exists(output_path):
         raise ValueError("Folderpath " + data_path + " already exists!")
     else:
         os.mkdir(output_path)
 
     # compute number of blocks and block size
-    bs_z = 128
-    n_blocks_z = 2
-    bs_y = 512
-    n_blocks_y = 1
-    bs_x = 512
-    n_blocks_x = 1
+    bs_z = 64
+    n_blocks_z = 4
+    bs_y = 128
+    n_blocks_y = 4
+    bs_x = 128
+    n_blocks_x = 4
 
     # start slice of zebrafinch block
     z_start = 6
