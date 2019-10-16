@@ -360,176 +360,6 @@ def fillwholesNoPython(box,cc_labels,associated_label):
 
     return cc_labels
 
-# compute extended boxes
-@njit
-def getBoxDyn(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_blocks_x):
-
-        # down refers to downsampled scale, ext to extended boxes (extended by the overlap)
-        # compute the downsampled dynamic box
-        z_min_dyn = bz*bs_z
-        z_max_dyn = (bz+1)*bs_z if ((bz+1)*bs_z<= box[1] and bz != n_blocks_z-1) else box[1]
-        y_min_dyn = by*bs_y
-        y_max_dyn = (by+1)*bs_y if ((by+1)*bs_y<= box[3] and by != n_blocks_y-1) else box[3]
-        x_min_dyn = bx*bs_x
-        x_max_dyn = (bx+1)*bs_x if ((bx+1)*bs_x<= box[5] and bx != n_blocks_x-1) else box[5]
-
-        box_dyn = [bz*bs_z,(bz+1)*bs_z,by*bs_y,(by+1)*bs_y,bx*bs_x,(bx+1)*bs_x]
-
-        return box_dyn
-
-# process whole filling process for chung of data
-def processData(output_path, sample_name, labels, rel_block_size, bs_y, bs_x, ID):
-
-        # read in chunk size
-        box = [0,labels.shape[0],0,labels.shape[1],0,labels.shape[2]]
-
-        # compute number of blocks and block size
-        bs_z = int(rel_block_size*(box[1]-box[0]))
-        n_blocks_z = math.floor((box[1]-box[0])/bs_z)
-        bs_y = int(rel_block_size*(box[3]-box[2]))
-        n_blocks_y = math.floor((box[3]-box[2])/bs_y)
-        bs_x = int(rel_block_size*(box[5]-box[4]))
-        n_blocks_x = math.floor((box[5]-box[4])/bs_x)
-
-        print("nblocks: " + str(n_blocks_z) + ", " + str(n_blocks_y) + ", " + str(n_blocks_x))
-        print("block size: " + str(bs_z) + ", " + str(bs_y) + ", " + str(bs_x))
-
-        #counters
-        cell_counter = 0
-        n_comp_total = 0
-        label_start = -1
-
-        max_labels_block = bs_z*bs_y*bs_x
-        max_labels_total = max_labels_block*n_blocks_z*n_blocks_y*n_blocks_x
-        print("Max labels per block: " + str(max_labels_block))
-
-        border_comp_global = Dict.empty(key_type=types.int64,value_type=types.int64)
-        associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
-        border_comp_exist_global = {(2**30)}
-        undetermined_global = set()
-        neighbor_label_set_inside_global = set()
-
-        # process blocks by iterating over all bloks
-        for bz in range(n_blocks_z):
-            print("processing z block " + str(bz))
-            for by in range(n_blocks_y):
-                for bx in range(n_blocks_x):
-
-                    border_comp_local = Dict.empty(key_type=types.int64,value_type=types.int64)
-                    border_comp_exist_local = {(2**30)}
-                    associated_label_local = Dict.empty(key_type=types.int64,value_type=types.int64)
-
-                    box_dyn = getBoxDyn(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_blocks_x)
-
-                    labels_cut = labels[box_dyn[0]:box_dyn[1],box_dyn[2]:box_dyn[3],box_dyn[4]:box_dyn[5]]
-
-                    output_name = "labels_cut"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
-                    writeData(output_path+output_name, labels_cut)
-
-                    cc_labels, n_comp = computeConnectedComp6(labels_cut,label_start,max_labels_block)
-
-                    label_start = label_start-max_labels_block
-
-                    output_name = "cc_labels_"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
-                    writeData(output_path+output_name, cc_labels)
-
-                    neighbor_label_set_inside_local, neighbor_label_set_border_local, border_comp_local, border_comp_exist_local = findAdjLabelSetLocal(box_dyn, bz, by, bx,
-                                    n_blocks_z, n_blocks_y, n_blocks_x, cc_labels, border_comp_local, border_comp_exist_local, yres, xres)
-
-                    border_comp_global.update(border_comp_local)
-                    border_comp_exist_global = border_comp_exist_global.union(border_comp_exist_local)
-                    neighbor_label_set_inside_global = neighbor_label_set_inside_global.union(neighbor_label_set_inside_local)
-
-                    neighbor_label_set = neighbor_label_set_inside_local.union(neighbor_label_set_border_local)
-                    neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
-
-                    undetermined_local = set(neighbor_label_dict.keys())
-                    associated_label_local, undetermined_local = findAssociatedLabels(neighbor_label_dict=neighbor_label_dict, undetermined=undetermined_local, associated_label=associated_label_local)
-                    associated_label_global.update(associated_label_local)
-
-                    undetermined_global = undetermined_global.union(undetermined_local)
-
-                    n_comp_total += n_comp
-                    cell_counter += 1
-
-                    del neighbor_label_set, neighbor_label_set_inside_local, neighbor_label_set_border_local, neighbor_label_dict, undetermined_local, associated_label_local, border_comp_exist_local
-
-        border_comp_exist_global.remove((2**30))
-
-        neighbor_label_set_border_global = {(1,1)}
-
-        for bz in range(n_blocks_z):
-            print("processing z block " + str(bz))
-            for by in range(n_blocks_y):
-                for bx in range(n_blocks_x):
-
-                    box_dyn = getBoxDyn(box, bz, bs_z, n_blocks_z, by, bs_y, n_blocks_y, bx, bs_x, n_blocks_x)
-
-                    neighbor_label_set_border_global = findAdjLabelSetGlobal(box_dyn, bz, by, bx, n_blocks_z, n_blocks_y, n_blocks_x,
-                        neighbor_label_set_border_global, border_comp_global, border_comp_exist_global, yres, xres)
-
-
-        neighbor_label_set_border_global.remove((1,1))
-        neighbor_label_set = neighbor_label_set_inside_global.union(neighbor_label_set_border_global)
-
-        print("Find associated labels...")
-        neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
-        associated_label_global, undetermined_global = findAssociatedLabels(neighbor_label_dict, undetermined_global, associated_label_global)
-        associated_label_global = setUndeterminedtoNonHole(undetermined_global, associated_label_global)
-
-        print("Fill wholes...")
-        del labels, cc_labels, labels_cut, neighbor_label_set
-        # process blocks by iterating over all bloks
-        for bz in range(n_blocks_z):
-            print("processing z block " + str(bz))
-            for by in range(n_blocks_y):
-                for bx in range(n_blocks_x):
-
-                    fillWholes(output_path,bz,by,bx,associated_label_global,ID)
-
-        # print out total of found wholes
-
-        print("Cells processed: " + str(cell_counter))
-        print("CC3D components total: " + str(n_comp_total))
-
-        del associated_label_global
-
-        blocks_concat = concatBlocks(n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID)
-
-        return blocks_concat
-
-def processFile(box, data_path, sample_name, ID, vizWholes, rel_block_size, yres, xres):
-
-    output_path = data_path + ID + "/"
-    if os.path.exists(output_path):
-        raise ValueError("Folderpath " + data_path + " already exists!")
-    else:
-        os.mkdir(output_path)
-
-    print("-----------------------------------------------------------------")
-
-    # read in data
-    labels = readData(box, data_path+sample_name+".h5")
-
-    start_time = time.time()
-
-    print("-----------------------------------------------------------------")
-
-    labels = processData(output_path=output_path, sample_name=ID,
-                labels=labels, rel_block_size=rel_block_size, yres=yres, xres=xres, ID=ID)
-
-    print("-----------------------------------------------------------------")
-    print("Time elapsed: " + str(time.time() - start_time))
-
-    # compute negative to visualize filled wholes
-    if vizWholes:
-        labels_inp = readData(box, data_path+sample_name+".h5")
-        neg = np.subtract(labels, labels_inp)
-        output_name = "wholes_" + ID
-        writeData(output_path+output_name, neg)
-
-    del labels_inp, neg, labels
-
 def concatFiles(box, slices_s, slices_e, output_path, data_path):
 
     for i in range(slices_s,slices_e+1):
@@ -678,27 +508,6 @@ class dataBlock:
     def __init__(self,viz_wholes):
         self.vizWholes = viz_wholes
 
-    def setDataPath(self, data_path):
-        self.data_path = data_path
-
-    def setOutputPath(self, output_path):
-        self.output_path = output_path
-
-    def createOutputFolder(self):
-        self.folder_path = self.output_path + self.sample_name + "_outp_" + time.strftime("%Y%m%d_%H_%M_%S") + "/"
-        os.mkdir(self.folder_path)
-
-    def createNewBlock(self, data_path, output_path, slices_start, slices_end, box_concat):
-        self.slices_start = slices_start
-        self.slices_end = slices_end
-        self.sample_name = "ZF_concat_"+str(slices_start)+"to"+str(slices_end)+"_"+str(box_concat[3]).zfill(4)+"_"+str(box_concat[5]).zfill(4)
-        self.bs_x = box_concat[5]
-        self.bs_y = box_concat[3]
-        self.box_concat = box_concat
-        self.setDataPath(data_path)
-        self.setOutputPath(output_path)
-        self.createOutputFolder()
-
     def useExistingFolder(self, output_path, sample_name):
         self.folder_path = output_path + sample_name + "/"
         self.sample_name = sample_name
@@ -723,40 +532,6 @@ class dataBlock:
         writeData(self.folder_path+self.sample_name, labels_concat)
 
         del labels_concat
-
-    def processFile(self, ID, rel_block_size):
-
-        box = getBoxAll(self.folder_path+self.sample_name+".h5")
-
-        output_path = self.folder_path + ID + "/"
-        if os.path.exists(output_path):
-            raise ValueError("Folderpath " + self.folder_path + " already exists!")
-        else:
-            os.mkdir(output_path)
-
-        print("-----------------------------------------------------------------")
-
-        # read in data
-        labels = readData(box, self.folder_path+self.sample_name+".h5")
-
-        start_time = time.time()
-
-        print("-----------------------------------------------------------------")
-
-        labels = processData(output_path=output_path, sample_name=ID,
-                    labels=labels, rel_block_size=rel_block_size, yres=self.yres, xres=self.xres, ID=ID)
-
-        print("-----------------------------------------------------------------")
-        print("Time elapsed: " + str(time.time() - start_time))
-
-        # compute negative to visualize filled wholes
-        if self.vizWholes:
-            labels_inp = readData(box, self.folder_path+self.sample_name+".h5")
-            neg = np.subtract(labels, labels_inp)
-            output_name = "wholes_" + ID
-            writeData(output_path+output_name, neg)
-
-        del labels_inp, neg, labels
 
     def evaluateWholes(self, ID_A, ID_B):
         print("Evaluating wholes...")
@@ -820,18 +595,6 @@ class dataBlock:
 
         del diff
 
-    def readLabels(self, data_path, sample_name, ID, bz, by, bx):
-        filename = data_path+"/"+sample_name+"/"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
-        box = getBoxAll(filename+".h5")
-        #TODO: change this to always read entire chunk and then check size, also change the damn ".h5" supplement studpid
-        self.labels_in = readData(box, filename+".h5")
-        self.bs_z = self.labels_in.shape[0]
-        self.bs_y = self.labels_in.shape[1]
-        self.bs_x = self.labels_in.shape[2]
-        self.bz=bz
-        self.by=by
-        self.bx=bx
-
     def readLabelsZebrafinch(self, data_path, sample_name, slice, bz, by, bx, bs_z, bs_y, bs_x):
         filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
         box = [0, bs_z, 0, bs_y, 0, bs_x]
@@ -843,9 +606,6 @@ class dataBlock:
         self.bz=bz
         self.by=by
         self.bx=bx
-
-    def clearLabelsIn(self):
-        del self.labels_in
 
     def computeStepOne(self, label_start, max_labels_block, output_path):
 
@@ -917,8 +677,8 @@ def main():
 
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-    sample_name = "ZF_concat_2to5_2048_2048"
-    outp_ID = "newgt2"
+    sample_name = "ZF_concat_2to4_0512_0512"
+    outp_ID = "update2"
 
     output_path = data_path + "/" + sample_name + "/" + outp_ID + "/"
     if os.path.exists(output_path):
@@ -926,16 +686,15 @@ def main():
     else:
         os.mkdir(output_path)
 
-
     # start slice of zebrafinch block
     slice_start = 2
 
     # compute number of blocks and block size
     bs_z = 128
-    n_blocks_z = 4
-    bs_y = 2048
+    n_blocks_z = 3
+    bs_y = 512
     n_blocks_y = 1
-    bs_x = 2048
+    bs_x = 512
     n_blocks_x = 1
 
     zres=bs_z*n_blocks_z
@@ -1052,7 +811,7 @@ def main():
     output_name = "wholes"
     writeData(output_path+output_name, neg)
 
-    compareOutp(output_path=output_path,sample_name=sample_name,ID_B=outp_ID )
+    compareOutp(output_path=data_path,sample_name=sample_name,ID_B=outp_ID )
 
 if __name__== "__main__":
   main()
