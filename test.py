@@ -679,7 +679,7 @@ def main():
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     sample_name = "ZF_concat_6to7_0512_0512"
-    outp_ID = "new8"
+    outp_ID = "new24"
 
     output_path = data_path + sample_name + "/" + outp_ID + "/"
     if os.path.exists(output_path):
@@ -717,6 +717,9 @@ def main():
         for by in range(y_start, y_start+n_blocks_y):
             for bx in range(x_start, x_start+n_blocks_x):
 
+                block_number = (bz)*(y_start+n_blocks_y)*(x_start+n_blocks_x)+by*(x_start+n_blocks_x)+bx
+                label_start = block_number*max_labels_block -1
+
                 currBlock = dataBlock(viz_wholes=True)
                 currBlock.readLabels(data_path=data_path, sample_name=sample_name,
                                         bz=bz, by=by, bx=bx, bs_z=bs_z, bs_y=bs_y, bs_x=bs_x)
@@ -727,7 +730,6 @@ def main():
 
                 cell_counter += 1
                 n_comp_total += currBlock.n_comp
-                label_start = label_start-max_labels_block
 
                 del currBlock
 
