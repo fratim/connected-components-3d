@@ -3,11 +3,14 @@ from numba import njit, types
 from numba.typed import Dict
 
 
+temp = dict()
+temp[0]=1
+print(temp[-1])
 
-sample_name = "ZF_concat_2to4_512_512"
-
-print(sample_name[-3:])
-print(sample_name[-7:-4])
+# sample_name = "ZF_concat_2to4_512_512"
+#
+# print(sample_name[-3:])
+# print(sample_name[-7:-4])
 
 # @njit
 # def test(dict_a):
