@@ -1,11 +1,29 @@
 import numpy as np
 from numba import njit, types
 from numba.typed import Dict
+import pickle
 
 
-temp = dict()
-temp[0]=1
-print(temp[-1])
+a = Dict.empty(key_type=types.int64,value_type=types.int64)
+# a[10]=11
+
+b = dict()
+# b = {**b, **a}
+b[9]=10
+
+a.update(b)
+
+filename = "/home/frtim/Desktop/test.pickle"
+print(filename)
+f = open(filename, 'wb')
+pickle.dump(a, f)
+
+print(a[10])
+f.close()
+#
+# temp = dict()
+# temp[0]=1
+# print(temp[-1])
 
 # sample_name = "ZF_concat_2to4_512_512"
 #
