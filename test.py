@@ -332,10 +332,10 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
     return associated_label, undetermined
 
 # fill detedted wholes and give non_wholes their ID (for visualization)
-def fillWholes(output_path,bz,by,bx,associated_label,ID):
+def fillWholes(output_path,bz,by,bx,associated_label):
 
     # create filename
-    input_name = "cc_labels_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+    input_name = "cc_labels"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
     box = getBoxAll(output_path+input_name+".h5")
 
     # read in data
@@ -344,7 +344,7 @@ def fillWholes(output_path,bz,by,bx,associated_label,ID):
     # use nopython to do actual computation
     cc_labels = fillwholesNoPython(box,cc_labels,associated_label)
 
-    output_name = "block_filled_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+    output_name = "block_filled"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
     writeData(output_path+output_name, cc_labels)
 
 @njit
@@ -423,14 +423,14 @@ def processData(output_path, sample_name, labels, rel_block_size, bs_y, bs_x, ID
 
                     labels_cut = labels[box_dyn[0]:box_dyn[1],box_dyn[2]:box_dyn[3],box_dyn[4]:box_dyn[5]]
 
-                    output_name = "labels_cut"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+                    output_name = "labels_cut"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
                     writeData(output_path+output_name, labels_cut)
 
                     cc_labels, n_comp = computeConnectedComp6(labels_cut,label_start,max_labels_block)
 
                     label_start = label_start-max_labels_block
 
-                    output_name = "cc_labels_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+                    output_name = "cc_labels_"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
                     writeData(output_path+output_name, cc_labels)
 
                     neighbor_label_set_inside_local, neighbor_label_set_border_local, border_comp_local, border_comp_exist_local = findAdjLabelSetLocal(box_dyn, bz, by, bx,
@@ -549,14 +549,14 @@ def concatFiles(box, slices_s, slices_e, output_path, data_path):
 
     del labels_concat
 
-def concatBlocks(z_start, n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID):
+def concatBlocks(z_start, n_blocks_z, n_blocks_y, n_blocks_x, output_path):
 
     for bz in range(z_start, z_start+n_blocks_z):
         print("processing z block " + str(bz))
         for by in range(n_blocks_y):
             for bx in range(n_blocks_x):
 
-                input_name = "block_filled_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+                input_name = "block_filled"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
                 if bz==z_start and by==bx==0:
                     box = getBoxAll(filename=output_path+input_name+".h5")
@@ -572,7 +572,7 @@ def concatBlocks(z_start, n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID):
                     labels_concat[(bz-z_start)*bs_z:((bz-z_start)+1)*bs_z,by*bs_y:(by+1)*bs_y,bx*bs_x:(bx+1)*bs_x] = readData(box=[1], filename=output_path+input_name+".h5")
 
     print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape))
-    output_name = "filled_" + ID
+    output_name = "filled"
     writeData(output_path+output_name, labels_concat)
 
     return labels_concat
@@ -580,12 +580,12 @@ def concatBlocks(z_start, n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID):
 def evaluateWholes(folder_path, ID_A, ID_B, sample_name):
     print("Evaluating wholes...")
     # load gt wholes
-    gt_wholes_filepath = folder_path+"/"+ID_A+"/"+"wholes_"+ID+".h5"
+    gt_wholes_filepath = folder_path+"/"+ID_A+"/"+"wholes"+".h5"
     box = getBoxAll(gt_wholes_filepath)
     wholes_gt = readData(box, gt_wholes_filepath)
 
     # load block wholes
-    inBlocks_wholes_filepath = folder_path+"/"+ID_B+"/"+"wholes_"+ID+".h5"
+    inBlocks_wholes_filepath = folder_path+"/"+ID_B+"/"+"wholes"+".h5"
     box = getBoxAll(inBlocks_wholes_filepath)
     wholes_inBlocks = readData(box, inBlocks_wholes_filepath)
 
@@ -634,8 +634,8 @@ def evaluateWholes(folder_path, ID_A, ID_B, sample_name):
     else:
         print("No FN classification")
 
-    output_name = 'diff_wholes_'+ID
-    writeData(folder_path+"/"+ID+"/"+output_name, diff)
+    output_name = 'diff_wholes'
+    writeData(folder_path+"/"+output_name, diff)
 
     del diff
 
@@ -651,7 +651,7 @@ def IdiToIdx(ix, iy, iz, yres, xres):
     return iz * yres * xres + iy * xres + ix
 
 def dumpNumbaDictToFile(object, object_name, output_path, output_name):
-    filename = output_path+object_name+"_"+output_name+".pickle"
+    filename = output_path+object_name+output_name+".pickle"
     temp = dict()
     temp.update(object)
 
@@ -660,13 +660,13 @@ def dumpNumbaDictToFile(object, object_name, output_path, output_name):
     f.close()
 
 def dumpToFile(object, object_name, output_path, output_name):
-    filename = output_path+object_name+"_"+output_name+".pickle"
+    filename = output_path+object_name+output_name+".pickle"
     f = open(filename, 'wb')
     pickle.dump(object, f)
     f.close()
 
 def readFromFile(object_name, output_path, output_name):
-    filename = output_path+object_name+"_"+output_name+".pickle"
+    filename = output_path+object_name+output_name+".pickle"
     f = open(filename, 'rb')
     object = pickle.load(f)
     f.close()
@@ -761,12 +761,12 @@ class dataBlock:
     def evaluateWholes(self, ID_A, ID_B):
         print("Evaluating wholes...")
         # load gt wholes
-        gt_wholes_filepath = self.folder_path+"/"+ID_A+"/"+"wholes_"+ID_A+".h5"
+        gt_wholes_filepath = self.folder_path+"/"+ID_A+"/"+"wholes"+".h5"
         box = getBoxAll(gt_wholes_filepath)
         wholes_gt = readData(box, gt_wholes_filepath)
 
         # load block wholes
-        inBlocks_wholes_filepath = self.folder_path+"/"+ID_B+"/"+"wholes_"+ID_B+".h5"
+        inBlocks_wholes_filepath = self.folder_path+"/"+ID_B+"/"+"wholes"+".h5"
         box = getBoxAll(inBlocks_wholes_filepath)
         wholes_inBlocks = readData(box, inBlocks_wholes_filepath)
 
@@ -815,7 +815,7 @@ class dataBlock:
         else:
             print("No FN classification")
 
-        output_name = 'diff_wholes_'+ID_A+ID_B
+        output_name = 'diff_wholes_'+ID_A+"_"+ID_B
         writeData(self.folder_path+"/"+ID_B+"/"+output_name, diff)
 
         del diff
@@ -847,7 +847,7 @@ class dataBlock:
     def clearLabelsIn(self):
         del self.labels_in
 
-    def computeStepOne(self, label_start, max_labels_block, ID, output_path):
+    def computeStepOne(self, label_start, max_labels_block, output_path):
 
         # TODO get rid of this
         box = [self.bz*self.bs_z,(self.bz+1)*self.bs_z,self.by*self.bs_y,(self.by+1)*self.bs_y,self.bx*self.bs_x,(self.bx+1)*self.bs_x]
@@ -860,7 +860,7 @@ class dataBlock:
 
         del self.labels_in
 
-        output_name = "cc_labels_"+ID+"_z"+str(self.bz).zfill(4)+"y"+str(self.by).zfill(4)+"x"+str(self.bx).zfill(4)
+        output_name = "cc_labels"+"_z"+str(self.bz).zfill(4)+"y"+str(self.by).zfill(4)+"x"+str(self.bx).zfill(4)
         writeData(output_path+output_name, cc_labels)
 
         neighbor_label_set_inside_local, neighbor_label_set_border_local, border_comp_local, border_comp_exist_local = findAdjLabelSetLocal(
@@ -878,7 +878,7 @@ class dataBlock:
 
         self.n_comp=n_comp
 
-        output_name = ID+"_z"+str(self.bz).zfill(4)+"y"+str(self.by).zfill(4)+"x"+str(self.bx).zfill(4)
+        output_name = "_z"+str(self.bz).zfill(4)+"y"+str(self.by).zfill(4)+"x"+str(self.bx).zfill(4)
 
         dumpNumbaDictToFile(border_comp_local, "border_comp_local", output_path, output_name)
         dumpToFile(border_comp_exist_local, "border_comp_exist_local", output_path, output_name)
@@ -891,8 +891,7 @@ class dataBlock:
         self.yres = yres
         self.xres = xres
 
-def compareOutp():
-    output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
+def compareOutp(output_path, sample_name, ID_B):
     vizWholes = True
 
     blockA = dataBlock(viz_wholes=vizWholes)
@@ -907,9 +906,7 @@ def compareOutp():
     #
     # blockA.processFile(ID="gt",rel_block_size=1)
 
-    blockA.useExistingFolder(output_path=output_path, sample_name="ZF_concat_2to5_2048_2048")
-
-    ID_B="test55"
+    blockA.useExistingFolder(output_path=output_path, sample_name=sample_name)
 
     # blockA.processFile(ID=ID_B,rel_block_size=0.25)
 
@@ -921,8 +918,7 @@ def main():
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     sample_name = "ZF_concat_2to5_2048_2048"
-    outp_ID = "test22"
-    inp_ID = "labels_cut64blocks"
+    outp_ID = "newgt2"
 
     output_path = data_path + "/" + sample_name + "/" + outp_ID + "/"
     if os.path.exists(output_path):
@@ -964,7 +960,7 @@ def main():
                 currBlock.setRes(zres=zres,yres=yres,xres=xres)
 
                 #TODO get rid off max labels block, just compute it in the connectedcomp function as the size of passed block
-                currBlock.computeStepOne(label_start=label_start, max_labels_block=max_labels_block, ID=outp_ID, output_path=output_path)
+                currBlock.computeStepOne(label_start=label_start, max_labels_block=max_labels_block, output_path=output_path)
 
                 cell_counter += 1
                 n_comp_total += currBlock.n_comp
@@ -986,8 +982,7 @@ def main():
         for by in range(n_blocks_y):
             for bx in range(n_blocks_x):
 
-                ID=outp_ID
-                output_name = ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+                output_name = "_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
                 border_comp_local = readFromFile("border_comp_local", output_path, output_name)
                 border_comp_exist_local = readFromFile("border_comp_exist_local", output_path, output_name)
@@ -1027,15 +1022,13 @@ def main():
     associated_label_global, undetermined_global = findAssociatedLabels(neighbor_label_dict, undetermined_global, associated_label_global)
     associated_label_global = setUndeterminedtoNonHole(undetermined_global, associated_label_global)
 
-    ID=outp_ID
-    output_name = ID
+    output_name = ""
     dumpNumbaDictToFile(associated_label_global, "associated_label_global", output_path, output_name)
 
     del associated_label_global
 
     # STEP 3
-    ID=outp_ID
-    oytput_name = ID
+    oytput_name = ""
     associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
     associated_label_global.update(readFromFile("associated_label_global", output_path, output_name))
 
@@ -1046,21 +1039,20 @@ def main():
         for by in range(n_blocks_y):
             for bx in range(n_blocks_x):
 
-                fillWholes(output_path=output_path,bz=bz,by=by,bx=bx,associated_label=associated_label_global,ID=outp_ID)
+                fillWholes(output_path=output_path,bz=bz,by=by,bx=bx,associated_label=associated_label_global)
 
     # (STEP 4 visualize wholes
     # print out total of found wholes
-    blocks_concat = concatBlocks(z_start=slice_start, n_blocks_z=n_blocks_z, n_blocks_y=n_blocks_y, n_blocks_x=n_blocks_x, output_path=output_path, ID=outp_ID)
+    blocks_concat = concatBlocks(z_start=slice_start, n_blocks_z=n_blocks_z, n_blocks_y=n_blocks_y, n_blocks_x=n_blocks_x, output_path=output_path)
 
     filename = data_path+"/"+sample_name+"/"+sample_name+".h5"
     box = getBoxAll(filename)
     labels_inp = readData(box, filename)
     neg = np.subtract(blocks_concat, labels_inp)
-    output_name = "wholes_" + outp_ID
+    output_name = "wholes"
     writeData(output_path+output_name, neg)
 
-
-
+    compareOutp(output_path=output_path,sample_name=sample_name,ID_B=outp_ID )
 
 if __name__== "__main__":
   main()
