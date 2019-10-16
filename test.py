@@ -86,7 +86,6 @@ def computeConnectedComp6(labels, start_label, max_labels):
 @njit
 def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres):
 
-    counter = 0
 
     for iz in [0, box[1]-box[0]-1]:
         for iy in range(0, box[3]-box[2]):
@@ -95,10 +94,8 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                 # connect to adjacent blocks
                 if iz == 0 and IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)]))
-                    counter = counter + 1
                 elif iz == box[1]-box[0]-1 and IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres)]))
-                    counter = counter + 1
                 else: #TODO get rif of 100000000 and replace by highest number
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
 
@@ -108,10 +105,8 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
 
                 if iy == 0 and IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres) in border_comp_exist:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)]))
-                    counter = counter + 1
                 elif iy == box[3]-box[2]-1 and IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres) in border_comp_exist:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres)]))
-                    counter = counter + 1
                 else:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
     for iz in range(0, box[1]-box[0]):
@@ -120,15 +115,13 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
 
                 if ix == 0 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres) in border_comp_exist:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)]))
-                    counter = counter + 1
                 elif ix == box[5]-box[4]-1 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres) in border_comp_exist:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres)]))
-                    counter = counter + 1
                 else:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
 
 
-    return neighbor_label_set_border, counter
+    return neighbor_label_set_border
 
 # find sets of adjacent components TODO do not pass border_comp and border_comp_exist (why?)
 @njit
@@ -555,26 +548,27 @@ def concatFiles(box, slices_s, slices_e, output_path, data_path):
 
     del labels_concat
 
-def concatBlocks(n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID):
+def concatBlocks(z_start, n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID):
 
-    for bz in range(n_blocks_z):
+    for bz in range(z_start, z_start+n_blocks_z):
         print("processing z block " + str(bz))
         for by in range(n_blocks_y):
             for bx in range(n_blocks_x):
 
                 input_name = "block_filled_"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
-                if bz==by==bx==0:
+                if bz==z_start and by==bx==0:
                     box = getBoxAll(filename=output_path+input_name+".h5")
                     bs_z = box[1]
                     bs_y = box[3]
                     bs_x = box[5]
                     labels_concat =  np.zeros((bs_z*n_blocks_z,bs_y*n_blocks_y,bs_x*n_blocks_x),dtype=np.uint16)
+                    print(labels_concat.shape)
 
                 if box != getBoxAll(filename=output_path+input_name+".h5"):
                     raise ValueError("Cannot Concat Blocks of different size!")
                 else:
-                    labels_concat[bz*bs_z:(bz+1)*bs_z,by*bs_y:(by+1)*bs_y,bx*bs_x:(bx+1)*bs_x] = readData(box=[1], filename=output_path+input_name+".h5")
+                    labels_concat[(bz-z_start)*bs_z:((bz-z_start)+1)*bs_z,by*bs_y:(by+1)*bs_y,bx*bs_x:(bx+1)*bs_x] = readData(box=[1], filename=output_path+input_name+".h5")
 
     print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape))
     output_name = "filled_" + ID
@@ -802,14 +796,26 @@ class dataBlock:
 
         del diff
 
-    def readLabels(self, data_path, ID, bz, by, bx):
-        filename = data_path+"/"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+    def readLabels(self, data_path, sample_name, ID, bz, by, bx):
+        filename = data_path+"/"+sample_name+"/"+ID+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
         box = getBoxAll(filename+".h5")
         #TODO: change this to always read entire chunk and then check size, also change the damn ".h5" supplement studpid
         self.labels_in = readData(box, filename+".h5")
         self.bs_z = self.labels_in.shape[0]
         self.bs_y = self.labels_in.shape[1]
         self.bs_x = self.labels_in.shape[2]
+        self.bz=bz
+        self.by=by
+        self.bx=bx
+
+    def readLabelsZebrafinch(self, data_path, sample_name, slice, bz, by, bx, bs_z, bs_y, bs_x):
+        filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
+        box = [0, bs_z, 0, bs_y, 0, bs_x]
+        #TODO: change this to always read entire chunk and then check size, also change the damn ".h5" supplement studpid
+        self.labels_in = readData(box, filename+".h5")
+        self.bs_z = bs_z
+        self.bs_y = bs_y
+        self.bs_x = bs_x
         self.bz=bz
         self.by=by
         self.bx=bx
@@ -836,25 +842,14 @@ class dataBlock:
         neighbor_label_set_inside_local, neighbor_label_set_border_local, border_comp_local, border_comp_exist_local = findAdjLabelSetLocal(
                                                                             box, cc_labels, border_comp_local, border_comp_exist_local, self.yres, self.xres)
 
-        if -7077890 in border_comp_local.values():
-            print("HOSSA C!!")
 
         del cc_labels
 
         neighbor_label_set = neighbor_label_set_inside_local.union(neighbor_label_set_border_local)
         neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
 
-        neighbor_label_dict_border = writeNeighborLabelDict(neighbor_label_set_border_local)
-
-        if -7077890 in neighbor_label_dict_border.keys():
-            print(neighbor_label_dict_border[-7077890])
-            print("HOSSA A!!")
-
         undetermined_local = set(neighbor_label_dict.keys())
         associated_label_local, undetermined_local = findAssociatedLabels(neighbor_label_dict=neighbor_label_dict, undetermined=undetermined_local, associated_label=associated_label_local)
-
-        if -7077890 in undetermined_local:
-            print("HOSSA B!!")
 
         del neighbor_label_set, neighbor_label_set_border_local, neighbor_label_dict
 
@@ -872,24 +867,30 @@ class dataBlock:
 
 
 def main():
+
+    # output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
+    # data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
+    # sample_name = "ZF_concat_2to5_2048_2048"
+    # outp_ID = "test55"
+    # inp_ID = "labels_cut64blocks"
     #
-    # # output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-    # data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/ZF_concat_2to3_0256_0256"
-    # outp_ID = "test45"
-    #
-    # output_path = data_path + "/" + outp_ID + "_"
+    # output_path = data_path + "/" + sample_name + "/" + outp_ID + "/"
     # if os.path.exists(output_path):
     #     raise ValueError("Folderpath " + data_path + " already exists!")
     # else:
     #     os.mkdir(output_path)
+
+
+    #start slice of zebrafinch block
+    # slice_start = 2
     #
     # # compute number of blocks and block size
-    # bs_z = 64
+    # bs_z = 128
     # n_blocks_z = 4
-    # bs_y = 64
-    # n_blocks_y = 4
-    # bs_x = 64
-    # n_blocks_x = 4
+    # bs_y = 2048
+    # n_blocks_y = 1
+    # bs_x = 2048
+    # n_blocks_x = 1
     #
     # zres=bs_z*n_blocks_z
     # yres=bs_y*n_blocks_y
@@ -909,23 +910,19 @@ def main():
     # undetermined_global = set()
     #
     # # STEP 1
-    # for bz in range(n_blocks_z):
+    # for bz in range(slice_start, slice_start+n_blocks_z):
     #     print("processing z block " + str(bz))
     #     for by in range(n_blocks_y):
     #         for bx in range(n_blocks_x):
     #
     #             currBlock = dataBlock(viz_wholes=True)
-    #             currBlock.readLabels(data_path=data_path, ID="labels_cut64blocks",bz=bz,by=by,bx=bx)
+    #             currBlock.readLabelsZebrafinch(data_path=data_path, sample_name=sample_name, slice=bz, bz=bz, by=by, bx=bx, bs_z=bs_z, bs_y=bs_y, bs_x=bs_x)
     #             currBlock.setRes(zres=zres,yres=yres,xres=xres)
     #
     #             #TODO get rid off max labels block, just compute it in the connectedcomp function as the size of passed block
-    #             currBlock.computeStepOne(label_start=label_start, max_labels_block=max_labels_block, ID="64blocks", output_path=output_path)
+    #             currBlock.computeStepOne(label_start=label_start, max_labels_block=max_labels_block, ID=outp_ID, output_path=output_path)
     #
     #             border_comp_global.update(currBlock.border_comp_local)
-    #
-    #             if -7077890 in currBlock.border_comp_local.values():
-    #                 print("HOSSA E!!")
-    #
     #             border_comp_exist_global = border_comp_exist_global.union(currBlock.border_comp_exist_local)
     #             neighbor_label_set_inside_global = neighbor_label_set_inside_global.union(currBlock.neighbor_label_set_inside_local)
     #             associated_label_global.update(currBlock.associated_label_local)
@@ -938,19 +935,14 @@ def main():
     #
     #             del currBlock
     #
-    # print("HERE!")
-    # print(len(border_comp_global))
-    #
     # # STEP 2
     # border_comp_exist_global.remove((2**30))
     # neighbor_label_set_border_global = {(1,1)}
     #
     # counter_total = 0
     #
-    # if -7077890 in border_comp_global.values():
-    #     print("HOSSA D!!")
     #
-    # for bz in range(n_blocks_z):
+    # for bz in range(slice_start, slice_start+n_blocks_z):
     #     print("processing z block " + str(bz))
     #     for by in range(n_blocks_y):
     #         for bx in range(n_blocks_x):
@@ -958,44 +950,35 @@ def main():
     #             box = [bz*bs_z,(bz+1)*bs_z,by*bs_y,(by+1)*bs_y,bx*bs_x,(bx+1)*bs_x]
     #             # print(box)
     #
-    #             neighbor_label_set_border_global, counter = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
+    #             neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
     #                                                     border_comp_global, border_comp_exist_global, yres, xres)
     #
-    #             counter_total += counter
-    #
-    # if -7077890 in border_comp_global.values():
-    #     print("HOSSA C!!")
-    #
-    # print(counter_total)
     # neighbor_label_set_border_global.remove((1,1))
     # neighbor_label_set = neighbor_label_set_inside_global.union(neighbor_label_set_border_global)
     #
     # # STEP 3
     # print("Find associated labels...")
     # neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
-    # print(min(neighbor_label_dict.keys()))
-    # print(max(neighbor_label_dict.keys()))
     # associated_label_global, undetermined_global = findAssociatedLabels(neighbor_label_dict, undetermined_global, associated_label_global)
     # associated_label_global = setUndeterminedtoNonHole(undetermined_global, associated_label_global)
     #
     # print("Fill wholes...")
     # # process blocks by iterating over all bloks
-    # for bz in range(n_blocks_z):
+    # for bz in range(slice_start, slice_start+n_blocks_z):
     #     print("processing z block " + str(bz))
     #     for by in range(n_blocks_y):
     #         for bx in range(n_blocks_x):
     #
-    #             fillWholes(output_path=output_path,bz=bz,by=by,bx=bx,associated_label=associated_label_global,ID="64blocks")
+    #             fillWholes(output_path=output_path,bz=bz,by=by,bx=bx,associated_label=associated_label_global,ID=outp_ID)
+
+    # print out total of found wholes
+    # blocks_concat = concatBlocks(z_start=slice_start, n_blocks_z=n_blocks_z, n_blocks_y=n_blocks_y, n_blocks_x=n_blocks_x, output_path=output_path, ID=outp_ID)
     #
-    # # print out total of found wholes
-    # ID="64blocks"
-    # blocks_concat = concatBlocks(n_blocks_z, n_blocks_y, n_blocks_x, output_path, ID)
-    #
-    # filename = data_path+"/ZF_concat_2to3_0256_0256.h5"
+    # filename = data_path+"/"+sample_name+"/"+sample_name+".h5"
     # box = getBoxAll(filename)
     # labels_inp = readData(box, filename)
     # neg = np.subtract(blocks_concat, labels_inp)
-    # output_name = "wholes_" + ID
+    # output_name = "wholes_" + outp_ID
     # writeData(output_path+output_name, neg)
 
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
@@ -1013,9 +996,9 @@ def main():
     #
     # blockA.processFile(ID="gt",rel_block_size=1)
 
-    blockA.useExistingFolder(output_path=output_path, sample_name="ZF_concat_2to3_0256_0256")
+    blockA.useExistingFolder(output_path=output_path, sample_name="ZF_concat_2to5_2048_2048")
 
-    ID_B="test45"
+    ID_B="test55"
 
     # blockA.processFile(ID=ID_B,rel_block_size=0.25)
 
