@@ -379,16 +379,16 @@ def concatFiles(box, slices_s, slices_e, output_path, data_path):
 
     del labels_concat
 
-def concatBlocks(z_start, n_blocks_z, n_blocks_y, n_blocks_x, output_path):
+def concatBlocks(z_start, y_start, x_start, n_blocks_z, n_blocks_y, n_blocks_x, output_path):
 
     for bz in range(z_start, z_start+n_blocks_z):
         print("processing z block " + str(bz))
-        for by in range(n_blocks_y):
-            for bx in range(n_blocks_x):
+        for by in range(y_start, y_start+n_blocks_y):
+            for bx in range(x_start, x_start+n_blocks_x):
 
                 input_name = "block_filled"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
-                if bz==z_start and by==bx==0:
+                if bz==z_start and by==y_start and bx==x_start:
                     box = getBoxAll(filename=output_path+input_name+".h5")
                     bs_z = box[1]
                     bs_y = box[3]
@@ -399,7 +399,7 @@ def concatBlocks(z_start, n_blocks_z, n_blocks_y, n_blocks_x, output_path):
                 if box != getBoxAll(filename=output_path+input_name+".h5"):
                     raise ValueError("Cannot Concat Blocks of different size!")
                 else:
-                    labels_concat[(bz-z_start)*bs_z:((bz-z_start)+1)*bs_z,by*bs_y:(by+1)*bs_y,bx*bs_x:(bx+1)*bs_x] = readData(box=[1], filename=output_path+input_name+".h5")
+                    labels_concat[(bz-z_start)*bs_z:((bz-z_start)+1)*bs_z,(by-y_start)*bs_y:(by-y_start+1)*bs_y,(bx-x_start)*bs_x:(bx-x_start+1)*bs_x] = readData(box=[1], filename=output_path+input_name+".h5")
 
     print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape))
     output_name = "filled"
@@ -595,8 +595,9 @@ class dataBlock:
 
         del diff
 
-    def readLabelsZebrafinch(self, data_path, sample_name, slice, bz, by, bx, bs_z, bs_y, bs_x):
-        filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
+    def readLabels(self, data_path, sample_name, bz, by, bx, bs_z, bs_y, bs_x):
+        # filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
+        filename = data_path+"/"+sample_name+"/"+"labels_cut"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
         box = [0, bs_z, 0, bs_y, 0, bs_x]
         #TODO: change this to always read entire chunk and then check size, also change the damn ".h5" supplement studpid
         self.labels_in = readData(box, filename+".h5")
@@ -677,8 +678,8 @@ def main():
 
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-    sample_name = "ZF_concat_2to4_0512_0512"
-    outp_ID = "update2"
+    sample_name = "ZF_concat_6to7_0512_0512"
+    outp_ID = "new5"
 
     output_path = data_path + "/" + sample_name + "/" + outp_ID + "/"
     if os.path.exists(output_path):
@@ -686,16 +687,18 @@ def main():
     else:
         os.mkdir(output_path)
 
-    # start slice of zebrafinch block
-    slice_start = 2
-
     # compute number of blocks and block size
     bs_z = 128
-    n_blocks_z = 3
+    n_blocks_z = 2
     bs_y = 512
     n_blocks_y = 1
     bs_x = 512
     n_blocks_x = 1
+
+    # start slice of zebrafinch block
+    z_start = 6
+    y_start = 0
+    x_start = 0
 
     zres=bs_z*n_blocks_z
     yres=bs_y*n_blocks_y
@@ -709,13 +712,14 @@ def main():
     max_labels_block = bs_z*bs_y*bs_x
 
     # STEP 1
-    for bz in range(slice_start, slice_start+n_blocks_z):
+    for bz in range(z_start, z_start+n_blocks_z):
         print("processing z block " + str(bz))
-        for by in range(n_blocks_y):
-            for bx in range(n_blocks_x):
+        for by in range(y_start, y_start+n_blocks_y):
+            for bx in range(x_start, x_start+n_blocks_x):
 
                 currBlock = dataBlock(viz_wholes=True)
-                currBlock.readLabelsZebrafinch(data_path=data_path, sample_name=sample_name, slice=bz, bz=bz, by=by, bx=bx, bs_z=bs_z, bs_y=bs_y, bs_x=bs_x)
+                currBlock.readLabels(data_path=data_path, sample_name=sample_name,
+                                        bz=bz, by=by, bx=bx, bs_z=bs_z, bs_y=bs_y, bs_x=bs_x)
                 currBlock.setRes(zres=zres,yres=yres,xres=xres)
 
                 #TODO get rid off max labels block, just compute it in the connectedcomp function as the size of passed block
@@ -736,10 +740,10 @@ def main():
     associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
     undetermined_global = set()
 
-    for bz in range(slice_start, slice_start+n_blocks_z):
+    for bz in range(z_start, z_start+n_blocks_z):
         print("processing z block " + str(bz))
-        for by in range(n_blocks_y):
-            for bx in range(n_blocks_x):
+        for by in range(y_start, y_start+n_blocks_y):
+            for bx in range(x_start, x_start+n_blocks_x):
 
                 output_name = "_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
@@ -762,10 +766,10 @@ def main():
 
     counter_total = 0
 
-    for bz in range(slice_start, slice_start+n_blocks_z):
+    for bz in range(z_start, z_start+n_blocks_z):
         print("processing z block " + str(bz))
-        for by in range(n_blocks_y):
-            for bx in range(n_blocks_x):
+        for by in range(y_start, y_start+n_blocks_y):
+            for bx in range(x_start, x_start+n_blocks_x):
 
                 box = [bz*bs_z,(bz+1)*bs_z,by*bs_y,(by+1)*bs_y,bx*bs_x,(bx+1)*bs_x]
                 # print(box)
@@ -793,16 +797,16 @@ def main():
 
     print("Fill wholes...")
     # process blocks by iterating over all bloks
-    for bz in range(slice_start, slice_start+n_blocks_z):
+    for bz in range(z_start, z_start+n_blocks_z):
         print("processing z block " + str(bz))
-        for by in range(n_blocks_y):
-            for bx in range(n_blocks_x):
+        for by in range(y_start, y_start+n_blocks_y):
+            for bx in range(x_start, x_start+n_blocks_x):
 
                 fillWholes(output_path=output_path,bz=bz,by=by,bx=bx,associated_label=associated_label_global)
 
     # (STEP 4 visualize wholes
     # print out total of found wholes
-    blocks_concat = concatBlocks(z_start=slice_start, n_blocks_z=n_blocks_z, n_blocks_y=n_blocks_y, n_blocks_x=n_blocks_x, output_path=output_path)
+    blocks_concat = concatBlocks(z_start=z_start, y_start=y_start, x_start=x_start, n_blocks_z=n_blocks_z, n_blocks_y=n_blocks_y, n_blocks_x=n_blocks_x, output_path=output_path)
 
     filename = data_path+"/"+sample_name+"/"+sample_name+".h5"
     box = getBoxAll(filename)
