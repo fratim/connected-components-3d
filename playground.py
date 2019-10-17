@@ -3,23 +3,37 @@ from numba import njit, types
 from numba.typed import Dict
 import pickle
 
+@njit
+def test():
+    a = dict()
+    a[10]=11
 
-a = Dict.empty(key_type=types.int64,value_type=types.int64)
-# a[10]=11
+    return a
 
-b = dict()
-# b = {**b, **a}
-b[9]=10
+b = test()
+print(b[10])
 
-a.update(b)
+#
+# a = np.zeros((1,1), dtype=np.int64)
+# a = 0x7FFFFFFFFFFFFFFF
+# print(a)
 
-filename = "/home/frtim/Desktop/test.pickle"
-print(filename)
-f = open(filename, 'wb')
-pickle.dump(a, f)
-
-print(a[10])
-f.close()
+# a = Dict.empty(key_type=types.int64,value_type=types.int64)
+# # a[10]=11
+#
+# b = dict()
+# # b = {**b, **a}
+# b[9]=10
+#
+# a.update(b)
+#
+# filename = "/home/frtim/Desktop/test.pickle"
+# print(filename)
+# f = open(filename, 'wb')
+# pickle.dump(a, f)
+#
+# print(a[10])
+# f.close()
 #
 # temp = dict()
 # temp[0]=1

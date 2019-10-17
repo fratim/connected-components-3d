@@ -98,8 +98,8 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)]))
                 elif iz == box[1]-box[0]-1 and IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres)]))
-                else: #TODO get rif of 100000000 and replace by highest number
-                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
+                else:
+                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
 
     for iz in range(0, box[1]-box[0]):
         for iy in [0, box[3]-box[2]-1]:
@@ -110,7 +110,7 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                 elif iy == box[3]-box[2]-1 and IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres) in border_comp_exist:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres)]))
                 else:
-                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
+                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
     for iz in range(0, box[1]-box[0]):
         for iy in range(0, box[3]-box[2]):
             for ix in [0, box[5]-box[4]-1]:
@@ -120,17 +120,20 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                 elif ix == box[5]-box[4]-1 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres) in border_comp_exist:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres)]))
                 else:
-                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 100000000))
+                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
 
 
     return neighbor_label_set_border
 
-# find sets of adjacent components TODO do not pass border_comp and border_comp_exist (why?)
+# find sets of adjacent components
 @njit
-def findAdjLabelSetLocal(box, cc_labels, border_comp, border_comp_exist, yres, xres):
+def findAdjLabelSetLocal(box, cc_labels, yres, xres):
 
     neighbor_label_set_inside = set()
     neighbor_label_set_border = set()
+
+    border_comp = dict()
+    border_comp_exist = set()
 
     for iz in range(0, box[1]-box[0]-1):
         for iy in range(0, box[3]-box[2]-1):
@@ -171,7 +174,7 @@ def findAdjLabelSetLocal(box, cc_labels, border_comp, border_comp_exist, yres, x
                 border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = cc_labels[iz,iy,ix]
                 border_comp_exist.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
-                neighbor_label_set_border.add((cc_labels[iz,iy,ix], 100000000))
+                neighbor_label_set_border.add((cc_labels[iz,iy,ix], 0x7FFFFFFFFFFFFFFF))
 
     for iz in range(0, box[1]-box[0]):
         for iy in [0, box[3]-box[2]-1]:
@@ -193,7 +196,7 @@ def findAdjLabelSetLocal(box, cc_labels, border_comp, border_comp_exist, yres, x
                 border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = cc_labels[iz,iy,ix]
                 border_comp_exist.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
-                neighbor_label_set_border.add((cc_labels[iz,iy,ix], 100000000))
+                neighbor_label_set_border.add((cc_labels[iz,iy,ix], 0x7FFFFFFFFFFFFFFF))
 
     for iz in range(0, box[1]-box[0]):
         for iy in range(0, box[3]-box[2]):
@@ -215,7 +218,7 @@ def findAdjLabelSetLocal(box, cc_labels, border_comp, border_comp_exist, yres, x
                 border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = cc_labels[iz,iy,ix]
                 border_comp_exist.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
-                neighbor_label_set_border.add((cc_labels[iz,iy,ix], 100000000))
+                neighbor_label_set_border.add((cc_labels[iz,iy,ix], 0x7FFFFFFFFFFFFFFF))
 
     return neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist
 
@@ -266,7 +269,7 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
         query_comp = undetermined.pop()
 
         #check if it has only one neighbor and this neighbor is a neuron
-        if len(neighbor_label_dict[query_comp])==1 and neighbor_label_dict[query_comp][0]!=100000000 and neighbor_label_dict[query_comp][0]>0:
+        if len(neighbor_label_dict[query_comp])==1 and neighbor_label_dict[query_comp][0]!=0x7FFFFFFFFFFFFFFF and neighbor_label_dict[query_comp][0]>0:
             associated_label[query_comp] = neighbor_label_dict[query_comp][0]
 
         # otherwise unroll neighbors to identify
@@ -276,7 +279,7 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
             open = []
             # iterate over all neighbors and add them to the open set, if they are a background componente (i.e. are negative)
             for elem in neighbor_label_dict[query_comp]:
-                if elem == 100000000:
+                if elem == 0x7FFFFFFFFFFFFFFF:
                     continue
                 elif elem < 0:
                     for son in neighbor_label_dict[elem]:
@@ -287,9 +290,9 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
             # appen all negative background components that are neighbors or ancestors
             while len(open)>0:
                 elem = open.pop()
-                if elem == 100000000:
-                    if 100000000 not in neighbor_label_dict[query_comp]:
-                        neighbor_label_dict[query_comp].append(100000000)
+                if elem == 0x7FFFFFFFFFFFFFFF:
+                    if 0x7FFFFFFFFFFFFFFF not in neighbor_label_dict[query_comp]:
+                        neighbor_label_dict[query_comp].append(0x7FFFFFFFFFFFFFFF)
                 else:
                     for son in neighbor_label_dict[elem]:
                         if son not in neighbor_label_dict[query_comp]:
@@ -298,7 +301,7 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
                                 open.insert(0,son)
 
             # check if there is a bordercontact, then add to bordercontact but remove all elemnts from undetermined (will be added again later)
-            if 100000000 in neighbor_label_dict[query_comp]:
+            if 0x7FFFFFFFFFFFFFFF in neighbor_label_dict[query_comp]:
                 border_contact.add(query_comp)
                 for elem in neighbor_label_dict[query_comp]:
                     if elem < 0:
@@ -307,8 +310,8 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
 
             # if component does not have border contact, it can now be definitley determined if it is a hole or not
             else:
-            # check again if there is only one positive neighbor and that it is not boundary and it is a neuron, if so, it is a hole #TODO: second check could be removed
-                if len(list(filter(lambda a: a>0, neighbor_label_dict[query_comp])))==1 and np.max(neighbor_label_dict[query_comp])>0:
+            # check again if there is only one positive neighbor and that it is not boundary and it is a neuron, if so, it is a hole
+                if len(list(filter(lambda a: a>0, neighbor_label_dict[query_comp])))==1:
                     associated_label[query_comp] = np.max(neighbor_label_dict[query_comp])
                     for elem in neighbor_label_dict[query_comp]:
                         if elem < 0:
@@ -532,7 +535,6 @@ class dataBlock:
         # filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
         filename = data_path+"/"+sample_name+"/"+"labels_cut"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
         box = [0, bs_z, 0, bs_y, 0, bs_x]
-        #TODO: change this to always read entire chunk and then check size, also change the damn ".h5" supplement studpid
         self.labels_in = readData(box, filename)
         self.bs_z = bs_z
         self.bs_y = bs_y
@@ -543,7 +545,6 @@ class dataBlock:
 
     def computeStepOne(self, label_start, max_labels_block, output_path):
 
-        # TODO get rid of this
         box = [self.bz*self.bs_z,(self.bz+1)*self.bs_z,self.by*self.bs_y,(self.by+1)*self.bs_y,self.bx*self.bs_x,(self.bx+1)*self.bs_x]
 
         border_comp_local = Dict.empty(key_type=types.int64,value_type=types.int64)
@@ -561,7 +562,7 @@ class dataBlock:
         writeData(output_folder+output_name, cc_labels)
 
         neighbor_label_set_inside_local, neighbor_label_set_border_local, border_comp_local, border_comp_exist_local = findAdjLabelSetLocal(
-                                                                            box, cc_labels, border_comp_local, border_comp_exist_local, self.yres, self.xres)
+                                                                            box, cc_labels, self.yres, self.xres)
 
         del cc_labels
 
@@ -608,7 +609,7 @@ def main():
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     sample_name = "ZF_concat_6to7_0512_0512"
-    outp_ID = "new40"
+    outp_ID = "new43"
 
     folder_path = data_path + sample_name + "/" + outp_ID + "/"
     makeFolder(folder_path)
@@ -650,7 +651,6 @@ def main():
                                         bz=bz, by=by, bx=bx, bs_z=bs_z, bs_y=bs_y, bs_x=bs_x)
                 currBlock.setRes(zres=zres,yres=yres,xres=xres)
 
-                #TODO get rid off max labels block, just compute it in the connectedcomp function as the size of passed block
                 currBlock.computeStepOne(label_start=label_start, max_labels_block=max_labels_block, output_path=folder_path)
 
                 cell_counter += 1
