@@ -26,6 +26,7 @@ else:
     bx = int(sys.argv[3]) + param.x_start
 
 # compute and save variables and data
+print("running...")
 block_number = (bz)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx
 label_start = -1*block_number*param.max_labels_block -1
 

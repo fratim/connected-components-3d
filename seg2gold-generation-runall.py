@@ -16,15 +16,14 @@ template = '''#!/bin/bash
 #SBATCH -o /n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/ZF_concat_6to7_0512_0512/output_files/{JOBNAME}.out       # where to write the log files
 #SBATCH -e /n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/ZF_concat_6to7_0512_0512/error_files/{JOBNAME}.err        # where to write the error files
 
-source new-modules.sh
-module load Anaconda/5.0.1-fasrc01
+module load Anaconda3/5.0.1-fasrc02
 module load cuda/9.0-fasrc02 cudnn/7.1_cuda9.0-fasrc01
 
-source activate holefilling
+source activate fillholes
 
 export PYTHONPATH=$PYTHONPATH:/n/home12/tfranzmeyer/
 
-cd /n/home12/tfranzmeyer/connected-components-3d/
+cd /n/home12/tfranzmeyer/Code/connected-components-3d/
 
 python stepOne.py {PREFIX}
 
