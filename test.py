@@ -1,21 +1,14 @@
 import cc3d
 import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-from scipy.spatial import ConvexHull
 import time
-from scipy.spatial import distance
 import h5py
 from numba import njit, types
 from numba.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
 import warnings
-import scipy.ndimage.interpolation
-import math
 from numba.typed import Dict
 import os
-import psutil
-import sys
 import pickle
+import param
 
 # set will be deprecated soon on numba, but until now an alternative has not been implemented
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
@@ -606,52 +599,27 @@ def makeFolder(folder_path):
 
 def main():
 
-    output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-    data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-    sample_name = "ZF_concat_6to7_0512_0512"
-    outp_ID = "new43"
-
-    folder_path = data_path + sample_name + "/" + outp_ID + "/"
-    makeFolder(folder_path)
-
-    # compute number of blocks and block size
-    bs_z = 64
-    n_blocks_z = 4
-    bs_y = 128
-    n_blocks_y = 4
-    bs_x = 128
-    n_blocks_x = 4
-
-    # start slice of zebrafinch block
-    z_start = 6
-    y_start = 0
-    x_start = 0
-
-    zres=bs_z*n_blocks_z
-    yres=bs_y*n_blocks_y
-    xres=bs_x*n_blocks_x
+    makeFolder(param.folder_path)
 
     #counters
     cell_counter = 0
     n_comp_total = 0
 
-    max_labels_block = bs_z*bs_y*bs_x
-
     # STEP 1
-    for bz in range(z_start, z_start+n_blocks_z):
+    for bz in range(param.z_start, param.z_start+param.n_blocks_z):
         print("processing z block " + str(bz))
-        for by in range(y_start, y_start+n_blocks_y):
-            for bx in range(x_start, x_start+n_blocks_x):
+        for by in range(param.y_start, param.y_start+param.n_blocks_y):
+            for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
-                block_number = (bz-6)*(y_start+n_blocks_y)*(x_start+n_blocks_x)+by*(x_start+n_blocks_x)+bx
-                label_start = -1*block_number*max_labels_block -1
+                block_number = (bz-6)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx
+                label_start = -1*block_number*param.max_labels_block -1
 
                 currBlock = dataBlock(viz_wholes=True)
-                currBlock.readLabels(data_path=data_path, sample_name=sample_name,
-                                        bz=bz, by=by, bx=bx, bs_z=bs_z, bs_y=bs_y, bs_x=bs_x)
-                currBlock.setRes(zres=zres,yres=yres,xres=xres)
+                currBlock.readLabels(data_path=param.data_path, sample_name=param.sample_name,
+                                        bz=bz, by=by, bx=bx, bs_z=param.bs_z, bs_y=param.bs_y, bs_x=param.bs_x)
+                currBlock.setRes(zres=param.zres,yres=param.yres,xres=param.xres)
 
-                currBlock.computeStepOne(label_start=label_start, max_labels_block=max_labels_block, output_path=folder_path)
+                currBlock.computeStepOne(label_start=label_start, max_labels_block=param.max_labels_block, output_path=param.folder_path)
 
                 cell_counter += 1
                 n_comp_total += currBlock.n_comp
@@ -667,12 +635,12 @@ def main():
     associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
     undetermined_global = set()
 
-    for bz in range(z_start, z_start+n_blocks_z):
+    for bz in range(param.z_start, param.z_start+param.n_blocks_z):
         print("processing z block " + str(bz))
-        for by in range(y_start, y_start+n_blocks_y):
-            for bx in range(x_start, x_start+n_blocks_x):
+        for by in range(param.y_start, param.y_start+param.n_blocks_y):
+            for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
-                output_folder = folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
+                output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
 
                 border_comp_local = readFromFile("border_comp_local", output_folder, "")
                 border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
@@ -693,16 +661,16 @@ def main():
 
     counter_total = 0
 
-    for bz in range(z_start, z_start+n_blocks_z):
+    for bz in range(param.z_start, param.z_start+param.n_blocks_z):
         print("processing z block " + str(bz))
-        for by in range(y_start, y_start+n_blocks_y):
-            for bx in range(x_start, x_start+n_blocks_x):
+        for by in range(param.y_start, param.y_start+param.n_blocks_y):
+            for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
-                box = [bz*bs_z,(bz+1)*bs_z,by*bs_y,(by+1)*bs_y,bx*bs_x,(bx+1)*bs_x]
+                box = [bz*param.bs_z,(bz+1)*param.bs_z,by*param.bs_y,(by+1)*param.bs_y,bx*param.bs_x,(bx+1)*param.bs_x]
                 # print(box)
 
                 neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
-                                                        border_comp_global, border_comp_exist_global, yres, xres)
+                                                        border_comp_global, border_comp_exist_global, param.yres, param.xres)
 
     neighbor_label_set_border_global.remove((1,1))
     neighbor_label_set = neighbor_label_set_inside_global.union(neighbor_label_set_border_global)
@@ -713,38 +681,38 @@ def main():
     associated_label_global = setUndeterminedtoNonHole(undetermined_global, associated_label_global)
 
     output_name = ""
-    dumpNumbaDictToFile(associated_label_global, "associated_label_global", folder_path, output_name)
+    dumpNumbaDictToFile(associated_label_global, "associated_label_global", param.folder_path, output_name)
 
     del associated_label_global
 
     # STEP 3
     oytput_name = ""
     associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
-    associated_label_global.update(readFromFile("associated_label_global", folder_path, output_name))
+    associated_label_global.update(readFromFile("associated_label_global", param.folder_path, output_name))
 
     print("Fill wholes...")
     # process blocks by iterating over all bloks
-    for bz in range(z_start, z_start+n_blocks_z):
+    for bz in range(param.z_start, param.z_start+param.n_blocks_z):
         print("processing z block " + str(bz))
-        for by in range(y_start, y_start+n_blocks_y):
-            for bx in range(x_start, x_start+n_blocks_x):
+        for by in range(param.y_start, param.y_start+param.n_blocks_y):
+            for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
-                output_folder = folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
+                output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
                 fillWholes(output_path=output_folder,bz=bz,by=by,bx=bx,associated_label=associated_label_global)
 
     # (STEP 4 visualize wholes
     # print out total of found wholes
-    blocks_concat = concatBlocks(z_start=z_start, y_start=y_start, x_start=x_start, n_blocks_z=n_blocks_z, n_blocks_y=n_blocks_y, n_blocks_x=n_blocks_x,
-                                    bs_z=bs_z, bs_y=bs_y, bs_x=bs_x, output_path=folder_path)
+    blocks_concat = concatBlocks(z_start=param.z_start, y_start=param.y_start, x_start=param.x_start, n_blocks_z=param.n_blocks_z, n_blocks_y=param.n_blocks_y, n_blocks_x=param.n_blocks_x,
+                                    bs_z=param.bs_z, bs_y=param.bs_y, bs_x=param.bs_x, output_path=param.folder_path)
 
-    filename = data_path+"/"+sample_name+"/"+sample_name
+    filename = param.data_path+"/"+param.sample_name+"/"+param.sample_name
     box = [1]
     labels_inp = readData(box, filename)
     neg = np.subtract(blocks_concat, labels_inp)
     output_name = "wholes"
-    writeData(folder_path+output_name, neg)
+    writeData(param.folder_path+output_name, neg)
 
-    compareOutp(output_path=data_path,sample_name=sample_name,ID_B=outp_ID )
+    compareOutp(output_path=param.data_path,sample_name=param.sample_name,ID_B=param.outp_ID )
 
 if __name__== "__main__":
   main()
