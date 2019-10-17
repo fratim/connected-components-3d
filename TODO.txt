@@ -1,6 +1,6 @@
 ToODO slices_start:
 
-Implement start_label into c++ code (so far shifted in python)
-
+1. Implement start_label into c++ code (so far shifted in python)
+2. Remove z_start, y_start, x_start
 
 Questions: Why does int64 take values higher than the specified max?

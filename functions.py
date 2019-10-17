@@ -9,6 +9,7 @@ from numba.typed import Dict
 import os
 import pickle
 import param
+import sys
 
 # set will be deprecated soon on numba, but until now an alternative has not been implemented
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
@@ -599,19 +600,19 @@ def makeFolder(folder_path):
 
 def main():
 
+
+    # STEP 1
     makeFolder(param.folder_path)
 
     #counters
     cell_counter = 0
     n_comp_total = 0
 
-    # STEP 1
     for bz in range(param.z_start, param.z_start+param.n_blocks_z):
-        print("processing z block " + str(bz))
         for by in range(param.y_start, param.y_start+param.n_blocks_y):
             for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
-                block_number = (bz-6)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx
+                block_number = (bz)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx
                 label_start = -1*block_number*param.max_labels_block -1
 
                 currBlock = dataBlock(viz_wholes=True)
@@ -627,6 +628,7 @@ def main():
                 del currBlock
 
     print("n_comp_total: " + str(n_comp_total))
+    print("cells processed: " + str(cell_counter))
 
     # STEP 2
     border_comp_global = Dict.empty(key_type=types.int64,value_type=types.int64)
@@ -636,7 +638,6 @@ def main():
     undetermined_global = set()
 
     for bz in range(param.z_start, param.z_start+param.n_blocks_z):
-        print("processing z block " + str(bz))
         for by in range(param.y_start, param.y_start+param.n_blocks_y):
             for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
@@ -662,7 +663,6 @@ def main():
     counter_total = 0
 
     for bz in range(param.z_start, param.z_start+param.n_blocks_z):
-        print("processing z block " + str(bz))
         for by in range(param.y_start, param.y_start+param.n_blocks_y):
             for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 

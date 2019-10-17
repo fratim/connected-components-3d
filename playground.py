@@ -3,15 +3,31 @@ from numba import njit, types
 from numba.typed import Dict
 import pickle
 
-@njit
-def test():
-    a = dict()
-    a[10]=11
 
-    return a
+python preparation.py
 
-b = test()
-print(b[10])
+for bz in {0..3}
+do
+    for by in {0..3}
+    do
+        for bx in {0..3}
+        do
+
+            python stepOne.py $bz $by $bx
+
+        done
+    done
+done
+
+# @njit
+# def test():
+#     a = dict()
+#     a[10]=11
+#
+#     return a
+#
+# b = test()
+# print(b[10])
 
 #
 # a = np.zeros((1,1), dtype=np.int64)

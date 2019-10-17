@@ -1,54 +1,37 @@
-    import cc3d
-    import numpy as np
-    from dataIO import ReadH5File
-    from mpl_toolkits.mplot3d import Axes3D
-    import matplotlib.pyplot as plt
-    from scipy.spatial import ConvexHull
-    import time
-    from scipy.spatial import distance
-    import h5py
-    from numba import njit, types
-    from numba.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
-    import warnings
-    import scipy.ndimage.interpolation
-    import math
-    from numba.typed import Dict
-    import os
-    import psutil
-    import sys
-    import pickle
+import cc3d
+import numpy as np
+import time
+import h5py
+from numba import njit, types
+from numba.errors import NumbaDeprecationWarning, NumbaPendingDeprecationWarning
+import warnings
+from numba.typed import Dict
+import os
+import sys
+import pickle
+import param
 
-    # set will be deprecated soon on numba, but until now an alternative has not been implemented
-    warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
-    warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
+from functions import makeFolder, dataBlock
 
+# set will be deprecated soon on numba, but until now an alternative has not been implemented
+warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
+warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
 
-    # STEP 1
-    makeFolder(folder_path)
+# pass arguments
+if(len(sys.argv))!=4:
+    raise ValueError(" Scripts needs exactley 3 input arguments (bz by bx)")
+else:
+    bz = int(sys.argv[1]) + param.z_start
+    by = int(sys.argv[2]) + param.y_start
+    bx = int(sys.argv[3]) + param.x_start
 
-    #counters
-    cell_counter = 0
-    n_comp_total = 0
+# compute and save variables and data
+block_number = (bz)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx
+label_start = -1*block_number*param.max_labels_block -1
 
-    for bz in range(z_start, z_start+n_blocks_z):
-        print("processing z block " + str(bz))
-        for by in range(y_start, y_start+n_blocks_y):
-            for bx in range(x_start, x_start+n_blocks_x):
+currBlock = dataBlock(viz_wholes=True)
+currBlock.readLabels(data_path=param.data_path, sample_name=param.sample_name,
+                        bz=bz, by=by, bx=bx, bs_z=param.bs_z, bs_y=param.bs_y, bs_x=param.bs_x)
+currBlock.setRes(zres=param.zres,yres=param.yres,xres=param.xres)
 
-                block_number = (bz-6)*(y_start+n_blocks_y)*(x_start+n_blocks_x)+by*(x_start+n_blocks_x)+bx
-                label_start = -1*block_number*max_labels_block -1
-
-                currBlock = dataBlock(viz_wholes=True)
-                currBlock.readLabels(data_path=data_path, sample_name=sample_name,
-                                        bz=bz, by=by, bx=bx, bs_z=bs_z, bs_y=bs_y, bs_x=bs_x)
-                currBlock.setRes(zres=zres,yres=yres,xres=xres)
-
-                #TODO get rid off max labels block, just compute it in the connectedcomp function as the size of passed block
-                currBlock.computeStepOne(label_start=label_start, max_labels_block=max_labels_block, output_path=folder_path)
-
-                cell_counter += 1
-                n_comp_total += currBlock.n_comp
-
-                del currBlock
-
-    print("n_comp_total: " + str(n_comp_total))
+currBlock.computeStepOne(label_start=label_start, max_labels_block=param.max_labels_block, output_path=param.folder_path)
