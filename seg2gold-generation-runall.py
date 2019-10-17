@@ -5,7 +5,7 @@ SLURM_OUTPUT_FOLDER = '/n/home12/bmatejek/neuronseg/COX_SLURMS'
 rhoana_files = os.listdir('rhoana')
 
 template = '''#!/bin/bash
-# 
+#
 # add all other SBATCH directives here
 #
 #SBATCH -p cox                                                         # use the COX partition
@@ -19,7 +19,7 @@ template = '''#!/bin/bash
 #SBATCH -e /n/home12/bmatejek/neuronseg/COX_SLURM_LOG/{JOBNAME}.err    # where to write the error files
 
 source new-modules.sh
-module load Anaconda/5.0.1-fasrc01
+module load Anaconda3
 module load cuda/9.0-fasrc02 cudnn/7.1_cuda9.0-fasrc01
 
 source activate ibex_env
@@ -52,5 +52,5 @@ for rhoana_file in rhoana_files:
         fd.write(t)
 
     files_written += 1
-        
+
 print 'Wrote {} slurms files to {}.'.format(files_written, SLURM_OUTPUT_FOLDER)
