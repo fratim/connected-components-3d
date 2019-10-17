@@ -4,6 +4,11 @@ from numba.typed import Dict
 import pickle
 
 
+for slurm_file in *slurm
+do
+   sbatch $slurm_file;
+done
+
 python preparation.py
 
 for bz in {0..3}
