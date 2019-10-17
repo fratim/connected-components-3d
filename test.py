@@ -335,7 +335,7 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
 def fillWholes(output_path,bz,by,bx,associated_label):
 
     # create filename
-    input_name = "cc_labels"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+    input_name = "cc_labels"
     box = getBoxAll(output_path+input_name+".h5")
 
     # read in data
@@ -344,7 +344,7 @@ def fillWholes(output_path,bz,by,bx,associated_label):
     # use nopython to do actual computation
     cc_labels = fillwholesNoPython(box,cc_labels,associated_label)
 
-    output_name = "block_filled"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+    output_name = "block_filled"
     writeData(output_path+output_name, cc_labels)
 
 @njit
@@ -386,7 +386,8 @@ def concatBlocks(z_start, y_start, x_start, n_blocks_z, n_blocks_y, n_blocks_x, 
         for by in range(y_start, y_start+n_blocks_y):
             for bx in range(x_start, x_start+n_blocks_x):
 
-                input_name = "block_filled"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+
+                input_name = "/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/" + "block_filled"
 
                 if bz==z_start and by==y_start and bx==x_start:
                     box = getBoxAll(filename=output_path+input_name+".h5")
@@ -621,8 +622,11 @@ class dataBlock:
 
         del self.labels_in
 
-        output_name = "cc_labels"+"_z"+str(self.bz).zfill(4)+"y"+str(self.by).zfill(4)+"x"+str(self.bx).zfill(4)
-        writeData(output_path+output_name, cc_labels)
+        output_name = "cc_labels"
+        output_folder = output_path+"/z"+str(self.bz).zfill(4)+"y"+str(self.by).zfill(4)+"x"+str(self.bx).zfill(4)+"/"
+
+        makeFolder(output_folder)
+        writeData(output_folder+output_name, cc_labels)
 
         neighbor_label_set_inside_local, neighbor_label_set_border_local, border_comp_local, border_comp_exist_local = findAdjLabelSetLocal(
                                                                             box, cc_labels, border_comp_local, border_comp_exist_local, self.yres, self.xres)
@@ -639,13 +643,13 @@ class dataBlock:
 
         self.n_comp=n_comp
 
-        output_name = "_z"+str(self.bz).zfill(4)+"y"+str(self.by).zfill(4)+"x"+str(self.bx).zfill(4)
+        output_folder = output_path+"/z"+str(self.bz).zfill(4)+"y"+str(self.by).zfill(4)+"x"+str(self.bx).zfill(4)+"/"
 
-        dumpNumbaDictToFile(border_comp_local, "border_comp_local", output_path, output_name)
-        dumpToFile(border_comp_exist_local, "border_comp_exist_local", output_path, output_name)
-        dumpToFile(neighbor_label_set_inside_local, "neighbor_label_set_inside_local", output_path, output_name)
-        dumpNumbaDictToFile(associated_label_local, "associated_label_local", output_path, output_name)
-        dumpToFile(undetermined_local, "undetermined_local", output_path, output_name)
+        dumpNumbaDictToFile(border_comp_local, "border_comp_local", output_folder, "")
+        dumpToFile(border_comp_exist_local, "border_comp_exist_local", output_folder, "")
+        dumpToFile(neighbor_label_set_inside_local, "neighbor_label_set_inside_local", output_folder, "")
+        dumpNumbaDictToFile(associated_label_local, "associated_label_local", output_folder, "")
+        dumpToFile(undetermined_local, "undetermined_local", output_folder, "")
 
     def setRes(self, zres,yres,xres):
         self.zres = zres
@@ -673,19 +677,21 @@ def compareOutp(output_path, sample_name, ID_B):
 
     blockA.evaluateWholes(ID_A="gt", ID_B=ID_B)
 
+def makeFolder(folder_path):
+    if os.path.exists(folder_path):
+        raise ValueError("Folderpath " + folder_path + " already exists!")
+    else:
+        os.mkdir(folder_path)
 
 def main():
 
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     sample_name = "ZF_concat_6to7_0512_0512"
-    outp_ID = "new28"
+    outp_ID = "new36"
 
-    output_path = data_path + sample_name + "/" + outp_ID + "/"
-    if os.path.exists(output_path):
-        raise ValueError("Folderpath " + data_path + " already exists!")
-    else:
-        os.mkdir(output_path)
+    folder_path = data_path + sample_name + "/" + outp_ID + "/"
+    makeFolder(folder_path)
 
     # compute number of blocks and block size
     bs_z = 64
@@ -725,7 +731,7 @@ def main():
                 currBlock.setRes(zres=zres,yres=yres,xres=xres)
 
                 #TODO get rid off max labels block, just compute it in the connectedcomp function as the size of passed block
-                currBlock.computeStepOne(label_start=label_start, max_labels_block=max_labels_block, output_path=output_path)
+                currBlock.computeStepOne(label_start=label_start, max_labels_block=max_labels_block, output_path=folder_path)
 
                 cell_counter += 1
                 n_comp_total += currBlock.n_comp
@@ -746,13 +752,13 @@ def main():
         for by in range(y_start, y_start+n_blocks_y):
             for bx in range(x_start, x_start+n_blocks_x):
 
-                output_name = "_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+                output_folder = folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
 
-                border_comp_local = readFromFile("border_comp_local", output_path, output_name)
-                border_comp_exist_local = readFromFile("border_comp_exist_local", output_path, output_name)
-                neighbor_label_set_inside_local = readFromFile("neighbor_label_set_inside_local", output_path, output_name)
-                associated_label_local = readFromFile("associated_label_local", output_path, output_name)
-                undetermined_local = readFromFile("undetermined_local", output_path, output_name)
+                border_comp_local = readFromFile("border_comp_local", output_folder, "")
+                border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
+                neighbor_label_set_inside_local = readFromFile("neighbor_label_set_inside_local", output_folder, "")
+                associated_label_local = readFromFile("associated_label_local", output_folder, "")
+                undetermined_local = readFromFile("undetermined_local", output_folder, "")
 
                 border_comp_global.update(border_comp_local)
                 border_comp_exist_global = border_comp_exist_global.union(border_comp_exist_local)
@@ -787,14 +793,14 @@ def main():
     associated_label_global = setUndeterminedtoNonHole(undetermined_global, associated_label_global)
 
     output_name = ""
-    dumpNumbaDictToFile(associated_label_global, "associated_label_global", output_path, output_name)
+    dumpNumbaDictToFile(associated_label_global, "associated_label_global", folder_path, output_name)
 
     del associated_label_global
 
     # STEP 3
     oytput_name = ""
     associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
-    associated_label_global.update(readFromFile("associated_label_global", output_path, output_name))
+    associated_label_global.update(readFromFile("associated_label_global", folder_path, output_name))
 
     print("Fill wholes...")
     # process blocks by iterating over all bloks
@@ -803,18 +809,19 @@ def main():
         for by in range(y_start, y_start+n_blocks_y):
             for bx in range(x_start, x_start+n_blocks_x):
 
-                fillWholes(output_path=output_path,bz=bz,by=by,bx=bx,associated_label=associated_label_global)
+                output_folder = folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
+                fillWholes(output_path=output_folder,bz=bz,by=by,bx=bx,associated_label=associated_label_global)
 
     # (STEP 4 visualize wholes
     # print out total of found wholes
-    blocks_concat = concatBlocks(z_start=z_start, y_start=y_start, x_start=x_start, n_blocks_z=n_blocks_z, n_blocks_y=n_blocks_y, n_blocks_x=n_blocks_x, output_path=output_path)
+    blocks_concat = concatBlocks(z_start=z_start, y_start=y_start, x_start=x_start, n_blocks_z=n_blocks_z, n_blocks_y=n_blocks_y, n_blocks_x=n_blocks_x, output_path=folder_path)
 
     filename = data_path+"/"+sample_name+"/"+sample_name+".h5"
     box = getBoxAll(filename)
     labels_inp = readData(box, filename)
     neg = np.subtract(blocks_concat, labels_inp)
     output_name = "wholes"
-    writeData(output_path+output_name, neg)
+    writeData(folder_path+output_name, neg)
 
     compareOutp(output_path=data_path,sample_name=sample_name,ID_B=outp_ID )
 
