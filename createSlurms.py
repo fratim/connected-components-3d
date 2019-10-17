@@ -12,10 +12,10 @@ template = '''#!/bin/bash
 #SBATCH -N 1                                                                                                                                        # Ensure that all cores are on one matching
 #SBATCH --mem=10000                                                                                                                                 # CPU memory in GBs
 #SBATCH -t 0-00:10                                                                                                                                  # time in dd-hh:mm to run the code for
-#SBATCH --mail-type=end                                                                                                                             # send all email types (start, end, error, etc.)
+#SBATCH --mail-type=NONE                                                                                                                             # send all email types (start, end, error, etc.)
 #SBATCH --mail-user=tfranzmeyer@g.harvard.edu                                                                                                       # email address to send to
-#SBATCH -o /n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/ZF_concat_6to7_0512_0512/output_files/{JOBNAME}.out       # where to write the log files
-#SBATCH -e /n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/ZF_concat_6to7_0512_0512/error_files/{JOBNAME}.err        # where to write the error files
+#SBATCH -o {ERROR_PATH}/{JOBNAME}.out       # where to write the log files
+#SBATCH -e {OUTPUT_PATH}/{JOBNAME}.err        # where to write the error files
 
 module load Anaconda3/5.0.1-fasrc02
 module load cuda/9.0-fasrc02 cudnn/7.1_cuda9.0-fasrc01
@@ -32,7 +32,7 @@ echo "DONE"
 
 '''
 
-def writefile(filename, data):
+def writeFile(filename, data):
     if os.path.exists(filename):
         raise ValueError("File " + filename + " already exists!")
     else:
@@ -40,6 +40,9 @@ def writefile(filename, data):
             fd.write(data)
 
 files_written = 0
+
+error_path = params.folder_path + "/error_files/"
+output_path = params.folder_path + "/output_files/"
 
 # Write Slurm for preparations file
 command = "preparations.py"
@@ -59,7 +62,7 @@ for bz in range(param.n_blocks_z):
     for by in range(param.n_blocks_y):
         for bx in range(param.n_blocks_x):
 
-            command = "stepOne.py"str(bz) + " " + str(by) + " " + str(bx)
+            command = "stepOne.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
             jobname = "step01_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
             t = template
