@@ -600,36 +600,6 @@ def makeFolder(folder_path):
 
 def main():
 
-
-    # STEP 1
-    makeFolder(param.folder_path)
-
-    #counters
-    cell_counter = 0
-    n_comp_total = 0
-
-    for bz in range(param.z_start, param.z_start+param.n_blocks_z):
-        for by in range(param.y_start, param.y_start+param.n_blocks_y):
-            for bx in range(param.x_start, param.x_start+param.n_blocks_x):
-
-                block_number = (bz)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx
-                label_start = -1*block_number*param.max_labels_block -1
-
-                currBlock = dataBlock(viz_wholes=True)
-                currBlock.readLabels(data_path=param.data_path, sample_name=param.sample_name,
-                                        bz=bz, by=by, bx=bx, bs_z=param.bs_z, bs_y=param.bs_y, bs_x=param.bs_x)
-                currBlock.setRes(zres=param.zres,yres=param.yres,xres=param.xres)
-
-                currBlock.computeStepOne(label_start=label_start, max_labels_block=param.max_labels_block, output_path=param.folder_path)
-
-                cell_counter += 1
-                n_comp_total += currBlock.n_comp
-
-                del currBlock
-
-    print("n_comp_total: " + str(n_comp_total))
-    print("cells processed: " + str(cell_counter))
-
     # STEP 2
     border_comp_global = Dict.empty(key_type=types.int64,value_type=types.int64)
     border_comp_exist_global = {(2**30)}

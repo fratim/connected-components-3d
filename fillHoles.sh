@@ -1,11 +1,11 @@
 #!/bin/bash
-
+set -e # stop on error
 
 # ren preparation script (make folder)
 python preparation.py
 
 
-# eecutre step one computations for every block
+# execute step one computations for every block
 for bz in {0..3}
 do
     for by in {0..3}
