@@ -3,7 +3,7 @@
 output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
 data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
 sample_name = "ZF_concat_6to7_0512_0512"
-outp_ID = "bash3"
+outp_ID = "bashnew"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
