@@ -1,6 +1,5 @@
 import cc3d
 import numpy as np
-from dataIO import ReadH5File
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from scipy.spatial import ConvexHull
@@ -22,36 +21,38 @@ import pickle
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
 
-#read data from HD5, given the file path
-def readData(box, filename):
-    # read in data block
-    data_in = ReadH5File(filename, box)
 
-    labels = data_in
-
-    # print("data read in; shape: " + str(data_in.shape) + "; DataType: " + str(data_in.dtype))
-
-    return labels
-
-# get shape of data saved in H5
-def getBoxAll(filename):
-
+def ReadH5File(filename,box):
     # return the first h5 dataset from this file
     with h5py.File(filename, 'r') as hf:
         keys = [key for key in hf.keys()]
         d = hf[keys[0]]
-        box = [0,d.shape[0],0,d.shape[1],0,d.shape[2]]
+        # read entire chunk if first element of box is one and length is one
+        if len(box)==1 and box[0]==1:
+            data=np.array(d)
+        else:
+            data = np.array(d[box[0]:box[1],box[2]:box[3],box[4]:box[5]])
+    return data
 
-    return box
+def WriteH5File(data, filename, dataset):
+    with h5py.File(filename, 'w') as hf:
+        # should cover all cases of affinities/images
+        hf.create_dataset(dataset, data=data, compression='gzip')
+
+#read data from HD5, given the file path
+def readData(box, filename):
+    # read in data block
+    filename_comp = filename +".h5"
+    data_in = ReadH5File(filename_comp, box)
+    labels = data_in
+
+    return labels
 
 # write data to H5 file
 def writeData(filename,labels):
 
     filename_comp = filename +".h5"
-
-    with h5py.File(filename_comp, 'w') as hf:
-        # should cover all cases of affinities/images
-        hf.create_dataset("main", data=labels, compression='gzip')
+    WriteH5File(data=labels, filename=filename_comp, dataset="main")
 
 #compute the connected Com ponent labels
 def computeConnectedComp26(labels):
@@ -336,10 +337,11 @@ def fillWholes(output_path,bz,by,bx,associated_label):
 
     # create filename
     input_name = "cc_labels"
-    box = getBoxAll(output_path+input_name+".h5")
+    box = [1]
 
     # read in data
-    cc_labels = readData(box, output_path+input_name+".h5")
+    cc_labels = readData(box, output_path+input_name)
+    box = [0,cc_labels.shape[0],0,cc_labels.shape[1],0,cc_labels.shape[2]]
 
     # use nopython to do actual computation
     cc_labels = fillwholesNoPython(box,cc_labels,associated_label)
@@ -366,9 +368,9 @@ def concatFiles(box, slices_s, slices_e, output_path, data_path):
         sample_name = str(i*128).zfill(4)
         print(str("Processing file " + sample_name).format(sample_name), end='\r')
         if i is slices_s:
-            labels_concat = readData(box, data_path+sample_name+".h5")
+            labels_concat = readData(box, data_path+sample_name)
         else:
-            labels_temp = readData(box, data_path+sample_name+".h5")
+            labels_temp = readData(box, data_path+sample_name)
             labels_old = labels_concat.copy()
             del labels_concat
             labels_concat = np.concatenate((labels_old,labels_temp),axis=0)
@@ -379,7 +381,7 @@ def concatFiles(box, slices_s, slices_e, output_path, data_path):
 
     del labels_concat
 
-def concatBlocks(z_start, y_start, x_start, n_blocks_z, n_blocks_y, n_blocks_x, output_path):
+def concatBlocks(z_start, y_start, x_start, n_blocks_z, n_blocks_y, n_blocks_x, bs_z, bs_y, bs_x, output_path):
 
     for bz in range(z_start, z_start+n_blocks_z):
         print("processing z block " + str(bz))
@@ -390,85 +392,15 @@ def concatBlocks(z_start, y_start, x_start, n_blocks_z, n_blocks_y, n_blocks_x, 
                 input_name = "/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/" + "block_filled"
 
                 if bz==z_start and by==y_start and bx==x_start:
-                    box = getBoxAll(filename=output_path+input_name+".h5")
-                    bs_z = box[1]
-                    bs_y = box[3]
-                    bs_x = box[5]
                     labels_concat =  np.zeros((bs_z*n_blocks_z,bs_y*n_blocks_y,bs_x*n_blocks_x),dtype=np.uint16)
-                    print(labels_concat.shape)
 
-                if box != getBoxAll(filename=output_path+input_name+".h5"):
-                    raise ValueError("Cannot Concat Blocks of different size!")
-                else:
-                    labels_concat[(bz-z_start)*bs_z:((bz-z_start)+1)*bs_z,(by-y_start)*bs_y:(by-y_start+1)*bs_y,(bx-x_start)*bs_x:(bx-x_start+1)*bs_x] = readData(box=[1], filename=output_path+input_name+".h5")
+                labels_concat[(bz-z_start)*bs_z:((bz-z_start)+1)*bs_z,(by-y_start)*bs_y:(by-y_start+1)*bs_y,(bx-x_start)*bs_x:(bx-x_start+1)*bs_x] = readData(box=[1], filename=output_path+input_name)
 
     print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape))
     output_name = "filled"
     writeData(output_path+output_name, labels_concat)
 
     return labels_concat
-
-def evaluateWholes(folder_path, ID_A, ID_B, sample_name):
-    print("Evaluating wholes...")
-    # load gt wholes
-    gt_wholes_filepath = folder_path+"/"+ID_A+"/"+"wholes"+".h5"
-    box = getBoxAll(gt_wholes_filepath)
-    wholes_gt = readData(box, gt_wholes_filepath)
-
-    # load block wholes
-    inBlocks_wholes_filepath = folder_path+"/"+ID_B+"/"+"wholes"+".h5"
-    box = getBoxAll(inBlocks_wholes_filepath)
-    wholes_inBlocks = readData(box, inBlocks_wholes_filepath)
-
-    try:# check that both can be converted to int16
-        if np.max(wholes_gt)>32767 or np.max(wholes_inBlocks)>32767:
-            raise ValueError("Cannot convert wholes to int16 (max is >32767)")
-    except:
-        print("Cannot convert wholes to int16 (max is >32767) -  ignored this Error")
-
-    wholes_gt = wholes_gt.astype(np.int16)
-    wholes_inBlocks = wholes_inBlocks.astype(np.int16)
-    wholes_gt = np.subtract(wholes_gt, wholes_inBlocks)
-    diff = wholes_gt
-    # free some RAM
-    del wholes_gt, wholes_inBlocks
-
-    print("Freed memory")
-
-    if np.min(diff)<0:
-        FP = diff.copy()
-        FP[FP>0]=0
-        n_points_FP = np.count_nonzero(FP)
-        n_comp_FP = computeConnectedComp26(FP)-1
-        print("FP classifications (points/components): " + str(n_points_FP) + "/ " +str(n_comp_FP))
-
-        # unique_values = np.unique(FP)
-        # for u in unique_values:
-        #     if u!=0:
-        #         print("Coordinates of component " + str(u))
-        #         coods = np.argwhere(FP==u)
-        #         for i in range(coods.shape[0]):
-        #             print(str(coods[i,0]) + ", " + str(coods[i,1]) + ", " + str(coods[i,2]))
-
-        del FP
-    else:
-        print("No FP classification")
-
-    if np.max(diff)>0:
-        FN = diff.copy()
-        FN[FN<0]=0
-        n_points_FN = np.count_nonzero(FN)
-        n_comp_FN = computeConnectedComp26(FN)-1
-        print("FN classifications (points/components): " + str(n_points_FN) + "/ " +str(n_comp_FN))
-        del FN
-
-    else:
-        print("No FN classification")
-
-    output_name = 'diff_wholes'
-    writeData(folder_path+"/"+output_name, diff)
-
-    del diff
 
 @njit
 def IdxToIdi(iv, yres, xres):
@@ -521,9 +453,9 @@ class dataBlock:
             sample_name = str(i*128).zfill(4)
             print(str("Processing file " + sample_name).format(sample_name), end='\r')
             if i is self.slices_start:
-                labels_concat = readData(self.box_concat, self.data_path+sample_name+".h5")
+                labels_concat = readData(self.box_concat, self.data_path+sample_name)
             else:
-                labels_temp = readData(self.box_concat, self.data_path+sample_name+".h5")
+                labels_temp = readData(self.box_concat, self.data_path+sample_name)
                 labels_old = labels_concat.copy()
                 del labels_concat
                 labels_concat = np.concatenate((labels_old,labels_temp),axis=0)
@@ -537,13 +469,13 @@ class dataBlock:
     def evaluateWholes(self, ID_A, ID_B):
         print("Evaluating wholes...")
         # load gt wholes
-        gt_wholes_filepath = self.folder_path+"/"+ID_A+"/"+"wholes"+".h5"
-        box = getBoxAll(gt_wholes_filepath)
+        gt_wholes_filepath = self.folder_path+"/"+ID_A+"/"+"wholes"
+        box = [1]
         wholes_gt = readData(box, gt_wholes_filepath)
 
         # load block wholes
-        inBlocks_wholes_filepath = self.folder_path+"/"+ID_B+"/"+"wholes"+".h5"
-        box = getBoxAll(inBlocks_wholes_filepath)
+        inBlocks_wholes_filepath = self.folder_path+"/"+ID_B+"/"+"wholes"
+        box = [1]
         wholes_inBlocks = readData(box, inBlocks_wholes_filepath)
 
         try:# check that both can be converted to int16
@@ -601,7 +533,7 @@ class dataBlock:
         filename = data_path+"/"+sample_name+"/"+"labels_cut"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
         box = [0, bs_z, 0, bs_y, 0, bs_x]
         #TODO: change this to always read entire chunk and then check size, also change the damn ".h5" supplement studpid
-        self.labels_in = readData(box, filename+".h5")
+        self.labels_in = readData(box, filename)
         self.bs_z = bs_z
         self.bs_y = bs_y
         self.bs_x = bs_x
@@ -661,19 +593,7 @@ def compareOutp(output_path, sample_name, ID_B):
 
     blockA = dataBlock(viz_wholes=vizWholes)
 
-    # blockA.createNewBlock(  data_path="/home/frtim/wiring/raw_data/segmentations/Zebrafinch/",
-    #                         output_path=output_path,
-    #                         slices_start=2,
-    #                         slices_end=3,
-    #                         box_concat=[0,128,0,256,0,256])
-    #
-    # blockA.concatFiles()
-    #
-    # blockA.processFile(ID="gt",rel_block_size=1)
-
     blockA.useExistingFolder(output_path=output_path, sample_name=sample_name)
-
-    # blockA.processFile(ID=ID_B,rel_block_size=0.25)
 
     blockA.evaluateWholes(ID_A="gt", ID_B=ID_B)
 
@@ -688,7 +608,7 @@ def main():
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     sample_name = "ZF_concat_6to7_0512_0512"
-    outp_ID = "new36"
+    outp_ID = "new40"
 
     folder_path = data_path + sample_name + "/" + outp_ID + "/"
     makeFolder(folder_path)
@@ -814,10 +734,11 @@ def main():
 
     # (STEP 4 visualize wholes
     # print out total of found wholes
-    blocks_concat = concatBlocks(z_start=z_start, y_start=y_start, x_start=x_start, n_blocks_z=n_blocks_z, n_blocks_y=n_blocks_y, n_blocks_x=n_blocks_x, output_path=folder_path)
+    blocks_concat = concatBlocks(z_start=z_start, y_start=y_start, x_start=x_start, n_blocks_z=n_blocks_z, n_blocks_y=n_blocks_y, n_blocks_x=n_blocks_x,
+                                    bs_z=bs_z, bs_y=bs_y, bs_x=bs_x, output_path=folder_path)
 
-    filename = data_path+"/"+sample_name+"/"+sample_name+".h5"
-    box = getBoxAll(filename)
+    filename = data_path+"/"+sample_name+"/"+sample_name
+    box = [1]
     labels_inp = readData(box, filename)
     neg = np.subtract(blocks_concat, labels_inp)
     output_name = "wholes"
