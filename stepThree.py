@@ -26,7 +26,5 @@ output_name = ""
 associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
 associated_label_global.update(readFromFile("associated_label_global", param.folder_path, output_name))
 
-print("Fill wholes...")
-
 output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
 fillWholes(output_path=output_folder,bz=bz,by=by,bx=bx,associated_label=associated_label_global)
