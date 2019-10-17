@@ -51,6 +51,8 @@ jobname = "step00"
 t = template
 t = t.replace('{JOBNAME}', jobname)
 t = t.replace('{COMMAND}', command)
+t = t.replace('{ERROR_PATH}', error_path)
+t = t.replace('{OUTPUT_PATH}', output_path)
 
 filename = SLURM_OUTPUT_FOLDER + jobname + ".slurm"
 writeFile(filename, t)
@@ -68,6 +70,8 @@ for bz in range(param.n_blocks_z):
             t = template
             t = t.replace('{JOBNAME}', jobname)
             t = t.replace('{COMMAND}', command)
+            t = t.replace('{ERROR_PATH}', error_path)
+            t = t.replace('{OUTPUT_PATH}', output_path)
 
             filename = SLURM_OUTPUT_FOLDER + jobname + ".slurm"
             writeFile(filename, t)
@@ -80,6 +84,8 @@ jobname = "step02"
 t = template
 t = t.replace('{JOBNAME}', jobname)
 t = t.replace('{COMMAND}', command)
+t = t.replace('{ERROR_PATH}', error_path)
+t = t.replace('{OUTPUT_PATH}', output_path)
 
 filename = SLURM_OUTPUT_FOLDER + jobname + ".slurm"
 writeFile(filename, t)
@@ -96,6 +102,8 @@ for bz in range(param.n_blocks_z):
             t = template
             t = t.replace('{JOBNAME}', jobname)
             t = t.replace('{COMMAND}', command)
+            t = t.replace('{ERROR_PATH}', error_path)
+            t = t.replace('{OUTPUT_PATH}', output_path)
 
             filename = SLURM_OUTPUT_FOLDER + jobname + ".slurm"
             writeFile(filename, t)
@@ -108,6 +116,8 @@ jobname = "step04"
 t = template
 t = t.replace('{JOBNAME}', jobname)
 t = t.replace('{COMMAND}', command)
+t = t.replace('{ERROR_PATH}', error_path)
+t = t.replace('{OUTPUT_PATH}', output_path)
 
 filename = SLURM_OUTPUT_FOLDER + jobname + ".slurm"
 writeFile(filename, t)
