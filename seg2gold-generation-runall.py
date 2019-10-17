@@ -1,12 +1,12 @@
 import os
 
-SLURM_OUTPUT_FOLDER = '/home/frtim/Desktop/file_outp/'
+SLURM_OUTPUT_FOLDER = '/n/home12/tfranzmeyer/slurm_files/'
 
 template = '''#!/bin/bash
 #
 # add all other SBATCH directives here
 #
-#SBATCH -p cox                                                                                                                                      # use the COX partition
+#SBATCH -p serial_requeue                                                                                                                           # use the COX partition
 #SBATCH -n 1                                                                                                                                        # Number of cores
 #SBATCH -N 1                                                                                                                                        # Ensure that all cores are on one matching
 #SBATCH --mem=10000                                                                                                                                 # CPU memory in GBs

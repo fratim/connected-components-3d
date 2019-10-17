@@ -1,4 +1,4 @@
-name: holefilling
+name: fillholes
 channels:
   - defaults
 dependencies:
