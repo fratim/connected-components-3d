@@ -19,8 +19,4 @@ makeFolder(param.folder_path)
 makeFolder(param.error_path)
 makeFolder(param.output_path)
 
-#make these folders if they do not exist yet
-os.mkdir(param.output_path_preparation)
-os.mkdir(param.error_path_preparation)
-
 print("Created output folders")

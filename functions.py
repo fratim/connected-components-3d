@@ -598,36 +598,5 @@ def makeFolder(folder_path):
     else:
         os.mkdir(folder_path)
 
-def main():
-
-    # STEP 3
-    oytput_name = ""
-    associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
-    associated_label_global.update(readFromFile("associated_label_global", param.folder_path, output_name))
-
-    print("Fill wholes...")
-    # process blocks by iterating over all bloks
-    for bz in range(param.z_start, param.z_start+param.n_blocks_z):
-        print("processing z block " + str(bz))
-        for by in range(param.y_start, param.y_start+param.n_blocks_y):
-            for bx in range(param.x_start, param.x_start+param.n_blocks_x):
-
-                output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
-                fillWholes(output_path=output_folder,bz=bz,by=by,bx=bx,associated_label=associated_label_global)
-
-    # (STEP 4 visualize wholes
-    # print out total of found wholes
-    blocks_concat = concatBlocks(z_start=param.z_start, y_start=param.y_start, x_start=param.x_start, n_blocks_z=param.n_blocks_z, n_blocks_y=param.n_blocks_y, n_blocks_x=param.n_blocks_x,
-                                    bs_z=param.bs_z, bs_y=param.bs_y, bs_x=param.bs_x, output_path=param.folder_path)
-
-    filename = param.data_path+"/"+param.sample_name+"/"+param.sample_name
-    box = [1]
-    labels_inp = readData(box, filename)
-    neg = np.subtract(blocks_concat, labels_inp)
-    output_name = "wholes"
-    writeData(param.folder_path+output_name, neg)
-
-    compareOutp(output_path=param.data_path,sample_name=param.sample_name,ID_B=param.outp_ID )
-
 if __name__== "__main__":
   main()

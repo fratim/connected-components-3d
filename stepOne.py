@@ -21,9 +21,9 @@ warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
 if(len(sys.argv))!=4:
     raise ValueError(" Scripts needs exactley 3 input arguments (bz by bx)")
 else:
-    bz = int(sys.argv[1]) + param.z_start
-    by = int(sys.argv[2]) + param.y_start
-    bx = int(sys.argv[3]) + param.x_start
+    bz = int(sys.argv[1])
+    by = int(sys.argv[2])
+    bx = int(sys.argv[3])
 
 # compute and save variables and data
 print("running...")

@@ -12,7 +12,7 @@ import param
 import sys
 
 
-from functions import readFromFile, findAdjLabelSetGlobal, writeNeighborLabelDict, findAssociatedLabels, setUndeterminedtoNonHole, dumpNumbaDictToFile 
+from functions import readFromFile, findAdjLabelSetGlobal, writeNeighborLabelDict, findAssociatedLabels, setUndeterminedtoNonHole, dumpNumbaDictToFile
 
 # STEP 2
 border_comp_global = Dict.empty(key_type=types.int64,value_type=types.int64)

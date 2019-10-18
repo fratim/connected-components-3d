@@ -78,9 +78,9 @@ files_written += 1
 
 # write slurm for step one
 
-for bz in range(param.n_blocks_z):
-    for by in range(param.n_blocks_y):
-        for bx in range(param.n_blocks_x):
+for bz in range(param.z_start, param.z_start + param.n_blocks_z):
+    for by in range(param.y_start, param.y_start + param.n_blocks_y):
+        for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
             command = "stepOne.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
             jobname = "step01_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
@@ -110,9 +110,9 @@ writeFile(filename, t)
 files_written += 1
 
 # write slurm for step three
-for bz in range(param.n_blocks_z):
-    for by in range(param.n_blocks_y):
-        for bx in range(param.n_blocks_x):
+for bz in range(param.z_start, param.z_start + param.n_blocks_z):
+    for by in range(param.y_start, param.y_start + param.n_blocks_y):
+        for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
             command = "stepThree.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
             jobname = "step03_" + "z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
