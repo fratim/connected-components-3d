@@ -15,5 +15,7 @@ from functions import makeFolder
 
 
 makeFolder(param.folder_path)
-makeFolder(param.folder_path+"error_files/")
-makeFolder(param.folder_path+"output_files/")
+makeFolder(param.error_path)
+makeFolder(param.output_path)
+
+print("Created folder_path, error_path and output_path")

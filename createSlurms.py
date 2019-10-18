@@ -14,7 +14,7 @@ template = '''#!/bin/bash
 #SBATCH --mail-user=tfranzmeyer@g.harvard.edu                # email address to send to
 #SBATCH -o {OUTPUT_PATH}/{JOBNAME}.out                       # where to write the log files
 #SBATCH -e {ERROR_PATH}/{JOBNAME}.err                        # where to write the error files
-#SBATCH -J fillholes_{JOBNAME}                               # jobname given to job 
+#SBATCH -J fillholes_{JOBNAME}                               # jobname given to job
 
 module load Anaconda3/5.0.1-fasrc02
 module load cuda/9.0-fasrc02 cudnn/7.1_cuda9.0-fasrc01
@@ -37,7 +37,6 @@ def makeFolder(folder_path):
         raise ValueError("Folderpath " + folder_path + " already exists!")
     else:
         os.mkdir(folder_path)
-
 
 def writeFile(filename, data):
     if os.path.exists(filename):
