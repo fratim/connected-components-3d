@@ -41,11 +41,11 @@ def writeFile(filename, data):
 
 files_written = 0
 
-error_path = params.folder_path + "/error_files/"
-output_path = params.folder_path + "/output_files/"
+error_path = param.error_path
+output_path = param.output_path
 
 # Write Slurm for preparations file
-command = "preparations.py"
+command = "preparation.py"
 jobname = "step00"
 
 t = template

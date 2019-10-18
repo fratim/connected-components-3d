@@ -7,6 +7,9 @@ sample_name = "ZF_concat_6to7_0512_0512"
 outp_ID = "bashnew23"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
+error_path = data_path + sample_name + "/error_folder"
+output_path = data_path + sample_name + "/output_folder"
+
 
 # compute number of blocks and block size
 bs_z = 64
