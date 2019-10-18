@@ -9,8 +9,8 @@ template = '''#!/bin/bash
 #SBATCH -n 1                                                 # Number of cores
 #SBATCH -N 1                                                 # Ensure that all cores are on one matching
 #SBATCH --mem={MEMORY}                                       # CPU memory in MBs
-#SBATCH -t 0-00:10                                           # time in dd-hh:mm to run the code for
-#SBATCH --mail-type=NONE                                     # send all email types (start, end, error, etc.)
+#SBATCH -t 0-01:00                                           # time in dd-hh:mm to run the code for
+#SBATCH --mail-type=ALL                                      # send all email types (start, end, error, etc.)
 #SBATCH --mail-user=tfranzmeyer@g.harvard.edu                # email address to send to
 #SBATCH -o {OUTPUT_PATH}/{JOBNAME}.out                       # where to write the log files
 #SBATCH -e {ERROR_PATH}/{JOBNAME}.err                        # where to write the error files
@@ -74,7 +74,7 @@ t = t.replace('{JOBNAME}', jobname)
 t = t.replace('{COMMAND}', command)
 t = t.replace('{ERROR_PATH}', param.error_path_preparation)
 t = t.replace('{OUTPUT_PATH}', param.output_path_preparation)
-t = t.replace('{MEMORY}', str(memory_std))
+t = t.replace('{MEMORY}', "2000")
 
 filename = step00folderpath + jobname + ".slurm"
 writeFile(filename, t)
