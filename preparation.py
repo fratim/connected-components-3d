@@ -14,8 +14,13 @@ import sys
 from functions import makeFolder
 
 
+# make these folders and give error if they exist
 makeFolder(param.folder_path)
 makeFolder(param.error_path)
 makeFolder(param.output_path)
 
-print("Created folder_path, error_path and output_path")
+#make these folders if they do not exist yet
+os.mkdir(param.output_path_preparation)
+os.mkdir(param.error_path_preparation)
+
+print("Created output folders")

@@ -7,6 +7,10 @@ sample_name = "ZF_concat_6to7_0512_0512"
 outp_ID = "bashnew23"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
+
+error_path_preparation = data_path + sample_name + "/" + "error_files_preparations/"
+output_path_preparation = data_path + sample_name + "/" + "output_files_preparations/"
+
 error_path = folder_path+"error_files/"
 output_path = folder_path+"output_files/"
 
