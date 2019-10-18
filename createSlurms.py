@@ -52,6 +52,7 @@ step03folderpath = SLURM_OUTPUT_FOLDER+"step03/"
 step04folderpath = SLURM_OUTPUT_FOLDER+"step04/"
 
 makeFolder(step00folderpath)
+print(step00folderpath)
 makeFolder(step01folderpath)
 makeFolder(step02folderpath)
 makeFolder(step03folderpath)
