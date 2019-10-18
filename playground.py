@@ -2,27 +2,53 @@ import numpy as np
 from numba import njit, types
 from numba.typed import Dict
 import pickle
+from functions import readData
 
+labels = readData([1],"/home/frtim/wiring/raw_data/segmentations/Zebrafinch/0000")
+print(labels.shape)
 
-for slurm_file in *slurm
-do
-   sbatch $slurm_file;
-done
+labels = readData([1],"/home/frtim/wiring/raw_data/segmentations/Zebrafinch/0128")
+print(labels.shape)
 
-python preparation.py
+labels = readData([1],"/home/frtim/wiring/raw_data/segmentations/Zebrafinch/2432")
+print(labels.shape)
 
-for bz in {0..3}
-do
-    for by in {0..3}
-    do
-        for bx in {0..3}
-        do
-
-            python stepOne.py $bz $by $bx
-
-        done
-    done
-done
+#
+# f = open("/home/frtim/Desktop/test.txt", "a+")
+# f.write("1\n")
+# f.close()
+#
+# f = open("/home/frtim/Desktop/test.txt", "a+")
+# f.write("4\n")
+# f.close()
+#
+# f = open("/home/frtim/Desktop/test.txt", "a+")
+# f.write("3\n")
+# f.close()
+#
+# f = open("/home/frtim/Desktop/test.txt", "a+")
+# f.write("2\n")
+# f.close()
+#
+# for slurm_file in *slurm
+# do
+#    sbatch $slurm_file;
+# done
+#
+# python preparation.py
+#
+# for bz in {0..3}
+# do
+#     for by in {0..3}
+#     do
+#         for bx in {0..3}
+#         do
+#
+#             python stepOne.py $bz $by $bx
+#
+#         done
+#     done
+# done
 
 # @njit
 # def test():

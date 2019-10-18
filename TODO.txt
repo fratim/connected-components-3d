@@ -1,4 +1,4 @@
-ToODO slices_start:
+#TODO slices_start:
 
 1. Implement start_label into c++ code (so far shifted in python)
 2. Remove z_start, y_start, x_start

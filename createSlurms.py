@@ -8,7 +8,7 @@ template = '''#!/bin/bash
 #SBATCH -p holyseasgpu                                       # use the COX partition
 #SBATCH -n 1                                                 # Number of cores
 #SBATCH -N 1                                                 # Ensure that all cores are on one matching
-#SBATCH --mem=10000                                          # CPU memory in GBs
+#SBATCH --mem={MEMORY}                                       # CPU memory in MBs
 #SBATCH -t 0-00:10                                           # time in dd-hh:mm to run the code for
 #SBATCH --mail-type=NONE                                     # send all email types (start, end, error, etc.)
 #SBATCH --mail-user=tfranzmeyer@g.harvard.edu                # email address to send to
@@ -47,6 +47,9 @@ def writeFile(filename, data):
 
 files_written = 0
 
+memory_std =
+memory_step04 = memory_std*param.n_blocks_z*param.n_blocks_y*param.n_blocks_x
+
 SLURM_OUTPUT_FOLDER = '/n/home12/tfranzmeyer/slurm_files/'
 
 step00folderpath = SLURM_OUTPUT_FOLDER+"step00/"
@@ -71,6 +74,7 @@ t = t.replace('{JOBNAME}', jobname)
 t = t.replace('{COMMAND}', command)
 t = t.replace('{ERROR_PATH}', param.error_path_preparation)
 t = t.replace('{OUTPUT_PATH}', param.output_path_preparation)
+t = t.replace('{MEMORY}', str(memory_std))
 
 filename = step00folderpath + jobname + ".slurm"
 writeFile(filename, t)
@@ -90,6 +94,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
             t = t.replace('{COMMAND}', command)
             t = t.replace('{ERROR_PATH}', param.error_path)
             t = t.replace('{OUTPUT_PATH}', param.output_path)
+            t = t.replace('{MEMORY}', str(memory_std))
 
             filename = step01folderpath + jobname + ".slurm"
             writeFile(filename, t)
@@ -104,6 +109,7 @@ t = t.replace('{JOBNAME}', jobname)
 t = t.replace('{COMMAND}', command)
 t = t.replace('{ERROR_PATH}', param.error_path)
 t = t.replace('{OUTPUT_PATH}', param.output_path)
+t = t.replace('{MEMORY}', str(memory_std))
 
 filename = step02folderpath + jobname + ".slurm"
 writeFile(filename, t)
@@ -122,6 +128,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
             t = t.replace('{COMMAND}', command)
             t = t.replace('{ERROR_PATH}', param.error_path)
             t = t.replace('{OUTPUT_PATH}', param.output_path)
+            t = t.replace('{MEMORY}', str(memory_std))
 
             filename = step03folderpath + jobname + ".slurm"
             writeFile(filename, t)
@@ -136,6 +143,7 @@ t = t.replace('{JOBNAME}', jobname)
 t = t.replace('{COMMAND}', command)
 t = t.replace('{ERROR_PATH}', param.error_path)
 t = t.replace('{OUTPUT_PATH}', param.output_path)
+t = t.replace('{MEMORY}', str(memory_step04))
 
 filename = step04folderpath + jobname + ".slurm"
 writeFile(filename, t)

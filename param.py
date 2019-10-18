@@ -4,7 +4,7 @@ output_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
 data_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
 sample_name = ""
 
-outp_ID = "clusterOP"
+outp_ID = "cluster_nHoles"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
@@ -16,6 +16,8 @@ output_path_preparation = data_path + sample_name + "/" + "output_files_preparat
 error_path = folder_path+"error_files/"
 output_path = folder_path+"output_files/"
 
+#create file no save n_comp (number of cc3d components) for each procesed block
+n_comp_filepath = folder_path+"n_comp.txt"
 
 # compute number of blocks and block size
 bs_z = 128
