@@ -2,9 +2,9 @@
 
 output_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
 data_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-sample_name = "ZF_concat_6to7_0512_0512"
+sample_name = "ZF_concat_2to5_2048_2048"
 
-outp_ID = "clusterOP_3"
+outp_ID = "clusterOP"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
@@ -18,15 +18,15 @@ output_path = folder_path+"output_files/"
 
 
 # compute number of blocks and block size
-bs_z = 64
+bs_z = 128
 n_blocks_z = 4
-bs_y = 128
-n_blocks_y = 4
-bs_x = 128
-n_blocks_x = 4
+bs_y = 2048
+n_blocks_y = 1
+bs_x = 2048
+n_blocks_x = 1
 
 # start slice of zebrafinch block
-z_start = 6
+z_start = 2
 y_start = 0
 x_start = 0
 

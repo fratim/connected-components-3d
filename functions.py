@@ -526,8 +526,8 @@ class dataBlock:
         del diff
 
     def readLabels(self, data_path, sample_name, bz, by, bx, bs_z, bs_y, bs_x):
-        # filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
-        filename = data_path+"/"+sample_name+"/"+"labels_cut"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+        filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
+        #filename = data_path+"/"+sample_name+"/"+"labels_cut"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
         box = [0, bs_z, 0, bs_y, 0, bs_x]
         self.labels_in = readData(box, filename)
         self.bs_z = bs_z

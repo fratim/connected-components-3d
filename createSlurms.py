@@ -64,7 +64,7 @@ makeFolder(step04folderpath)
 
 # Write Slurm for preparations file
 command = "preparation.py"
-jobname = "step00"+"_"+param.outp_ID+"_"
+jobname = "step00"+"_"+param.outp_ID
 
 t = template
 t = t.replace('{JOBNAME}', jobname)
@@ -97,7 +97,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
 
 # Write Slurm for step two
 command = "stepTwo.py"
-jobname = "step02"+"_"+param.outp_ID+"_"
+jobname = "step02"+"_"+param.outp_ID
 
 t = template
 t = t.replace('{JOBNAME}', jobname)
@@ -129,7 +129,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
 
 # Write Slurm for step four
 command = "stepFour.py"
-jobname = "step04"+"_"+param.outp_ID+"_"
+jobname = "step04"+"_"+param.outp_ID
 
 t = template
 t = t.replace('{JOBNAME}', jobname)
