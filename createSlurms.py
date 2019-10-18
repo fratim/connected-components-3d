@@ -64,7 +64,7 @@ makeFolder(step04folderpath)
 
 # Write Slurm for preparations file
 command = "preparation.py"
-jobname = "step00"
+jobname = "step00"+"_"+param.outp_ID+"_"
 
 t = template
 t = t.replace('{JOBNAME}', jobname)
@@ -83,7 +83,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
         for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
             command = "stepOne.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
-            jobname = "step01_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+            jobname = "step01"+"_"+param.outp_ID+"_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
             t = template
             t = t.replace('{JOBNAME}', jobname)
@@ -97,7 +97,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
 
 # Write Slurm for step two
 command = "stepTwo.py"
-jobname = "step02"
+jobname = "step02"+"_"+param.outp_ID+"_"
 
 t = template
 t = t.replace('{JOBNAME}', jobname)
@@ -115,7 +115,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
         for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
             command = "stepThree.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
-            jobname = "step03_" + "z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+            jobname = "step03"+"_"+param.outp_ID+"_"+ "z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
             t = template
             t = t.replace('{JOBNAME}', jobname)
@@ -129,7 +129,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
 
 # Write Slurm for step four
 command = "stepFour.py"
-jobname = "step04"
+jobname = "step04"+"_"+param.outp_ID+"_"
 
 t = template
 t = t.replace('{JOBNAME}', jobname)
