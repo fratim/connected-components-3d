@@ -1,8 +1,8 @@
 # Header file for block processing, includes parameters and paths
 
-output_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-data_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-sample_name = "ZF_concat_2to5_2048_2048"
+output_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
+data_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
+sample_name = ""
 
 outp_ID = "clusterOP"
 
