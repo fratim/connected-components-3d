@@ -47,7 +47,7 @@ def writeFile(filename, data):
 
 files_written = 0
 
-memory_std = 10000
+memory_std = param.memory_needed
 memory_step04 = memory_std*param.n_blocks_z*param.n_blocks_y*param.n_blocks_x
 
 SLURM_OUTPUT_FOLDER = '/n/home12/tfranzmeyer/slurm_files/'

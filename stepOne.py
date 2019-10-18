@@ -39,5 +39,5 @@ currBlock.computeStepOne(label_start=label_start, max_labels_block=param.max_lab
 
 # write n_comp to text file that all blocks write to
 f = open(param.n_comp_filepath, "a+")
-f.write(str(block_number).zfill(6)+","+str(currBlock.n_comp).zfill(6)+"\n")
+f.write(str(block_number).zfill(8)+","+str(currBlock.n_comp).zfill(12)+"\n")
 f.close()

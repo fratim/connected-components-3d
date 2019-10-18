@@ -4,7 +4,7 @@ output_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
 data_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
 sample_name = ""
 
-outp_ID = "cluster_nHoles"
+outp_ID = "fullSize_1to20"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
@@ -21,14 +21,17 @@ n_comp_filepath = folder_path+"n_comp.txt"
 
 # compute number of blocks and block size
 bs_z = 128
-n_blocks_z = 4
-bs_y = 2048
+n_blocks_z = 20
+bs_y = 5456
 n_blocks_y = 1
-bs_x = 2048
+bs_x = 5332
 n_blocks_x = 1
 
+#memory need per block (in MB)
+memory_needed = int(1.1*bs_z*bs_y*bs_x*(8+8+2)/1000/1000)
+
 # start slice of zebrafinch block
-z_start = 2
+z_start = 0
 y_start = 0
 x_start = 0
 
