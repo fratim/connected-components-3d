@@ -1,7 +1,6 @@
 import os
 import param
-
-SLURM_OUTPUT_FOLDER = '/n/home12/tfranzmeyer/slurm_files/'
+from functions import makeFolder
 
 template = '''#!/bin/bash
 #
@@ -41,8 +40,22 @@ def writeFile(filename, data):
 
 files_written = 0
 
+SLURM_OUTPUT_FOLDER = '/n/home12/tfranzmeyer/slurm_files/'
+
 error_path = param.error_path
 output_path = param.output_path
+
+step00folderpath = SLURM_OUTPUT_FOLDER+"step00/"
+step01folderpath = SLURM_OUTPUT_FOLDER+"step01/"
+step02folderpath = SLURM_OUTPUT_FOLDER+"step02/"
+step03folderpath = SLURM_OUTPUT_FOLDER+"step03/"
+step04folderpath = SLURM_OUTPUT_FOLDER+"step04/"
+
+makeFolder(step00folderpath)
+makeFolder(step01folderpath)
+makeFolder(step02folderpath)
+makeFolder(step03folderpath)
+makeFolder(step04folderpath)
 
 # Write Slurm for preparations file
 command = "preparation.py"
@@ -54,7 +67,7 @@ t = t.replace('{COMMAND}', command)
 t = t.replace('{ERROR_PATH}', error_path)
 t = t.replace('{OUTPUT_PATH}', output_path)
 
-filename = SLURM_OUTPUT_FOLDER + jobname + ".slurm"
+filename = step00folderpath + jobname + ".slurm"
 writeFile(filename, t)
 files_written += 1
 
@@ -73,7 +86,7 @@ for bz in range(param.n_blocks_z):
             t = t.replace('{ERROR_PATH}', error_path)
             t = t.replace('{OUTPUT_PATH}', output_path)
 
-            filename = SLURM_OUTPUT_FOLDER + jobname + ".slurm"
+            filename = step01folderpath + jobname + ".slurm"
             writeFile(filename, t)
             files_written += 1
 
@@ -87,7 +100,7 @@ t = t.replace('{COMMAND}', command)
 t = t.replace('{ERROR_PATH}', error_path)
 t = t.replace('{OUTPUT_PATH}', output_path)
 
-filename = SLURM_OUTPUT_FOLDER + jobname + ".slurm"
+filename = step02folderpath + jobname + ".slurm"
 writeFile(filename, t)
 files_written += 1
 
@@ -105,7 +118,7 @@ for bz in range(param.n_blocks_z):
             t = t.replace('{ERROR_PATH}', error_path)
             t = t.replace('{OUTPUT_PATH}', output_path)
 
-            filename = SLURM_OUTPUT_FOLDER + jobname + ".slurm"
+            filename = step03folderpath + jobname + ".slurm"
             writeFile(filename, t)
             files_written += 1
 
@@ -119,7 +132,7 @@ t = t.replace('{COMMAND}', command)
 t = t.replace('{ERROR_PATH}', error_path)
 t = t.replace('{OUTPUT_PATH}', output_path)
 
-filename = SLURM_OUTPUT_FOLDER + jobname + ".slurm"
+filename = step04folderpath + jobname + ".slurm"
 writeFile(filename, t)
 files_written += 1
 

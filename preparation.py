@@ -13,6 +13,7 @@ import sys
 
 from functions import makeFolder
 
+
 makeFolder(param.folder_path)
 makeFolder(param.folder_path+"error_files/")
 makeFolder(param.folder_path+"output_files/")
