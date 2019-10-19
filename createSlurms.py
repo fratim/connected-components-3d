@@ -5,7 +5,7 @@ template = '''#!/bin/bash
 #
 # add all other SBATCH directives here
 #
-#SBATCH -p holyseasgpu                                       # use the COX partition
+#SBATCH -p unrestricted                                      # use the COX partition
 #SBATCH -n 1                                                 # Number of cores
 #SBATCH -N 1                                                 # Ensure that all cores are on one matching
 #SBATCH --mem={MEMORY}                                       # CPU memory in MBs

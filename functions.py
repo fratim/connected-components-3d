@@ -258,7 +258,13 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
     # time_start = time.time()
     border_contact = set()
 
+    counter = 0
+
     while len(undetermined)>0:
+
+        counter = counter + 1
+	if counter%1000 == 0:
+	    print("Counter is: " + str(counter), flush=True)
 
         query_comp = undetermined.pop()
 
