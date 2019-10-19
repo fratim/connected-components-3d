@@ -4,14 +4,22 @@ from numba.typed import Dict
 import pickle
 from functions import readData
 
-labels = readData([1],"/home/frtim/wiring/raw_data/segmentations/Zebrafinch/0000")
-print(labels.shape)
+counter = 0
+for i in range(20):
+ counter = counter + 1
+ if counter%5 == 0:
+     print("Count is: " + str(counter))
 
-labels = readData([1],"/home/frtim/wiring/raw_data/segmentations/Zebrafinch/0128")
-print(labels.shape)
 
-labels = readData([1],"/home/frtim/wiring/raw_data/segmentations/Zebrafinch/2432")
-print(labels.shape)
+
+# labels = readData([1],"/home/frtim/wiring/raw_data/segmentations/Zebrafinch/0000")
+# print(labels.shape)
+#
+# labels = readData([1],"/home/frtim/wiring/raw_data/segmentations/Zebrafinch/0128")
+# print(labels.shape)
+#
+# labels = readData([1],"/home/frtim/wiring/raw_data/segmentations/Zebrafinch/2432")
+# print(labels.shape)
 
 #
 # f = open("/home/frtim/Desktop/test.txt", "a+")
