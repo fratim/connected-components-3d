@@ -1,10 +1,10 @@
 # Header file for block processing, includes parameters and paths
-isCluster = False
+isCluster = True
 
 if isCluster:
-    output_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
-    data_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
-    sample_name = ""
+    output_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
+    data_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
+    sample_name = "ZF_concat_2to5_2048_2048"
 
     # compute number of blocks and block size
     bs_z = 128
