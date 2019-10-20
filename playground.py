@@ -4,11 +4,17 @@ from numba.typed import Dict
 import pickle
 from functions import readData
 
-counter = 0
-for i in range(20):
- counter = counter + 1
- if counter%5 == 0:
-     print("Count is: " + str(counter))
+r = np.arange(10)
+r = r[::2]
+
+for i in r:
+    print(i)
+
+# counter = 0
+# for i in range(20):
+#  counter = counter + 1
+#  if counter%5 == 0:
+#      print("Count is: " + str(counter))
 
 
 

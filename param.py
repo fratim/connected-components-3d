@@ -40,6 +40,8 @@ if not isCluster:
 
 outp_ID = "localTest"
 
+time_needed_step3 = 0
+
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
 #have to creat these in advance

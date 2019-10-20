@@ -12,92 +12,111 @@ import param
 import sys
 
 
-from functions import readFromFile, findAdjLabelSetGlobal, writeNeighborLabelDict, findAssociatedLabels, setUndeterminedtoNonHole, dumpNumbaDictToFile
+from functions import readFromFile, findAdjLabelSetGlobal, writeNeighborLabelDict, findAssociatedLabels, setUndeterminedtoNonHole, dumpNumbaDictToFile, makeFolder, dumpToFile, IdiToIdx
 
 print("executing Step 2 calculations...", flush=True)
 
 # STEP 2
-time_start = time.time()
 
 neighbor_label_set_inside_global = set()
 associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
 undetermined_global = set()
 neighbor_label_set_border_global = {(1,1)}
 
-for bz in range(param.z_start, param.z_start+param.n_blocks_z):
+z_range = np.arange(param.z_start, param.z_start+param.n_blocks_z)
 
-    if bz == param.z_start:
-        border_comp_global = dict()
-        border_comp_exist_global = set()
+#iteration 1 (2 blokcs)
+for bz_global in z_range[::2]:
 
-    border_comp_global_old = dict()
-    border_comp_exist_global_old = set()
-    border_comp_global_old.update(border_comp_global)
-    border_comp_exist_global_old = border_comp_exist_global_old.union(border_comp_exist_global)
+    border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
+    border_comp_exist_combined = set()
 
-    del border_comp_global, border_comp_exist_global
+    for bz in [bz_global, bz_global+1]:
+        for by in range(param.y_start, param.y_start+param.n_blocks_y):
+            for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
-    border_comp_global = dict()
-    border_comp_exist_global = set()
+                print("Block z is: " + str(bz), flush=True)
+                output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
 
-    for by in range(param.y_start, param.y_start+param.n_blocks_y):
-        for bx in range(param.x_start, param.x_start+param.n_blocks_x):
+                border_comp_local = readFromFile("border_comp_local", output_folder, "")
+                border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
+                neighbor_label_set_inside_local = readFromFile("neighbor_label_set_inside_local", output_folder, "")
+                associated_label_local = readFromFile("associated_label_local", output_folder, "")
+                undetermined_local = readFromFile("undetermined_local", output_folder, "")
 
-            print("Block z is: " + str(bz), flush=True)
-            output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
+                border_comp_combined.update(border_comp_local)
+                border_comp_exist_combined = border_comp_exist_combined.union(border_comp_exist_local)
 
-            border_comp_local = readFromFile("border_comp_local", output_folder, "")
-            border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
-            neighbor_label_set_inside_local = readFromFile("neighbor_label_set_inside_local", output_folder, "")
-            associated_label_local = readFromFile("associated_label_local", output_folder, "")
-            undetermined_local = readFromFile("undetermined_local", output_folder, "")
+                neighbor_label_set_inside_global = neighbor_label_set_inside_global.union(neighbor_label_set_inside_local)
+                associated_label_global.update(associated_label_local)
+                undetermined_global = undetermined_global.union(undetermined_local)
 
-            # print("Border_comp_global: " + str(sys.getsizeof(border_comp_global)))
-            # print("Border_com_exist_global: " + str(sys.getsizeof(border_comp_exist_global)))
-            # print("neighbor_label_set_inside_global: " + str(sys.getsizeof(neighbor_label_set_inside_global)))
-            # print("associated_label_global: " + str(sys.getsizeof(associated_label_global)))
-            # print("undetermined_global: " + str(sys.getsizeof(undetermined_global)))
+                del border_comp_local, border_comp_exist_local, neighbor_label_set_inside_local, associated_label_local, undetermined_local
 
-            border_comp_global.update(border_comp_local)
-            border_comp_exist_global = border_comp_exist_global.union(border_comp_exist_local)
-            neighbor_label_set_inside_global = neighbor_label_set_inside_global.union(neighbor_label_set_inside_local)
-            associated_label_global.update(associated_label_local)
-            undetermined_global = undetermined_global.union(undetermined_local)
+    for bz in [bz_global, bz_global+1]:
 
-            del border_comp_local, border_comp_exist_local, neighbor_label_set_inside_local, associated_label_local, undetermined_local
+        if bz == bz_global:
+            connectInPosZdirec = True
+            connectInNegZdirec = False
 
-    border_comp_global_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
-    border_comp_exist_global_combined = {(2**30)}
+        if bz == bz_global+1:
+            connectInPosZdirec = False
+            connectInNegZdirec = True
 
-    border_comp_global_combined.update(border_comp_global)
-    border_comp_exist_global_combined = border_comp_exist_global_combined.union(border_comp_exist_global)
-    border_comp_global_combined.update(border_comp_global_old)
-    border_comp_exist_global_combined = border_comp_exist_global_combined.union(border_comp_exist_global_old)
+        for by in range(param.y_start, param.y_start+param.n_blocks_y):
+            for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
-    border_comp_exist_global_combined.remove((2**30))
+                box = [bz*param.bs_z,(bz+1)*param.bs_z,by*param.bs_y,(by+1)*param.bs_y,bx*param.bs_x,(bx+1)*param.bs_x]
+                print(box)
 
-    print("Time needed: " + str(time.time()-time_start))
+                # print(box)
+                neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
+                                                        border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec)
 
-    if bz == param.z_start+param.n_blocks_z-1:
-        connectInPosZdirec = True
-    else:
-        connectInPosZdirec = False
+    output_folder = param.folder_path+"/z"+str(bz_global).zfill(4)+"/"
+    makeFolder(output_folder)
+    dumpNumbaDictToFile(border_comp_combined, "border_comp_local", output_folder, "")
+    dumpToFile(border_comp_exist_combined, "border_comp_exist_local", output_folder, "")
 
-    for by in range(param.y_start, param.y_start+param.n_blocks_y):
-        for bx in range(param.x_start, param.x_start+param.n_blocks_x):
+    del border_comp_combined, border_comp_exist_combined
 
-            box = [bz*param.bs_z,(bz+1)*param.bs_z,by*param.bs_y,(by+1)*param.bs_y,bx*param.bs_x,(bx+1)*param.bs_x]
+#iteration2 (4 blocks)
+for bz_global in z_range[::4]:
 
-            # print(box)
-            neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
-                                                    border_comp_global_combined, border_comp_exist_global_combined, param.yres, param.xres, connectInPosZdirec)
+    border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
+    border_comp_exist_combined = set()
 
-    del border_comp_global_old, border_comp_exist_global_old, border_comp_global_combined, border_comp_exist_global_combined
+    for bz in [bz_global, bz_global+2]:
+
+        print("Block z is: " + str(bz), flush=True)
+        output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"/"
+
+        border_comp_local = readFromFile("border_comp_local", output_folder, "")
+        border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
+
+        border_comp_combined.update(border_comp_local)
+        border_comp_exist_combined = border_comp_exist_combined.union(border_comp_exist_local)
+
+        del border_comp_local, border_comp_exist_local
+
+    for bz in [bz_global, bz_global+2]:
+
+        connectInPosZdirec = True # (this is the final block)
+        connectInNegZdirec = True
+
+        box = [bz*param.bs_z,(bz+2)*param.bs_z,param.y_start*param.bs_y,(param.y_start+param.n_blocks_y)*param.bs_y,param.x_start*param.bs_x,(param.x_start+param.n_blocks_x)*param.bs_x]
+
+        print(box)
+
+        # print(box)
+        neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
+                                                border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec)
+
+    del border_comp_combined, border_comp_exist_combined
+
 
 
 print("Final: ")
-print("Border_comp_global: " + str(sys.getsizeof(dict(border_comp_global))))
-print("Border_com_exist_global: " + str(sys.getsizeof(border_comp_exist_global)))
 print("neighbor_label_set_inside_global: " + str(sys.getsizeof(neighbor_label_set_inside_global)))
 print("associated_label_global: " + str(sys.getsizeof(dict(associated_label_global))))
 print("undetermined_global: " + str(sys.getsizeof(undetermined_global)))
