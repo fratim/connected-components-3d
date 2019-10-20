@@ -17,13 +17,28 @@ from functions import readFromFile, findAdjLabelSetGlobal, writeNeighborLabelDic
 print("executing Step 2 calculations...", flush=True)
 
 # STEP 2
-border_comp_global = Dict.empty(key_type=types.int64,value_type=types.int64)
-border_comp_exist_global = {(2**30)}
+
 neighbor_label_set_inside_global = set()
 associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
 undetermined_global = set()
+neighbor_label_set_border_global = {(1,1)}
 
 for bz in range(param.z_start, param.z_start+param.n_blocks_z):
+
+    if bz == param.z_start:
+        border_comp_global = Dict.empty(key_type=types.int64,value_type=types.int64)
+        border_comp_exist_global = {(2**30)}
+
+    border_comp_global_old = Dict.empty(key_type=types.int64,value_type=types.int64)
+    border_comp_exist_global_old = {(2**30)}
+    border_comp_global_old.update(border_comp_global)
+    border_comp_exist_global_old = border_comp_exist_global_old.union(border_comp_exist_global)
+
+    del border_comp_global, border_comp_exist_global
+
+    border_comp_global = Dict.empty(key_type=types.int64,value_type=types.int64)
+    border_comp_exist_global = {(2**30)}
+
     for by in range(param.y_start, param.y_start+param.n_blocks_y):
         for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
@@ -50,8 +65,32 @@ for bz in range(param.z_start, param.z_start+param.n_blocks_z):
 
             del border_comp_local, border_comp_exist_local, neighbor_label_set_inside_local, associated_label_local, undetermined_local
 
-border_comp_exist_global.remove((2**30))
-neighbor_label_set_border_global = {(1,1)}
+    border_comp_global_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
+    border_comp_exist_global_combined = {(2**30)}
+
+    border_comp_global_combined.update(border_comp_global)
+    border_comp_exist_global_combined = border_comp_exist_global_combined.union(border_comp_exist_global)
+    border_comp_global_combined.update(border_comp_global_old)
+    border_comp_exist_global_combined = border_comp_exist_global_combined.union(border_comp_exist_global_old)
+
+    border_comp_exist_global.remove((2**30))
+
+    if bz == param.z_start+param.n_blocks_z-1:
+        connectInPosZdirec = True
+    else:
+        connectInPosZdirec = False
+
+    for by in range(param.y_start, param.y_start+param.n_blocks_y):
+        for bx in range(param.x_start, param.x_start+param.n_blocks_x):
+
+            box = [bz*param.bs_z,(bz+1)*param.bs_z,by*param.bs_y,(by+1)*param.bs_y,bx*param.bs_x,(bx+1)*param.bs_x]
+
+            # print(box)
+            neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
+                                                    border_comp_global_combined, border_comp_exist_global_combined, param.yres, param.xres, connectInPosZdirec)
+
+    del border_comp_global_old, border_comp_exist_global_old, border_comp_global_combined, border_comp_exist_global_combined
+
 
 print("Final: ")
 print("Border_comp_global: " + str(sys.getsizeof(dict(border_comp_global))))
@@ -62,17 +101,17 @@ print("undetermined_global: " + str(sys.getsizeof(undetermined_global)))
 
 print("Created border_comp_exist_global and neighbor_label_set_border_global", flush=True)
 
-counter_total = 0
-
-for bz in range(param.z_start, param.z_start+param.n_blocks_z):
-    for by in range(param.y_start, param.y_start+param.n_blocks_y):
-        for bx in range(param.x_start, param.x_start+param.n_blocks_x):
-
-            box = [bz*param.bs_z,(bz+1)*param.bs_z,by*param.bs_y,(by+1)*param.bs_y,bx*param.bs_x,(bx+1)*param.bs_x]
-            # print(box)
-
-            neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
-                                                    border_comp_global, border_comp_exist_global, param.yres, param.xres)
+# counter_total = 0
+#
+# for bz in range(param.z_start, param.z_start+param.n_blocks_z):
+#     for by in range(param.y_start, param.y_start+param.n_blocks_y):
+#         for bx in range(param.x_start, param.x_start+param.n_blocks_x):
+#
+#             box = [bz*param.bs_z,(bz+1)*param.bs_z,by*param.bs_y,(by+1)*param.bs_y,bx*param.bs_x,(bx+1)*param.bs_x]
+#             # print(box)
+#
+#             neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
+#                                                     border_comp_global, border_comp_exist_global, param.yres, param.xres)
 
 neighbor_label_set_border_global.remove((1,1))
 neighbor_label_set = neighbor_label_set_inside_global.union(neighbor_label_set_border_global)

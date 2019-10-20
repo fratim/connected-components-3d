@@ -4,5 +4,6 @@
 4. flush all print messages
 5. try to copy neighbor_label dicht over steps, so far have to create new in step2
 6. get rid off neighbor_label_exist
+7. Trey to find global label set by only looking one direction
 
 Questions: Why does int64 take values higher than the specified max?
