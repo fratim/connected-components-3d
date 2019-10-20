@@ -26,7 +26,7 @@ undetermined_global = set()
 for bz in range(param.z_start, param.z_start+param.n_blocks_z):
     for by in range(param.y_start, param.y_start+param.n_blocks_y):
         for bx in range(param.x_start, param.x_start+param.n_blocks_x):
-            
+
             print("Block z is: " + str(bz), flush=True)
             output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
 
@@ -35,6 +35,12 @@ for bz in range(param.z_start, param.z_start+param.n_blocks_z):
             neighbor_label_set_inside_local = readFromFile("neighbor_label_set_inside_local", output_folder, "")
             associated_label_local = readFromFile("associated_label_local", output_folder, "")
             undetermined_local = readFromFile("undetermined_local", output_folder, "")
+
+            # print("Border_comp_global: " + str(sys.getsizeof(border_comp_global)))
+            # print("Border_com_exist_global: " + str(sys.getsizeof(border_comp_exist_global)))
+            # print("neighbor_label_set_inside_global: " + str(sys.getsizeof(neighbor_label_set_inside_global)))
+            # print("associated_label_global: " + str(sys.getsizeof(associated_label_global)))
+            # print("undetermined_global: " + str(sys.getsizeof(undetermined_global)))
 
             border_comp_global.update(border_comp_local)
             border_comp_exist_global = border_comp_exist_global.union(border_comp_exist_local)
@@ -46,6 +52,13 @@ for bz in range(param.z_start, param.z_start+param.n_blocks_z):
 
 border_comp_exist_global.remove((2**30))
 neighbor_label_set_border_global = {(1,1)}
+
+print("Final: ")
+print("Border_comp_global: " + str(sys.getsizeof(dict(border_comp_global))))
+print("Border_com_exist_global: " + str(sys.getsizeof(border_comp_exist_global)))
+print("neighbor_label_set_inside_global: " + str(sys.getsizeof(neighbor_label_set_inside_global)))
+print("associated_label_global: " + str(sys.getsizeof(dict(associated_label_global))))
+print("undetermined_global: " + str(sys.getsizeof(undetermined_global)))
 
 print("Created border_comp_exist_global and neighbor_label_set_border_global", flush=True)
 
@@ -68,6 +81,12 @@ print("Find associated labels...", flush=True)
 neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
 associated_label_global, undetermined_global = findAssociatedLabels(neighbor_label_dict, undetermined_global, associated_label_global)
 associated_label_global = setUndeterminedtoNonHole(undetermined_global, associated_label_global)
+
+print("Final: ")
+print("neighbor_label_dict: " + str(sys.getsizeof(neighbor_label_dict)))
+print("neighbor_label_set: " + str(sys.getsizeof(neighbor_label_set)))
+print("associated_label_global: " + str(sys.getsizeof(dict(associated_label_global))))
+print("undetermined_global: " + str(sys.getsizeof(undetermined_global)))
 
 output_name = ""
 dumpNumbaDictToFile(associated_label_global, "associated_label_global", param.folder_path, output_name)

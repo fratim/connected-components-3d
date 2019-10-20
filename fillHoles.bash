@@ -7,7 +7,7 @@ echo "Execution started"
 python preparation.py
 
 # Execute step one
-for bz in {0..3}
+for bz in {6..9}
 do
   for by in {0..3}
   do
@@ -26,7 +26,7 @@ python stepTwo.py
 echo "Step 2 finished"
 
 # execute step 3 (fill holes)
-for bz in {0..3}
+for bz in {6..9}
 do
   for by in {0..3}
   do

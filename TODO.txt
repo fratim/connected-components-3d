@@ -1,7 +1,8 @@
 #TODO slices_start:
 
 1. Implement start_label into c++ code (so far shifted in python)
-2. Remove z_start, y_start, x_start
-3. write n_comp to file
+4. flush all print messages
+5. try to copy neighbor_label dicht over steps, so far have to create new in step2
+6. get rid off neighbor_label_exist
 
 Questions: Why does int64 take values higher than the specified max?
