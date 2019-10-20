@@ -27,18 +27,18 @@ neighbor_label_set_border_global = {(1,1)}
 for bz in range(param.z_start, param.z_start+param.n_blocks_z):
 
     if bz == param.z_start:
-        border_comp_global = Dict.empty(key_type=types.int64,value_type=types.int64)
-        border_comp_exist_global = {(2**30)}
+        border_comp_global = dict()
+        border_comp_exist_global = set()
 
-    border_comp_global_old = Dict.empty(key_type=types.int64,value_type=types.int64)
-    border_comp_exist_global_old = {(2**30)}
+    border_comp_global_old = dict()
+    border_comp_exist_global_old = set()
     border_comp_global_old.update(border_comp_global)
     border_comp_exist_global_old = border_comp_exist_global_old.union(border_comp_exist_global)
 
     del border_comp_global, border_comp_exist_global
 
-    border_comp_global = Dict.empty(key_type=types.int64,value_type=types.int64)
-    border_comp_exist_global = {(2**30)}
+    border_comp_global = dict()
+    border_comp_exist_global = set()
 
     for by in range(param.y_start, param.y_start+param.n_blocks_y):
         for bx in range(param.x_start, param.x_start+param.n_blocks_x):
@@ -74,7 +74,7 @@ for bz in range(param.z_start, param.z_start+param.n_blocks_z):
     border_comp_global_combined.update(border_comp_global_old)
     border_comp_exist_global_combined = border_comp_exist_global_combined.union(border_comp_exist_global_old)
 
-    border_comp_exist_global.remove((2**30))
+    border_comp_exist_global_combined.remove((2**30))
 
     print("Time needed: " + str(time.time()-time_start))
 
