@@ -17,6 +17,7 @@ from functions import readFromFile, findAdjLabelSetGlobal, writeNeighborLabelDic
 print("executing Step 2 calculations...", flush=True)
 
 # STEP 2
+time_start = time.time()
 
 neighbor_label_set_inside_global = set()
 associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
@@ -74,6 +75,8 @@ for bz in range(param.z_start, param.z_start+param.n_blocks_z):
     border_comp_exist_global_combined = border_comp_exist_global_combined.union(border_comp_exist_global_old)
 
     border_comp_exist_global.remove((2**30))
+
+    print("Time needed: " + str(time.time()-time_start))
 
     if bz == param.z_start+param.n_blocks_z-1:
         connectInPosZdirec = True
