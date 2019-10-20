@@ -8,14 +8,14 @@ if isCluster:
 
     # compute number of blocks and block size
     bs_z = 128
-    n_blocks_z = 20
-    bs_y = 5456
+    n_blocks_z = 4
+    bs_y = 2048 #5456
     n_blocks_y = 1
-    bs_x = 5332
+    bs_x = 2048 #5332
     n_blocks_x = 1
 
     # start slice of zebrafinch block
-    z_start = 0
+    z_start = 2
     y_start = 0
     x_start = 0
 
@@ -38,7 +38,7 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = "testnew7"
+outp_ID = "newglobalConnect"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
