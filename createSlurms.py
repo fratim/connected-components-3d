@@ -5,12 +5,12 @@ template = '''#!/bin/bash
 #
 # add all other SBATCH directives here
 #
-#SBATCH -p unrestricted                                      # use the COX partition
+#SBATCH -p shared                                      # use the COX partition
 #SBATCH -n 1                                                 # Number of cores
 #SBATCH -N 1                                                 # Ensure that all cores are on one matching
 #SBATCH --mem={MEMORY}                                       # CPU memory in MBs
 #SBATCH -t 0-01:00                                           # time in dd-hh:mm to run the code for
-#SBATCH --mail-type=ALL                                      # send all email types (start, end, error, etc.)
+#SBATCH --mail-type=NONE                                      # send all email types (start, end, error, etc.)
 #SBATCH --mail-user=tfranzmeyer@g.harvard.edu                # email address to send to
 #SBATCH -o {OUTPUT_PATH}/{JOBNAME}.out                       # where to write the log files
 #SBATCH -e {ERROR_PATH}/{JOBNAME}.err                        # where to write the error files
