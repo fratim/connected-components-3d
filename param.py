@@ -24,15 +24,15 @@ if not isCluster:
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     # sample_name = "ZF_concat_6to7_0512_0512"
-    sample_name = "ZF_concat_2to5_2048_2048"
+    sample_name = "ZF_concat_2to18_0256_0256"
 
     # compute number of blocks and block size
     bs_z = 128
-    n_blocks_z = 4
-    bs_y = 2048
-    n_blocks_y = 1
-    bs_x = 2048
-    n_blocks_x = 1
+    n_blocks_z = 17
+    bs_y = 128
+    n_blocks_y = 2
+    bs_x = 128
+    n_blocks_x = 2
 
     # this has to set here and in the bash script
     z_start = 2
