@@ -89,12 +89,16 @@ for bz_global in z_range[::2]:
     del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new
 
 #iteration2 (4 blocks)
-for bz_global in z_range[::4]:
+bz_global_range = z_range[::4]
+for bz_global in bz_global_range:
 
     border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
     border_comp_exist_combined = set()
 
-    for bz in [bz_global, bz_global+2]:
+    bz_range_start = int(np.where(r==bz_global)[0])
+    bz_range = z_range[bz_range_start:bz_range_start+2]
+    print(bz_range)
+    for bz in bz_range:
 
         print("Block z is: " + str(bz), flush=True)
         output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"/"

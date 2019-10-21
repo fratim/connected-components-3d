@@ -4,10 +4,33 @@ from numba.typed import Dict
 import pickle
 from functions import readData, IdiToIdx
 
-print("HERE") 
+print("HERE")
+
+z_range = np.arange(10,36)
+print(z_range)
+
+#iteration2 (4 blocks)
+iteration = 2
+finished = False
+
+while finished==False:
+
+    print("new Iteration!!")
+    block_size = 2**iteration
+    bz_global_range = z_range[::block_size]
+    for bz_global in bz_global_range:
+
+        print("new block")
+
+        for bz in [bz_global, bz_global+int(block_size/2)]:
+            print(bz)
+
+    iteration = iteration + 1
+    if z_range[0]+block_size >= z_range[-1]:
+         finished = True
+         print ("DONE")
 
 
-# r = np.arange(10)
 # r = r[::2]
 #
 # for i in r:
