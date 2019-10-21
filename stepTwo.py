@@ -80,13 +80,11 @@ for bz_global in z_range[::2]:
 
 
     border_comp_exist_combined_new.remove((2**30))
-    if 524673 in border_comp_exist_combined_new: print("HOSSA M")
 
     output_folder = param.folder_path+"/z"+str(bz_global).zfill(4)+"/"
     makeFolder(output_folder)
     dumpNumbaDictToFile(border_comp_combined_new, "border_comp_local", output_folder, "")
     dumpToFile(border_comp_exist_combined_new, "border_comp_exist_local", output_folder, "")
-    print("len 1: " + str(len(border_comp_exist_combined_new)))
 
     del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new
 
@@ -103,12 +101,9 @@ for bz_global in z_range[::4]:
 
         border_comp_local = readFromFile("border_comp_local", output_folder, "")
         border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
-        if 524673 in border_comp_exist_local: print("HOSSA N")
-        print("len 1: " + str(len(border_comp_exist_local)))
 
         border_comp_combined.update(border_comp_local)
         border_comp_exist_combined = border_comp_exist_combined.union(border_comp_exist_local)
-        if 524673 in border_comp_exist_combined: print("HOSSA O")
 
         del border_comp_local, border_comp_exist_local
 
