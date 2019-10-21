@@ -2,13 +2,16 @@ import numpy as np
 from numba import njit, types
 from numba.typed import Dict
 import pickle
-from functions import readData
+from functions import readData, IdiToIdx
 
-r = np.arange(10)
-r = r[::2]
+print("HERE") 
 
-for i in r:
-    print(i)
+
+# r = np.arange(10)
+# r = r[::2]
+#
+# for i in r:
+#     print(i)
 
 # counter = 0
 # for i in range(20):

@@ -77,14 +77,18 @@ for bz_global in z_range[::2]:
                                                         border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
                                                         border_comp_combined_new, border_comp_exist_combined_new)
 
+
+
     border_comp_exist_combined_new.remove((2**30))
+    if 524673 in border_comp_exist_combined_new: print("HOSSA M")
 
     output_folder = param.folder_path+"/z"+str(bz_global).zfill(4)+"/"
     makeFolder(output_folder)
     dumpNumbaDictToFile(border_comp_combined_new, "border_comp_local", output_folder, "")
     dumpToFile(border_comp_exist_combined_new, "border_comp_exist_local", output_folder, "")
+    print("len 1: " + str(len(border_comp_exist_combined_new)))
 
-    del border_comp_combined, border_comp_exist_combined
+    del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new
 
 #iteration2 (4 blocks)
 for bz_global in z_range[::4]:
@@ -99,9 +103,12 @@ for bz_global in z_range[::4]:
 
         border_comp_local = readFromFile("border_comp_local", output_folder, "")
         border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
+        if 524673 in border_comp_exist_local: print("HOSSA N")
+        print("len 1: " + str(len(border_comp_exist_local)))
 
         border_comp_combined.update(border_comp_local)
         border_comp_exist_combined = border_comp_exist_combined.union(border_comp_exist_local)
+        if 524673 in border_comp_exist_combined: print("HOSSA O")
 
         del border_comp_local, border_comp_exist_local
 
@@ -116,7 +123,7 @@ for bz_global in z_range[::4]:
         box = [bz*param.bs_z,(bz+2)*param.bs_z,param.y_start*param.bs_y,(param.y_start+param.n_blocks_y)*param.bs_y,param.x_start*param.bs_x,(param.x_start+param.n_blocks_x)*param.bs_x]
 
         print(box)
-
+        if 524673 in border_comp_exist_combined: print("HOSSA P")
         # print(box)
         border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
                                                 border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,

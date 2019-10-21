@@ -87,21 +87,28 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
             for iy in range(0, box[3]-box[2]):
                 for ix in range(0, box[5]-box[4]):
 
-                    if 385==iz+box[0] and 0==iy+box[2] and 1==ix+box[4]:
-                        print("HOSSA A!")
-
-                    if iz == 0 and IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist:
+                    if iz == 0:
                         if connectInNegZdirec:
-                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)]))
-                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
+                            if  IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)!=-1 and IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist:
+                                neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)]))
+                                neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
+                            else:
+                                neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
+                                border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
+                                border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
                         else:
                             border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
                             border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
-                    elif iz == box[1]-box[0]-1 and IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist and connectInPosZdirec:
+                    elif iz == box[1]-box[0]-1:
                         if connectInPosZdirec:
-                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres)]))
-                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
+                            if IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist and connectInPosZdirec:
+                                neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres)]))
+                                neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
+                            else:
+                                neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
+                                border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
+                                border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
                         else:
                             border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
                             border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
@@ -110,52 +117,33 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                         border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
                         border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
     except:
-        print(iz,iy,ix)
-        raise ValueError("FAIL A!")
+        raise ValueError("FAIL A")
 
     try:
         for iz in range(0, box[1]-box[0]):
             for iy in [0, box[3]-box[2]-1]:
                 for ix in range(0, box[5]-box[4]):
-
-                    if 385==iz+box[0] and 0==iy+box[2] and 1==ix+box[4]:
-                        print("HOSSA B!")
-
-                    if iy == 0 and IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres) in border_comp_exist:
-                        if 385==iz+box[0] and 0==iy+box[2] and 1==ix+box[4]:
-                            print("HOSSA BA!")
-                            print(iz+box[0],iy+box[2]-1,ix+box[4])
-                        neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)]))
-                        neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
-                    elif iy == box[3]-box[2]-1 and IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres) in border_comp_exist:
-                        if 385==iz+box[0] and 0==iy+box[2] and 1==ix+box[4]:
-                            print("HOSSA BB!")
+                    if iy == 0 and IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)!=-1 and IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres) in border_comp_exist:
+                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)]))
+                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
+                    elif iy == box[3]-box[2]-1 and IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres)!=-1 and IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres) in border_comp_exist:
                         neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres)]))
                         neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
                     else:
-                        if 385==iz+box[0] and 0==iy+box[2] and 1==ix+box[4]:
-                            print("HOSSA BC!")
                         neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
                         border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
                         border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
     except:
         print(iz,iy,ix)
-        print(iy == 0 and IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres) in border_comp_exist)
-        print(IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres))
-        print(iz+box[0],iy+box[2],ix+box[4])
-        print(border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)])
-        print(border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)])
         raise ValueError("FAIL B!")
-
     try:
         for iz in range(0, box[1]-box[0]):
             for iy in range(0, box[3]-box[2]):
                 for ix in [0, box[5]-box[4]-1]:
-
-                    if ix == 0 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres) in border_comp_exist:
-                        neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)]))
-                        neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
-                    elif ix == box[5]-box[4]-1 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres) in border_comp_exist:
+                    if ix == 0 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)!=-1 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres) in border_comp_exist:
+                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)]))
+                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
+                    elif ix == box[5]-box[4]-1 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres)!=-1 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres) in border_comp_exist:
                         neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres)]))
                         neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
                     else:
@@ -462,10 +450,13 @@ def IdxToIdi(iv, yres, xres):
     return iz, iy, ix
 
 @njit
-def IdiToIdx(ix, iy, iz, yres, xres):
-    if iz<0 or iy<0 or ix<0:
-        raise ValueError ("Cannot get Idx of negative coordinate: " + str(iz,iy,ix))
-    return iz * yres * xres + iy * xres + ix
+def IdiToIdx(iz, iy, ix, yres, xres):
+    if (iz<param.bs_z*param.z_start or iy<param.bs_y*param.y_start or ix<param.bs_x*param.x_start
+            or iy >= param.bs_y*(param.y_start+param.n_blocks_y) or ix >= param.bs_x*(param.x_start+param.n_blocks_x)):
+        # print(iz,iy,ix)
+        return -1
+    else:
+        return iz * yres * xres + iy * xres + ix
 
 def dumpNumbaDictToFile(object, object_name, output_path, output_name):
     filename = output_path+object_name+output_name+".pickle"

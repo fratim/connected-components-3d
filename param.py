@@ -38,7 +38,7 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = "localTest"
+outp_ID = "localTest2"
 
 time_needed_step3 = 0
 
