@@ -69,25 +69,25 @@ def loadViz(box, path, caption, res, printIDs, idRes, printCoods):
 idRes = 1 #which resolution to use to search for IDs
 res=[20,18,18]; # resolution of the data
 data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-sample_name= "ZF_concat_2to3_0256_0256"
-compare= "test_newx"
+sample_name= "ZF_concat_2to17_0256_0256"
+compare= "fresh"
 
 # box = [0,1152,0,1000,0,1000]
 box = [1]
 
 fn_org =                 data_path + sample_name + "/" + sample_name + ".h5"
-fn_filled_gt =           data_path + sample_name + "/" + "gt/" + "filled_gt.h5"
-fn_wholes_gt =           data_path + sample_name + "/" + "gt/" + "wholes_gt.h5"
-fn_filled_compare =      data_path + sample_name + "/" + compare + "/" + "filled_" + compare + ".h5"
-fn_wholes_compare =      data_path + sample_name + "/" + compare + "/" + "wholes_" + compare + ".h5"
-fn_diff_wholes_compare = data_path + sample_name + "/" + compare + "/" + "diff_wholes_" + compare + ".h5"
+fn_filled_gt =           data_path + sample_name + "/" + "gt/" + "filled.h5"
+fn_wholes_gt =           data_path + sample_name + "/" + "gt/" + "wholes.h5"
+fn_filled_compare =      data_path + sample_name + "/" + compare + "/" + "filled.h5"
+fn_wholes_compare =      data_path + sample_name + "/" + compare + "/" + "wholes.h5"
+fn_diff_wholes_compare = data_path + sample_name + "/" + compare + "/" + "diff_wholes.h5"
 
 print("----------------------------HOST:---------------------------------")
 print("-----------------------------------------------------------------")
 print(viewer)
 
 loadViz(box=box, path=fn_org,                   caption="original",             res=res, printIDs = True, idRes=4*idRes,    printCoods=False)
-# loadViz(box=box, path=fn_filled_gt,           caption="filled_gt",            res=res, printIDs = True, idRes=4*idRes,    printCoods=False)
+loadViz(box=box, path=fn_filled_gt,           caption="filled_gt",            res=res, printIDs = True, idRes=4*idRes,    printCoods=False)
 loadViz(box=box, path=fn_wholes_gt,             caption="wholes_gt",            res=res, printIDs = True, idRes=idRes,      printCoods=False)
 loadViz(box=box, path=fn_filled_compare,        caption="filled_comp",          res=res, printIDs = True, idRes=idRes,      printCoods=False)
 loadViz(box=box, path=fn_wholes_compare,        caption="wholes_comp",          res=res, printIDs = True, idRes=idRes,      printCoods=False)

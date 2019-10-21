@@ -138,7 +138,7 @@ while lastIteration==False:
                     raise ValueError("Error in determining z connection directions")
 
             box = [bz*param.bs_z,(bz+int(block_size/2))*param.bs_z,param.y_start*param.bs_y,(param.y_start+param.n_blocks_y)*param.bs_y,param.x_start*param.bs_x,(param.x_start+param.n_blocks_x)*param.bs_x]
-
+            print(box)
             # print(box)
             border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
                                                     border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
