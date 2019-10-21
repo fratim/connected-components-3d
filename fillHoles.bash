@@ -7,7 +7,7 @@ echo "Execution started"
 python preparation.py
 
 # Execute step one
-for bz in {2..18}
+for bz in {2..17}
 do
   for by in {0..1}
   do
@@ -20,13 +20,13 @@ done
 
 echo "Step 1 finished"
 
-# execute step 2 (find associatted labels_global)
+# # execute step 2 (find associatted labels_global)
 python stepTwo.py
 
 echo "Step 2 finished"
 
 # execute step 3 (fill holes)
-for bz in {2..18}
+for bz in {2..17}
 do
   for by in {0..1}
   do

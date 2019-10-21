@@ -77,62 +77,84 @@ for bz_global in z_range[::2]:
                                                         border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
                                                         border_comp_combined_new, border_comp_exist_combined_new)
 
-
-
     border_comp_exist_combined_new.remove((2**30))
 
-    output_folder = param.folder_path+"/z"+str(bz_global).zfill(4)+"/"
+    iteration = 1
+    output_folder = param.folder_path+"/z"+str(bz_global).zfill(4)+"_it_"+str(iteration)+"/"
     makeFolder(output_folder)
     dumpNumbaDictToFile(border_comp_combined_new, "border_comp_local", output_folder, "")
     dumpToFile(border_comp_exist_combined_new, "border_comp_exist_local", output_folder, "")
 
     del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new
 
-#iteration2 (4 blocks)
-bz_global_range = z_range[::4]
-for bz_global in bz_global_range:
+iteration = 2
+lastIteration = False
+while lastIteration==False:
 
-    border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
-    border_comp_exist_combined = set()
+    print("new Iteration!!")
+    block_size = 2**iteration
+    bz_global_range = z_range[::block_size]
 
-    bz_range_start = int(np.where(r==bz_global)[0])
-    bz_range = z_range[bz_range_start:bz_range_start+2]
-    print(bz_range)
-    for bz in bz_range:
+    if z_range[0]+block_size >= z_range[-1]:
+        lastIteration = True
+        print ("this is last iteration")
 
-        print("Block z is: " + str(bz), flush=True)
-        output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"/"
+    #iteration2 (4 blocks)
+    bz_global_range = z_range[::block_size]
+    for bz_global in bz_global_range:
 
-        border_comp_local = readFromFile("border_comp_local", output_folder, "")
-        border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
+        border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
+        border_comp_exist_combined = set()
 
-        border_comp_combined.update(border_comp_local)
-        border_comp_exist_combined = border_comp_exist_combined.union(border_comp_exist_local)
+        for bz in [bz_global, bz_global+int(block_size/2)]:
 
-        del border_comp_local, border_comp_exist_local
+            print("bz read in is : " + str(bz), flush=True)
+            output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"_it_"+str(iteration-1)+"/"
 
-    border_comp_combined_new = Dict.empty(key_type=types.int64,value_type=types.int64)
-    border_comp_exist_combined_new = {(2**30)}
+            border_comp_local = readFromFile("border_comp_local", output_folder, "")
+            border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
 
-    for bz in [bz_global, bz_global+2]:
+            border_comp_combined.update(border_comp_local)
+            border_comp_exist_combined = border_comp_exist_combined.union(border_comp_exist_local)
 
-        connectInPosZdirec = True # (this is the final block)
-        connectInNegZdirec = True
+            del border_comp_local, border_comp_exist_local
 
-        box = [bz*param.bs_z,(bz+2)*param.bs_z,param.y_start*param.bs_y,(param.y_start+param.n_blocks_y)*param.bs_y,param.x_start*param.bs_x,(param.x_start+param.n_blocks_x)*param.bs_x]
+        border_comp_combined_new = Dict.empty(key_type=types.int64,value_type=types.int64)
+        border_comp_exist_combined_new = {(2**30)}
 
-        print(box)
-        if 524673 in border_comp_exist_combined: print("HOSSA P")
-        # print(box)
-        border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
-                                                border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
-                                                border_comp_combined_new, border_comp_exist_combined_new)
+        for bz in [bz_global, bz_global+int(block_size/2)]:
 
-    border_comp_exist_combined_new.remove((2**30))
+            if lastIteration:
+                connectInPosZdirec = True
+                connectInNegZdirec = True
+            else:
+                if bz == bz_global:
+                    connectInPosZdirec = True
+                    connectInNegZdirec = False
+                elif bz == bz_global+int(block_size/2):
+                    connectInPosZdirec = False
+                    connectInNegZdirec = True
+                else:
+                    raise ValueError("Error in determining z connection directions")
 
-    del border_comp_combined, border_comp_exist_combined
+            box = [bz*param.bs_z,(bz+int(block_size/2))*param.bs_z,param.y_start*param.bs_y,(param.y_start+param.n_blocks_y)*param.bs_y,param.x_start*param.bs_x,(param.x_start+param.n_blocks_x)*param.bs_x]
 
+            # print(box)
+            border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
+                                                    border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
+                                                    border_comp_combined_new, border_comp_exist_combined_new)
 
+        print("bz_global write is : " + str(bz_global), flush=True)
+        border_comp_exist_combined_new.remove((2**30))
+        print("making folder: " + str(bz_global))
+        output_folder = param.folder_path+"/z"+str(bz_global).zfill(4)+"_it_"+str(iteration)+"/"
+        makeFolder(output_folder)
+        dumpNumbaDictToFile(border_comp_combined_new, "border_comp_local", output_folder, "")
+        dumpToFile(border_comp_exist_combined_new, "border_comp_exist_local", output_folder, "")
+
+        del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new
+
+    iteration = iteration + 1
 
 print("Final: ")
 print("neighbor_label_set_inside_global: " + str(sys.getsizeof(neighbor_label_set_inside_global)))
