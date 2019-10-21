@@ -53,6 +53,9 @@ for bz_global in z_range[::2]:
 
                 del border_comp_local, border_comp_exist_local, neighbor_label_set_inside_local, associated_label_local, undetermined_local
 
+    border_comp_combined_new = Dict.empty(key_type=types.int64,value_type=types.int64)
+    border_comp_exist_combined_new = {(2**30)}
+
     for bz in [bz_global, bz_global+1]:
 
         if bz == bz_global:
@@ -70,13 +73,16 @@ for bz_global in z_range[::2]:
                 print(box)
 
                 # print(box)
-                neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
-                                                        border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec)
+                border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
+                                                        border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
+                                                        border_comp_combined_new, border_comp_exist_combined_new)
+
+    border_comp_exist_combined_new.remove((2**30))
 
     output_folder = param.folder_path+"/z"+str(bz_global).zfill(4)+"/"
     makeFolder(output_folder)
-    dumpNumbaDictToFile(border_comp_combined, "border_comp_local", output_folder, "")
-    dumpToFile(border_comp_exist_combined, "border_comp_exist_local", output_folder, "")
+    dumpNumbaDictToFile(border_comp_combined_new, "border_comp_local", output_folder, "")
+    dumpToFile(border_comp_exist_combined_new, "border_comp_exist_local", output_folder, "")
 
     del border_comp_combined, border_comp_exist_combined
 
@@ -99,6 +105,9 @@ for bz_global in z_range[::4]:
 
         del border_comp_local, border_comp_exist_local
 
+    border_comp_combined_new = Dict.empty(key_type=types.int64,value_type=types.int64)
+    border_comp_exist_combined_new = {(2**30)}
+
     for bz in [bz_global, bz_global+2]:
 
         connectInPosZdirec = True # (this is the final block)
@@ -109,8 +118,11 @@ for bz_global in z_range[::4]:
         print(box)
 
         # print(box)
-        neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
-                                                border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec)
+        border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
+                                                border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
+                                                border_comp_combined_new, border_comp_exist_combined_new)
+
+    border_comp_exist_combined_new.remove((2**30))
 
     del border_comp_combined, border_comp_exist_combined
 
