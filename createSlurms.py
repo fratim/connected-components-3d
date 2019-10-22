@@ -124,20 +124,23 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
 for it in range(2, param.iterations_needed+1)
     for bz in range(param.z_start, param.z_start + param.n_blocks_z):
 
-        command = "stepTwoB.py" + " " + str(bz) + " " + str(it)
-        jobname = "step02A"+"_"+param.outp_ID+"_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+        blocksize = it**2
+        z_range = np.arange(param.z_start, param.z_start+param.n_blocks_z)
+        if it in z_range[::blocksize]:
 
-        t = template
-        t = t.replace('{JOBNAME}', jobname)
-        t = t.replace('{COMMAND}', command)
-        t = t.replace('{ERROR_PATH}', param.error_path)
-        t = t.replace('{OUTPUT_PATH}', param.output_path)
-        t = t.replace('{MEMORY}', str(memory_std))
+            command = "stepTwoB.py" + " " + str(bz) + " " + str(it)
+            jobname = "step02A"+"_"+param.outp_ID+"_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
-        filename = step02Bfolderpath + jobname + ".slurm"
-        writeFile(filename, t)
-        files_written += 1
+            t = template
+            t = t.replace('{JOBNAME}', jobname)
+            t = t.replace('{COMMAND}', command)
+            t = t.replace('{ERROR_PATH}', param.error_path)
+            t = t.replace('{OUTPUT_PATH}', param.output_path)
+            t = t.replace('{MEMORY}', str(memory_std))
 
+            filename = step02Bfolderpath + jobname + ".slurm"
+            writeFile(filename, t)
+            files_written += 1
 
 # Write Slurm for step two C
 command = "stepTwoC.py"
