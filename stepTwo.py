@@ -12,11 +12,13 @@ import param
 import sys
 
 
-from functions import readFromFile, findAdjLabelSetGlobal, writeNeighborLabelDict, findAssociatedLabels, setUndeterminedtoNonHole, dumpNumbaDictToFile, makeFolder, dumpToFile, IdiToIdx
+from functions import readFromFile, findAdjLabelSetGlobal, writeNeighborLabelDict, findAssociatedLabels, setUndeterminedtoNonHole, dumpNumbaDictToFile, makeFolder, dumpToFile, IdiToIdx, combineBoxes
 
 print("executing Step 2 calculations...", flush=True)
 
 # STEP 2
+
+# Iteration 1 interconnects 2 z-blocks, also interconnecting in all x-y directions and loading the needed variables
 
 neighbor_label_set_inside_global = set()
 associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
@@ -56,6 +58,8 @@ for bz_global in z_range[::2]:
     border_comp_combined_new = Dict.empty(key_type=types.int64,value_type=types.int64)
     border_comp_exist_combined_new = {(2**30)}
 
+
+
     for bz in [bz_global, bz_global+1]:
 
         if bz == bz_global:
@@ -70,22 +74,25 @@ for bz_global in z_range[::2]:
             for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
                 box = [bz*param.bs_z,(bz+1)*param.bs_z,by*param.bs_y,(by+1)*param.bs_y,bx*param.bs_x,(bx+1)*param.bs_x]
-                print(box)
 
-                # print(box)
+
                 border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
                                                         border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
                                                         border_comp_combined_new, border_comp_exist_combined_new)
 
     border_comp_exist_combined_new.remove((2**30))
 
+    box_combined = [bz_global*param.bs_z,(bz_global+2)*param.bs_z,param.y_start*param.bs_y,(param.y_start+param.n_blocks_y)*param.bs_y,param.x_start*param.bs_x,(param.x_start+param.n_blocks_x)*param.bs_x]
+    print("Box combined: " + str(box_combined))
+
     iteration = 1
     output_folder = param.folder_path+"/z"+str(bz_global).zfill(4)+"_it_"+str(iteration)+"/"
     makeFolder(output_folder)
     dumpNumbaDictToFile(border_comp_combined_new, "border_comp_local", output_folder, "")
     dumpToFile(border_comp_exist_combined_new, "border_comp_exist_local", output_folder, "")
+    dumpToFile(box_combined, "box_combined", output_folder, "")
 
-    del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new
+    del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new, box_combined
 
 iteration = 2
 lastIteration = False
@@ -111,6 +118,9 @@ while lastIteration==False:
             print("bz read in is : " + str(bz), flush=True)
             output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"_it_"+str(iteration-1)+"/"
 
+            if bz==bz_global: box_a = readFromFile("box_combined", output_folder, "")
+            if bz==bz_global+int(block_size/2): box_b = readFromFile("box_combined", output_folder, "")
+
             border_comp_local = readFromFile("border_comp_local", output_folder, "")
             border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
 
@@ -118,6 +128,8 @@ while lastIteration==False:
             border_comp_exist_combined = border_comp_exist_combined.union(border_comp_exist_local)
 
             del border_comp_local, border_comp_exist_local
+
+        box_combined = combineBoxes(box_a, box_b)
 
         border_comp_combined_new = Dict.empty(key_type=types.int64,value_type=types.int64)
         border_comp_exist_combined_new = {(2**30)}
@@ -139,6 +151,7 @@ while lastIteration==False:
 
             box = [bz*param.bs_z,(bz+int(block_size/2))*param.bs_z,param.y_start*param.bs_y,(param.y_start+param.n_blocks_y)*param.bs_y,param.x_start*param.bs_x,(param.x_start+param.n_blocks_x)*param.bs_x]
             print(box)
+            print("Box Combined:" + str(box_combined))
             # print(box)
             border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
                                                     border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
@@ -151,6 +164,7 @@ while lastIteration==False:
         makeFolder(output_folder)
         dumpNumbaDictToFile(border_comp_combined_new, "border_comp_local", output_folder, "")
         dumpToFile(border_comp_exist_combined_new, "border_comp_exist_local", output_folder, "")
+        dumpToFile(box_combined, "box_combined", output_folder, "")
 
         del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new
 

@@ -470,6 +470,22 @@ def readFromFile(object_name, output_path, output_name):
 
     return object
 
+def combineBoxes(box_a, box_b):
+    if box_a[0]<box_b[0]:
+        box_b[0] = box_a[0]
+    if box_a[1]>box_b[1]:
+        box_b[1] = box_a[1]
+    if box_a[2]<box_b[2]:
+        box_b[2] = box_a[2]
+    if box_a[3]>box_b[3]:
+        box_b[2] = box_a[3]
+    if box_a[4]<box_b[4]:
+        box_b[4] = box_a[4]
+    if box_a[5]>box_b[5]:
+        box_b[5] = box_a[5]
+
+    return box_b
+
 class dataBlock:
 
     def __init__(self,viz_wholes):
