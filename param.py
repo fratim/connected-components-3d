@@ -1,26 +1,38 @@
 import math
 
 # Header file for block processing, includes parameters and paths
-isCluster = False
+isCluster = True
 
 if isCluster:
-    output_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
-    data_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
-    sample_name = ""
+    output_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
+    data_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
+    sample_name = "ZF_concat_2to15_0256_0256"
+
+    # compute number of blocks and block size
+    # bs_z = 128
+    # n_blocks_z = 20
+    # bs_y = 5456
+    # n_blocks_y = 1
+    # bs_x = 5332
+    # n_blocks_x = 1
+
+    # start slice of zebrafinch block
+    # z_start = 0
+    # y_start = 0
+    # x_start = 0
 
     # compute number of blocks and block size
     bs_z = 128
-    n_blocks_z = 20
-    bs_y = 5456
-    n_blocks_y = 1
-    bs_x = 5332
-    n_blocks_x = 1
+    n_blocks_z = 14
+    bs_y = 128
+    n_blocks_y = 2
+    bs_x = 128
+    n_blocks_x = 2
 
-    # start slice of zebrafinch block
-    z_start = 0
+    # this has to set here and in the bash script
+    z_start = 2
     y_start = 0
     x_start = 0
-
 
 if not isCluster:
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
@@ -41,7 +53,7 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = "fresh2"
+outp_ID = "freshOnCluster"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
