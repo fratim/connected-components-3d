@@ -20,23 +20,19 @@ print("executing Step 2 calculations...", flush=True)
 # STEP 2
 
 # Iteration 1 interconnects 2 z-blocks, also interconnecting in all x-y directions and loading the needed variables
-
-neighbor_label_set_inside_global = set()
-associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
-undetermined_global = set()
-neighbor_label_set_border_global = {(1,1)}
-iterations_needed = math.ceil(math.log(param.n_blocks_z)/math.log(2))
+iterations_needed = param.iterations_needed
 iteration = 1
 z_range = np.arange(param.z_start, param.z_start+param.n_blocks_z)
 
 print("------------------------------------------------")
 print("Iteration " + str(iteration))
 
-#iteration 1 (2 blocks)
+# iteration 1 (2 blocks)
 for bz_global in z_range[::2]:
 
     border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
     border_comp_exist_combined = set()
+    neighbor_label_set_border_global = {(1,1)}
 
     # determine if the last block is single (uneven number of blocks)
     if bz_global+1>z_range[-1]:
@@ -94,6 +90,7 @@ for bz_global in z_range[::2]:
                                                         border_comp_combined_new, border_comp_exist_combined_new)
 
     border_comp_exist_combined_new.remove((2**30))
+    neighbor_label_set_border_global.remove((1,1))
 
     #compute coutput blocksize
     if isSingle:
@@ -110,10 +107,11 @@ for bz_global in z_range[::2]:
     dumpNumbaDictToFile(border_comp_combined_new, "border_comp_local", output_folder, "")
     dumpToFile(border_comp_exist_combined_new, "border_comp_exist_local", output_folder, "")
     dumpToFile(box_combined, "box_combined", output_folder, "")
+    dumpToFile(neighbor_label_set_border_global, "neighbor_label_set_border_global", output_folder, "")
 
-    del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new, box_combined
+    del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new, box_combined, neighbor_label_set_border_global
 
-
+# blockwise iterations
 for iteration in range(2, iterations_needed+1):
 
     print("------------------------------------------------")
@@ -131,6 +129,7 @@ for iteration in range(2, iterations_needed+1):
 
         border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
         border_comp_exist_combined = set()
+        neighbor_label_set_border_global_combined = set()
 
         # check if block is missing and have to compute single
         if bz_global+int(block_size/2)>z_range[-1]:
@@ -157,10 +156,11 @@ for iteration in range(2, iterations_needed+1):
             #load border components from last iteration
             border_comp_local = readFromFile("border_comp_local", output_folder, "")
             border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
+            neighbor_label_set_border_global = readFromFile("neighbor_label_set_border_global", output_folder, "")
             border_comp_combined.update(border_comp_local)
             border_comp_exist_combined = border_comp_exist_combined.union(border_comp_exist_local)
-
-            del border_comp_local, border_comp_exist_local
+            neighbor_label_set_border_global_combined = neighbor_label_set_border_global_combined.union(neighbor_label_set_border_global)
+            del border_comp_local, border_comp_exist_local, neighbor_label_set_border_global
 
         print("------------------")
         print("bz_range: " + str(bz_range))
@@ -205,7 +205,7 @@ for iteration in range(2, iterations_needed+1):
                 raise ValueError("Unknown Error")
 
             # associated label global and border components for next iteration
-            border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
+            border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global_combined,
                                                     border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
                                                     border_comp_combined_new, border_comp_exist_combined_new)
 
@@ -216,11 +216,19 @@ for iteration in range(2, iterations_needed+1):
         dumpNumbaDictToFile(border_comp_combined_new, "border_comp_local", output_folder, "")
         dumpToFile(border_comp_exist_combined_new, "border_comp_exist_local", output_folder, "")
         dumpToFile(box_combined, "box_combined", output_folder, "")
+        dumpToFile(neighbor_label_set_border_global, "neighbor_label_set_border_global", output_folder, "")
 
-        del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new, box_combined
+        del border_comp_combined, border_comp_exist_combined, border_comp_combined_new
+        del border_comp_exist_combined_new, box_combined, neighbor_label_set_border_global, neighbor_label_set_border_global_combined
 
-#load neighbor label set_border_global for all blocks
-neighbor_label_set_border_global.remove((1,1))
+
+# final step
+output_folder = param.folder_path+"/z"+str(param.z_start).zfill(4)+"_it_"+str(param.iterations_needed)+"/"
+neighbor_label_set_border_global = readFromFile("neighbor_label_set_border_global", output_folder, "")
+
+neighbor_label_set_inside_global = set()
+associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
+undetermined_global = set()
 
 # load sets by iterating over all folders (expected to be small)
 for bz in range(param.z_start, param.z_start+param.n_blocks_z):

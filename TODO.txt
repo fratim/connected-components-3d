@@ -2,9 +2,11 @@
 
 1. Implement start_label into c++ code (so far shifted in python)
 4. flush all print messages
-5. try to copy neighbor_label dicht over steps, so far have to create new in step2
+5. try to copy neighbor_label dict over steps, so far have to create new in step2
 6. get rid off neighbor_label_exist
-7. Trey to find global label set by only looking one direction
+7. Try to find global label set by only looking one direction
 8. replace 2**30 by highest number
+9. Do not reload neighbor_label_set_border_global on every iteration, but load it all at the end
 
-Questions: Why does int64 take values higher than the specified max?
+Questions:
+1. Why does int64 take values higher than the specified max?

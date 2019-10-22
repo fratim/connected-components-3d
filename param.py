@@ -1,3 +1,5 @@
+import math
+
 # Header file for block processing, includes parameters and paths
 isCluster = False
 
@@ -62,3 +64,6 @@ yres=bs_y*n_blocks_y
 xres=bs_x*n_blocks_x
 
 max_labels_block = bs_z*bs_y*bs_x
+
+#step Two iterations needed:
+iterations_needed  = math.ceil(math.log(n_blocks_z)/math.log(2))
