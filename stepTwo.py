@@ -10,6 +10,7 @@ import os
 import pickle
 import param
 import sys
+import math
 
 
 from functions import readFromFile, findAdjLabelSetGlobal, writeNeighborLabelDict, findAssociatedLabels, setUndeterminedtoNonHole, dumpNumbaDictToFile, makeFolder, dumpToFile, IdiToIdx, combineBoxes
@@ -28,6 +29,9 @@ iterations_needed = math.ceil(math.log(param.n_blocks_z)/math.log(2))
 iteration = 1
 z_range = np.arange(param.z_start, param.z_start+param.n_blocks_z)
 
+print("------------------------------------------------")
+print("Iteration " + str(iteration))
+
 #iteration 1 (2 blocks)
 for bz_global in z_range[::2]:
 
@@ -38,7 +42,6 @@ for bz_global in z_range[::2]:
     if bz_global+1>z_range[-1]:
         bz_range = [bz_global]
         isSingle = True
-        print("ISSINGLE!")
     elif bz_global+1<=z_range[-1]:
         bz_range = [bz_global, bz_global+1]
         isSingle = False
@@ -46,7 +49,6 @@ for bz_global in z_range[::2]:
         raise ValueError("Unknown Error!")
 
     for bz in bz_range:
-        print("Block z is: " + str(bz), flush=True)
         for by in range(param.y_start, param.y_start+param.n_blocks_y):
             for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
@@ -63,6 +65,7 @@ for bz_global in z_range[::2]:
     border_comp_combined_new = Dict.empty(key_type=types.int64,value_type=types.int64)
     border_comp_exist_combined_new = {(2**30)}
 
+    print("bz_range: " + str(bz_range))
     for bz in bz_range:
 
         # choose z directions to connect
@@ -86,7 +89,6 @@ for bz_global in z_range[::2]:
 
                 # find box to iterative over all blocks
                 box = [bz*param.bs_z,(bz+1)*param.bs_z,by*param.bs_y,(by+1)*param.bs_y,bx*param.bs_x,(bx+1)*param.bs_x]
-
                 border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
                                                         border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
                                                         border_comp_combined_new, border_comp_exist_combined_new)
@@ -101,6 +103,8 @@ for bz_global in z_range[::2]:
         box_combined = [bz_global*param.bs_z,(bz_global+2)*param.bs_z,param.y_start*param.bs_y,(param.y_start+param.n_blocks_y)*param.bs_y,
                             param.x_start*param.bs_x,(param.x_start+param.n_blocks_x)*param.bs_x]
 
+    print("box_combined: " + str(box_combined))
+
     output_folder = param.folder_path+"/z"+str(bz_global).zfill(4)+"_it_"+str(iteration)+"/"
     makeFolder(output_folder)
     dumpNumbaDictToFile(border_comp_combined_new, "border_comp_local", output_folder, "")
@@ -110,7 +114,7 @@ for bz_global in z_range[::2]:
     del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new, box_combined
 
 
-for iteration in range(2, iterations_needed+1)
+for iteration in range(2, iterations_needed+1):
 
     print("------------------------------------------------")
     print("Iteration " + str(iteration))
@@ -134,10 +138,12 @@ for iteration in range(2, iterations_needed+1)
             isSingle = True
         elif bz_global+int(block_size/2)<=z_range[-1]:
             bz_range = [bz_global, bz_global+int(block_size/2)]
+            isSingle=False
         else:
             raise ValueError("Unknown Error!")
 
         for bz in bz_range:
+
             output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"_it_"+str(iteration-1)+"/"
 
             # load coordinate boxes
@@ -156,10 +162,17 @@ for iteration in range(2, iterations_needed+1)
 
             del border_comp_local, border_comp_exist_local
 
+        print("------------------")
+        print("bz_range: " + str(bz_range))
         if isSingle:
             box_combined = box_a
+            print("box_a       : " + str(box_a))
         if not isSingle:
             box_combined = combineBoxes(box_a, box_b)
+            print("box_a:        " + str(box_a))
+            print("box_b:        " + str(box_b))
+        print("box_combined: " + str(box_combined))
+
 
         border_comp_combined_new = Dict.empty(key_type=types.int64,value_type=types.int64)
         border_comp_exist_combined_new = {(2**30)}
@@ -204,7 +217,7 @@ for iteration in range(2, iterations_needed+1)
         dumpToFile(border_comp_exist_combined_new, "border_comp_exist_local", output_folder, "")
         dumpToFile(box_combined, "box_combined", output_folder, "")
 
-        del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new, box_combined, box_a, box_b
+        del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new, box_combined
 
 #load neighbor label set_border_global for all blocks
 neighbor_label_set_border_global.remove((1,1))
@@ -213,6 +226,8 @@ neighbor_label_set_border_global.remove((1,1))
 for bz in range(param.z_start, param.z_start+param.n_blocks_z):
     for by in range(param.y_start, param.y_start+param.n_blocks_y):
         for bx in range(param.x_start, param.x_start+param.n_blocks_x):
+
+            output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
 
             neighbor_label_set_inside_local = readFromFile("neighbor_label_set_inside_local", output_folder, "")
             associated_label_local = readFromFile("associated_label_local", output_folder, "")

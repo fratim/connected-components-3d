@@ -20,10 +20,10 @@ echo "Execution started"
 #
 # echo "Step 1 finished"
 #
-# # # execute step 2 (find associatted labels_global)
-# python stepTwo.py
-# 
-# echo "Step 2 finished"
+# # execute step 2 (find associatted labels_global)
+python stepTwo.py
+
+echo "Step 2 finished"
 
 # execute step 3 (fill holes)
 for bz in {2..15}
