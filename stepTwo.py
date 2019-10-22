@@ -33,7 +33,18 @@ for bz_global in z_range[::2]:
     border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
     border_comp_exist_combined = set()
 
-    for bz in [bz_global, bz_global+1]:
+    # determine if the last block is single (uneven number of blocks)
+    if bz_global+1>z_range[-1]:
+        bz_range = [bz_global]
+        isSingle = True
+        print("ISSINGLE!")
+    elif bz_global+1<=z_range[-1]:
+        bz_range = [bz_global, bz_global+1]
+        isSingle = False
+    else:
+        raise ValueError("Unknown Error!")
+
+    for bz in bz_range:
         for by in range(param.y_start, param.y_start+param.n_blocks_y):
             for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
@@ -60,15 +71,22 @@ for bz_global in z_range[::2]:
 
 
 
-    for bz in [bz_global, bz_global+1]:
+    for bz in bz_range:
 
-        if bz == bz_global:
+        if isSingle:
+            connectInPosZdirec = False
+            connectInNegZdirec = False
+
+        elif bz == bz_range[0]:
             connectInPosZdirec = True
             connectInNegZdirec = False
 
-        if bz == bz_global+1:
+        elif bz == bz_range[1]:
             connectInPosZdirec = False
             connectInNegZdirec = True
+
+        else:
+            raise ValueError("Unkown Error")
 
         for by in range(param.y_start, param.y_start+param.n_blocks_y):
             for bx in range(param.x_start, param.x_start+param.n_blocks_x):
@@ -82,7 +100,13 @@ for bz_global in z_range[::2]:
 
     border_comp_exist_combined_new.remove((2**30))
 
-    box_combined = [bz_global*param.bs_z,(bz_global+2)*param.bs_z,param.y_start*param.bs_y,(param.y_start+param.n_blocks_y)*param.bs_y,param.x_start*param.bs_x,(param.x_start+param.n_blocks_x)*param.bs_x]
+    if isSingle:
+        box_combined = [bz_global*param.bs_z,(bz_global+1)*param.bs_z,param.y_start*param.bs_y,(param.y_start+param.n_blocks_y)*param.bs_y,
+                            param.x_start*param.bs_x,(param.x_start+param.n_blocks_x)*param.bs_x]
+    elif not isSingle:
+        box_combined = [bz_global*param.bs_z,(bz_global+2)*param.bs_z,param.y_start*param.bs_y,(param.y_start+param.n_blocks_y)*param.bs_y,
+                            param.x_start*param.bs_x,(param.x_start+param.n_blocks_x)*param.bs_x]
+
     print("Box combined: " + str(box_combined))
 
     iteration = 1
@@ -102,9 +126,12 @@ while lastIteration==False:
     block_size = 2**iteration
     bz_global_range = z_range[::block_size]
 
-    if z_range[0]+block_size >= z_range[-1]:
+    if z_range[0]+block_size > z_range[-1]:
+        print("range: " + str(z_range))
+        print("block size: " + str(block_size))
         lastIteration = True
         print ("this is last iteration")
+
 
     #iteration2 (4 blocks)
     bz_global_range = z_range[::block_size]
@@ -113,12 +140,23 @@ while lastIteration==False:
         border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
         border_comp_exist_combined = set()
 
-        for bz in [bz_global, bz_global+int(block_size/2)]:
+        # check if block is missing and have to compute single
+        if bz_global+int(block_size/2)>z_range[-1]:
+            bz_range = [bz_global]
+            isSingle = True
+            print("ISSINGLE!")
+        elif bz_global+int(block_size/2)<=z_range[-1]:
+            bz_range = [bz_global, bz_global+int(block_size/2)]
+            isSingle = False
+        else:
+            raise ValueError("Unknown Error!")
+
+        for bz in bz_range:
 
             print("bz read in is : " + str(bz), flush=True)
             output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"_it_"+str(iteration-1)+"/"
 
-            if bz==bz_global: box_a = readFromFile("box_combined", output_folder, "")
+            if bz==bz_range[0]: box_a = readFromFile("box_combined", output_folder, "")
             if bz==bz_global+int(block_size/2): box_b = readFromFile("box_combined", output_folder, "")
 
             border_comp_local = readFromFile("border_comp_local", output_folder, "")
@@ -129,31 +167,34 @@ while lastIteration==False:
 
             del border_comp_local, border_comp_exist_local
 
-        box_combined = combineBoxes(box_a, box_b)
+        if isSingle:
+            box_combined = box_a
+        if not isSingle:
+            box_combined = combineBoxes(box_a, box_b)
 
         border_comp_combined_new = Dict.empty(key_type=types.int64,value_type=types.int64)
         border_comp_exist_combined_new = {(2**30)}
 
-        for bz in [bz_global, bz_global+int(block_size/2)]:
+        for bz in bz_range:
 
             if lastIteration:
                 connectInPosZdirec = True
                 connectInNegZdirec = True
+            elif isSingle:
+                connectInPosZdirec = False
+                connectInNegZdirec = False
             else:
-                if bz == bz_global:
+                if bz == bz_range[0]:
                     connectInPosZdirec = True
                     connectInNegZdirec = False
-                elif bz == bz_global+int(block_size/2):
+                elif bz == bz_range[1]:
                     connectInPosZdirec = False
                     connectInNegZdirec = True
                 else:
                     raise ValueError("Error in determining z connection directions")
 
-            box = [bz*param.bs_z,(bz+int(block_size/2))*param.bs_z,param.y_start*param.bs_y,(param.y_start+param.n_blocks_y)*param.bs_y,param.x_start*param.bs_x,(param.x_start+param.n_blocks_x)*param.bs_x]
-            print(box)
-            print("Box Combined:" + str(box_combined))
-            # print(box)
-            border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
+            print(box_combined)
+            border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box_combined, neighbor_label_set_border_global,
                                                     border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
                                                     border_comp_combined_new, border_comp_exist_combined_new)
 
@@ -166,28 +207,11 @@ while lastIteration==False:
         dumpToFile(border_comp_exist_combined_new, "border_comp_exist_local", output_folder, "")
         dumpToFile(box_combined, "box_combined", output_folder, "")
 
-        del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new
+        del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new, box_combined
 
     iteration = iteration + 1
 
-print("Final: ")
-print("neighbor_label_set_inside_global: " + str(sys.getsizeof(neighbor_label_set_inside_global)))
-print("associated_label_global: " + str(sys.getsizeof(dict(associated_label_global))))
-print("undetermined_global: " + str(sys.getsizeof(undetermined_global)))
-
 print("Created border_comp_exist_global and neighbor_label_set_border_global", flush=True)
-
-# counter_total = 0
-#
-# for bz in range(param.z_start, param.z_start+param.n_blocks_z):
-#     for by in range(param.y_start, param.y_start+param.n_blocks_y):
-#         for bx in range(param.x_start, param.x_start+param.n_blocks_x):
-#
-#             box = [bz*param.bs_z,(bz+1)*param.bs_z,by*param.bs_y,(by+1)*param.bs_y,bx*param.bs_x,(bx+1)*param.bs_x]
-#             # print(box)
-#
-#             neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
-#                                                     border_comp_global, border_comp_exist_global, param.yres, param.xres)
 
 neighbor_label_set_border_global.remove((1,1))
 neighbor_label_set = neighbor_label_set_inside_global.union(neighbor_label_set_border_global)
@@ -196,12 +220,6 @@ print("Find associated labels...", flush=True)
 neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
 associated_label_global, undetermined_global = findAssociatedLabels(neighbor_label_dict, undetermined_global, associated_label_global)
 associated_label_global = setUndeterminedtoNonHole(undetermined_global, associated_label_global)
-
-print("Final: ")
-print("neighbor_label_dict: " + str(sys.getsizeof(neighbor_label_dict)))
-print("neighbor_label_set: " + str(sys.getsizeof(neighbor_label_set)))
-print("associated_label_global: " + str(sys.getsizeof(dict(associated_label_global))))
-print("undetermined_global: " + str(sys.getsizeof(undetermined_global)))
 
 output_name = ""
 dumpNumbaDictToFile(associated_label_global, "associated_label_global", param.folder_path, output_name)

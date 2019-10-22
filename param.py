@@ -28,7 +28,7 @@ if not isCluster:
 
     # compute number of blocks and block size
     bs_z = 128
-    n_blocks_z = 16
+    n_blocks_z = 9
     bs_y = 128
     n_blocks_y = 2
     bs_x = 128
