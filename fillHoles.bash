@@ -20,8 +20,28 @@ echo "Execution started"
 #
 # echo "Step 1 finished"
 #
-# # execute step 2 (find associatted labels_global)
-python stepTwo.py
+# execute step 2 (find associatted labels_global)
+for bz in {2..15}
+do
+  python stepTwoA.py $bz
+done
+
+for bz in {2..15}
+do
+  python stepTwoB.py $bz 2
+done
+
+for bz in {2..15}
+do
+  python stepTwoB.py $bz 3
+done
+
+for bz in {2..15}
+do
+  python stepTwoB.py $bz 4
+done
+
+python stepTwoC.py
 
 echo "Step 2 finished"
 
