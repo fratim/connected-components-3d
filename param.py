@@ -39,7 +39,7 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = "fresh"
+outp_ID = "fresh2"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 

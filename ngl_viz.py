@@ -54,8 +54,9 @@ def loadViz(box, path, caption, res, printIDs, idRes, printCoods):
             if u!=0:
                 print("Coordinates of component " + str(u))
                 coods = np.argwhere(gt==u)
-                for i in coods.shape[0]:
-                    print(str(coods[i,0]) + ", " + str(coods[i,1]) + ", " + str(coods[i,2]))
+                print(coods)
+                # for i in int(coods.shape[0]):
+                #     print(str(coods[i,0]) + ", " + str(coods[i,1]) + ", " + str(coods[i,2]))
 
     with viewer.txn() as s:
         s.layers.append(
@@ -91,7 +92,7 @@ loadViz(box=box, path=fn_filled_gt,           caption="filled_gt",            re
 loadViz(box=box, path=fn_wholes_gt,             caption="wholes_gt",            res=res, printIDs = True, idRes=idRes,      printCoods=False)
 loadViz(box=box, path=fn_filled_compare,        caption="filled_comp",          res=res, printIDs = True, idRes=idRes,      printCoods=False)
 loadViz(box=box, path=fn_wholes_compare,        caption="wholes_comp",          res=res, printIDs = True, idRes=idRes,      printCoods=False)
-loadViz(box=box, path=fn_diff_wholes_compare,   caption="diff_wholes_comp",     res=res, printIDs = True, idRes=idRes,      printCoods=False)
+loadViz(box=box, path=fn_diff_wholes_compare,   caption="diff_wholes_comp",     res=res, printIDs = True, idRes=idRes,      printCoods=True)
 
 print("----------------------------DONE---------------------------------")
 print("-----------------------------------------------------------------")

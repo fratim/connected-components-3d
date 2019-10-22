@@ -122,7 +122,8 @@ iteration = 2
 lastIteration = False
 while lastIteration==False:
 
-    print("new Iteration!!")
+    print("------------------------------------------------")
+    print("Iteration " + str(iteration))
     block_size = 2**iteration
     bz_global_range = z_range[::block_size]
 
@@ -193,8 +194,22 @@ while lastIteration==False:
                 else:
                     raise ValueError("Error in determining z connection directions")
 
-            print(box_combined)
-            border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box_combined, neighbor_label_set_border_global,
+            print("Z Pos: " + str(connectInPosZdirec))
+            print("Z Neg: " + str(connectInNegZdirec))
+
+            if bz == bz_range[0]:
+                box = box_a
+            elif not isSingle:
+                if bz == bz_range[1]:
+                    box = box_b
+                else:
+                    raise ValueError("Unknown Error")
+            else:
+                raise ValueError("Unknown Error")
+
+            print(box)
+
+            border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
                                                     border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
                                                     border_comp_combined_new, border_comp_exist_combined_new)
 
