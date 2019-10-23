@@ -1,15 +1,16 @@
 import os
 import param
+import numpy as np
 
 template = '''#!/bin/bash
 #
 # add all other SBATCH directives here
 #
-#SBATCH -p shared                                            # use the COX partition
+#SBATCH -p holyseasgpu                                       # use the COX partition
 #SBATCH -n 1                                                 # Number of cores
 #SBATCH -N 1                                                 # Ensure that all cores are on one matching
 #SBATCH --mem={MEMORY}                                       # CPU memory in MBs
-#SBATCH -t 0-01:00                                           # time in dd-hh:mm to run the code for
+#SBATCH -t 0-15:00                                           # time in dd-hh:mm to run the code for
 #SBATCH --mail-type=NONE                                     # send all email types (start, end, error, etc.)
 #SBATCH --mail-user=tfranzmeyer@g.harvard.edu                # email address to send to
 #SBATCH -o {OUTPUT_PATH}/{JOBNAME}.out                       # where to write the log files
@@ -56,7 +57,7 @@ step00folderpath = SLURM_OUTPUT_FOLDER+"step00/"
 step01folderpath = SLURM_OUTPUT_FOLDER+"step01/"
 step02Afolderpath = SLURM_OUTPUT_FOLDER+"step02A/"
 step02Bfolderpath = SLURM_OUTPUT_FOLDER+"step02B/"
-step02Bfolderpath = SLURM_OUTPUT_FOLDER+"step02C/"
+step02Cfolderpath = SLURM_OUTPUT_FOLDER+"step02C/"
 step03folderpath = SLURM_OUTPUT_FOLDER+"step03/"
 step04folderpath = SLURM_OUTPUT_FOLDER+"step04/"
 
@@ -107,7 +108,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
 for bz in range(param.z_start, param.z_start + param.n_blocks_z):
 
     command = "stepTwoA.py" + " " + str(bz)
-    jobname = "step02A"+"_"+param.outp_ID+"_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+    jobname = "step02A"+"_it1_"+param.outp_ID+"_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
     t = template
     t = t.replace('{JOBNAME}', jobname)
@@ -121,15 +122,16 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
     files_written += 1
 
 # write slurm for step two B
-for it in range(2, param.iterations_needed+1)
+print("Iterations needed: "+ str(param.iterations_needed))
+for it in range(2, param.iterations_needed+1):
     for bz in range(param.z_start, param.z_start + param.n_blocks_z):
 
-        blocksize = it**2
+        blocksize = 2**it
         z_range = np.arange(param.z_start, param.z_start+param.n_blocks_z)
-        if it in z_range[::blocksize]:
+        if bz in z_range[::blocksize]:
 
             command = "stepTwoB.py" + " " + str(bz) + " " + str(it)
-            jobname = "step02A"+"_"+param.outp_ID+"_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+            jobname = "step02B_it"+str(it)+"_"+param.outp_ID+"_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
             t = template
             t = t.replace('{JOBNAME}', jobname)
@@ -144,7 +146,7 @@ for it in range(2, param.iterations_needed+1)
 
 # Write Slurm for step two C
 command = "stepTwoC.py"
-jobname = "step02"+"_"+param.outp_ID
+jobname = "step02C"+"_"+param.outp_ID
 
 t = template
 t = t.replace('{JOBNAME}', jobname)
