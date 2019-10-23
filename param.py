@@ -69,7 +69,7 @@ output_path = folder_path+"output_files/"
 n_comp_filepath = folder_path+"n_comp.txt"
 
 #memory need per block (in MB)
-memory_needed = 40000 #int(1.1*bs_z*bs_y*bs_x*(8+8+2)/1000/1000)
+memory_needed = 150000 #int(1.1*bs_z*bs_y*bs_x*(8+8+2)/1000/1000)
 
 zres=bs_z*n_blocks_z
 yres=bs_y*n_blocks_y
