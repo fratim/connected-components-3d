@@ -1,7 +1,7 @@
 import math
 
 # Header file for block processing, includes parameters and paths
-isCluster = True
+isCluster = False
 
 if isCluster:
     output_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
@@ -53,7 +53,7 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = "fullSize_1to20"
+outp_ID = "newBash"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 

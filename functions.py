@@ -295,9 +295,13 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
         query_comp = undetermined.pop()
 
         #check if it has only one neighbor and this neighbor is a neuron
-        if len(neighbor_label_dict[query_comp])==1 and neighbor_label_dict[query_comp][0]!=0x7FFFFFFFFFFFFFFF and neighbor_label_dict[query_comp][0]>0:
-            associated_label[query_comp] = neighbor_label_dict[query_comp][0]
-
+        try:
+            if len(neighbor_label_dict[query_comp])==1 and neighbor_label_dict[query_comp][0]!=0x7FFFFFFFFFFFFFFF and neighbor_label_dict[query_comp][0]>0:
+                associated_label[query_comp] = neighbor_label_dict[query_comp][0]
+        except:
+            print(query_comp)
+            print(neighbor_label_dict[query_comp])
+            raise ValueError("ERROR")
         # otherwise unroll neighbors to identify
         else:
 
@@ -582,11 +586,10 @@ class dataBlock:
         del diff
 
     def readLabels(self, data_path, sample_name, bz, by, bx, bs_z, bs_y, bs_x):
-        # if param.isCluster:
-        filename = data_path+"/"+sample_name+"/"+str(bz).zfill(4)
-        print(bz,by,bx)
-        # if not param.isCluster:
-        #     filename = data_path+"/"+sample_name+"/"+"labels_cut"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+        if param.isCluster:
+            filename = data_path+"/"+sample_name+"/"+str(bz).zfill(4)
+        else:
+            filename = data_path+"/"+sample_name+"/"+"cut_z_"+ str((bz)).zfill(4)+"y_"+ str(by).zfill(4)+"x_"+ str(bx).zfill(4)
         box = [0, bs_z, 0, bs_y, 0, bs_x]
         self.labels_in = readData(box, filename)
         self.bs_z = bs_z
