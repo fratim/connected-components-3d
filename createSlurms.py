@@ -11,7 +11,7 @@ template = '''#!/bin/bash
 #SBATCH -N 1                                                 # Ensure that all cores are on one matching
 #SBATCH --mem={MEMORY}                                       # CPU memory in MBs
 #SBATCH -t 0-15:00                                           # time in dd-hh:mm to run the code for
-#SBATCH --mail-type=NONE                                     # send all email types (start, end, error, etc.)
+#SBATCH --mail-type=END                                      # send all email types (start, end, error, etc.)
 #SBATCH --mail-user=tfranzmeyer@g.harvard.edu                # email address to send to
 #SBATCH -o {OUTPUT_PATH}/{JOBNAME}.out                       # where to write the log files
 #SBATCH -e {ERROR_PATH}/{JOBNAME}.err                        # where to write the error files
