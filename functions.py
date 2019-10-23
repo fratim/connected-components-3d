@@ -362,8 +362,7 @@ def fillWholes(output_path,associated_label):
 
     # use nopython to do actual computation
     cc_labels = fillwholesNoPython(box,cc_labels,associated_label)
-
-    output_name = "block_filled"
+    output_name = ""
     writeData(output_path+output_name, cc_labels)
 
 @njit
@@ -410,9 +409,8 @@ def concatBlocks(z_start, y_start, x_start, n_blocks_z, n_blocks_y, n_blocks_x, 
 
                 if bz==z_start and by==y_start and bx==x_start:
                     labels_concat =  np.zeros((bs_z*n_blocks_z,bs_y*n_blocks_y,bs_x*n_blocks_x),dtype=np.uint16)
-
-                labels_concat[(bz-z_start)*bs_z:((bz-z_start)+1)*bs_z,(by-y_start)*bs_y:(by-y_start+1)*bs_y,(bx-x_start)*bs_x:(bx-x_start+1)*bs_x] = readData(box=[1], filename=output_path+input_name)
-
+                box=[0,bs_z,0,bs_y,0,bs_x]
+                labels_concat[(bz-z_start)*bs_z:((bz-z_start)+1)*bs_z,(by-y_start)*bs_y:(by-y_start+1)*bs_y,(bx-x_start)*bs_x:(bx-x_start+1)*bs_x] = readData(box, filename=output_path+input_name)
     print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape))
     output_name = "filled"
     writeData(output_path+output_name, labels_concat)
