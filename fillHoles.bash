@@ -3,10 +3,10 @@ set -e
 
 echo "Execution started"
 
-# # prepare folders
+# # # # prepare folders
 # python preparation.py
-#
-# # Execute step one
+# #
+# # # Execute step one
 # for bz in {2..15}
 # do
 #   for by in {0..1}
@@ -19,29 +19,14 @@ echo "Execution started"
 # done
 #
 # echo "Step 1 finished"
-#
-# execute step 2 (find associatted labels_global)
-for bz in {2..15}
-do
-  python stepTwoA.py $bz
-done
+# #
+# # execute step 2 (find associatted labels_global)
+# for bz in {2..15}
+# do
+#   python stepTwoA.py $bz
+# done
 
-for bz in {2..15}
-do
-  python stepTwoB.py $bz 2
-done
-
-for bz in {2..15}
-do
-  python stepTwoB.py $bz 3
-done
-
-for bz in {2..15}
-do
-  python stepTwoB.py $bz 4
-done
-
-python stepTwoC.py
+python stepTwoB.py
 
 echo "Step 2 finished"
 

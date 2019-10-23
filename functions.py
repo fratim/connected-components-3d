@@ -79,8 +79,8 @@ def computeConnectedComp6(labels, start_label, max_labels):
     return cc_labels, n_comp
 
 # find sets of adjacent components
-# @njit
-def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres, connectInPosZdirec, connectInNegZdirec, border_comp_combined_new, border_comp_exist_combined_new):
+@njit
+def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres, connectInPosZdirec, connectInNegZdirec):
 
     for iz in [0, box[1]-box[0]-1]:
         for iy in range(0, box[3]-box[2]):
@@ -93,11 +93,6 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                             neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
                         else:
                             neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
-                            border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                            border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
-                    else:
-                        border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                        border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
                 elif iz == box[1]-box[0]-1:
                     if connectInPosZdirec:
@@ -106,15 +101,8 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                             neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
                         else:
                             neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
-                            border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                            border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
-                    else:
-                        border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                        border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
                 else:
-                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
-                    border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                    border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
+                    raise ValueError("Unknown Error")
 
     for iz in range(0, box[1]-box[0]):
         for iy in [0, box[3]-box[2]-1]:
@@ -127,8 +115,6 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
                 else:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
-                    border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                    border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
     for iz in range(0, box[1]-box[0]):
         for iy in range(0, box[3]-box[2]):
@@ -141,10 +127,8 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
                 else:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
-                    border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                    border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
-    return border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border
+    return neighbor_label_set_border
 
 # find sets of adjacent components
 @njit
@@ -295,9 +279,13 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
         query_comp = undetermined.pop()
 
         #check if it has only one neighbor and this neighbor is a neuron
-        if len(neighbor_label_dict[query_comp])==1 and neighbor_label_dict[query_comp][0]!=0x7FFFFFFFFFFFFFFF and neighbor_label_dict[query_comp][0]>0:
-            associated_label[query_comp] = neighbor_label_dict[query_comp][0]
-
+        try:
+            if len(neighbor_label_dict[query_comp])==1 and neighbor_label_dict[query_comp][0]!=0x7FFFFFFFFFFFFFFF and neighbor_label_dict[query_comp][0]>0:
+                associated_label[query_comp] = neighbor_label_dict[query_comp][0]
+        except:
+            print(query_comp)
+            print(neighbor_label_dict[query_comp])
+            raise ValueError("ERROR")
         # otherwise unroll neighbors to identify
         else:
 
@@ -582,11 +570,10 @@ class dataBlock:
         del diff
 
     def readLabels(self, data_path, sample_name, bz, by, bx, bs_z, bs_y, bs_x):
-        # if param.isCluster:
-        filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
-        print(bz,by,bx)
-        # if not param.isCluster:
-        #     filename = data_path+"/"+sample_name+"/"+"labels_cut"+"_z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+        if param.isCluster:
+            filename = data_path+"/"+sample_name+"/"+str(bz).zfill(4)
+        else:
+            filename = data_path+"/"+sample_name+"/"+"cut_z_"+ str((bz)).zfill(4)+"y_"+ str(by).zfill(4)+"x_"+ str(bx).zfill(4)
         box = [0, bs_z, 0, bs_y, 0, bs_x]
         self.labels_in = readData(box, filename)
         self.bs_z = bs_z
