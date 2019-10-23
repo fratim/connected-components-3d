@@ -5,42 +5,42 @@ import pickle
 from functions import readData, IdiToIdx
 
 print("HERE")
-
-z_range = np.arange(10,36)
-print(z_range)
-
-#iteration2 (4 blocks)
-iteration = 2
-finished = False
-
-while finished==False:
-
-    print("new Iteration!!")
-    block_size = 2**iteration
-    bz_global_range = z_range[::block_size]
-    for bz_global in bz_global_range:
-
-        print("new block")
-
-        for bz in [bz_global, bz_global+int(block_size/2)]:
-            print(bz)
-
-    iteration = iteration + 1
-    if z_range[0]+block_size >= z_range[-1]:
-         finished = True
-         print ("DONE")
-
-
-# r = r[::2]
 #
-# for i in r:
-#     print(i)
-
-# counter = 0
-# for i in range(20):
-#  counter = counter + 1
-#  if counter%5 == 0:
-#      print("Count is: " + str(counter))
+# z_range = np.arange(10,36)
+# print(z_range)
+#
+# #iteration2 (4 blocks)
+# iteration = 2
+# finished = False
+#
+# while finished==False:
+#
+#     print("new Iteration!!")
+#     block_size = 2**iteration
+#     bz_global_range = z_range[::block_size]
+#     for bz_global in bz_global_range:
+#
+#         print("new block")
+#
+#         for bz in [bz_global, bz_global+int(block_size/2)]:
+#             print(bz)
+#
+#     iteration = iteration + 1
+#     if z_range[0]+block_size >= z_range[-1]:
+#          finished = True
+#          print ("DONE")
+#
+#
+# # r = r[::2]
+# #
+# # for i in r:
+# #     print(i)
+#
+# # counter = 0
+# # for i in range(20):
+# #  counter = counter + 1
+# #  if counter%5 == 0:
+# #      print("Count is: " + str(counter))
 
 
 
@@ -50,8 +50,8 @@ while finished==False:
 # labels = readData([1],"/home/frtim/wiring/raw_data/segmentations/Zebrafinch/0128")
 # print(labels.shape)
 #
-# labels = readData([1],"/home/frtim/wiring/raw_data/segmentations/Zebrafinch/2432")
-# print(labels.shape)
+labels = readData([1],"/home/frtim/wiring/raw_data/segmentations/Zebrafinch/5632")
+print(labels.shape)
 
 #
 # f = open("/home/frtim/Desktop/test.txt", "a+")

@@ -4,15 +4,18 @@ import math
 isCluster = True
 
 if isCluster:
-    output_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
-    data_path = "/n/home12/tfranzmeyer/wiring/raw_data/segmentations/Zebrafinch/"
+    output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
+    data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
     sample_name = ""
 
     # compute number of blocks and block size
     bs_z = 128
+    bs_z_last = 68
     n_blocks_z = 45
+
     bs_y = 5456
     n_blocks_y = 1
+
     bs_x = 5332
     n_blocks_x = 1
 
@@ -42,9 +45,12 @@ if not isCluster:
 
     # compute number of blocks and block size
     bs_z = 128
+    bs_z_last = 68
     n_blocks_z = 4
+
     bs_y = 2048
     n_blocks_y = 1
+
     bs_x = 2048
     n_blocks_x = 1
 
@@ -69,7 +75,7 @@ output_path = folder_path+"output_files/"
 n_comp_filepath = folder_path+"n_comp.txt"
 
 #memory need per block (in MB)
-memory_needed = 100000 #int(1.1*bs_z*bs_y*bs_x*(8+8+2)/1000/1000)
+memory_needed = 80000 #int(1.1*bs_z*bs_y*bs_x*(8+8+2)/1000/1000)
 
 zres=bs_z*n_blocks_z
 yres=bs_y*n_blocks_y

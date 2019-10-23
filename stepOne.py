@@ -32,7 +32,7 @@ label_start = -1*block_number*param.max_labels_block -1
 
 currBlock = dataBlock(viz_wholes=True)
 currBlock.readLabels(data_path=param.data_path, sample_name=param.sample_name,
-                        bz=bz, by=by, bx=bx, bs_z=param.bs_z, bs_y=param.bs_y, bs_x=param.bs_x)
+                        bz=bz, by=by, bx=bx)
 currBlock.setRes(zres=param.zres,yres=param.yres,xres=param.xres)
 
 currBlock.computeStepOne(label_start=label_start, max_labels_block=param.max_labels_block, output_path=param.folder_path)

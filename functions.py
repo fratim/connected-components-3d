@@ -567,16 +567,16 @@ class dataBlock:
 
         del diff
 
-    def readLabels(self, data_path, sample_name, bz, by, bx, bs_z, bs_y, bs_x):
+    def readLabels(self, data_path, sample_name, bz, by, bx):
         if param.isCluster:
         	filename = data_path+"/"+sample_name+"/"+str(bz).zfill(4)
         else:
         	filename = data_path+"/"+sample_name+"/"+"cut_z_"+ str((bz)).zfill(4)+"y_"+ str(by).zfill(4)+"x_"+ str(bx).zfill(4)
-        box = [0, bs_z, 0, bs_y, 0, bs_x]
+        box = [1]
         self.labels_in = readData(box, filename)
-        self.bs_z = bs_z
-        self.bs_y = bs_y
-        self.bs_x = bs_x
+        self.bs_z = self.labels_in[0]
+        self.bs_y = self.labels_in[1]
+        self.bs_x = self.labels_in[2]
         self.bz=bz
         self.by=by
         self.bx=bx
