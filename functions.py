@@ -79,8 +79,8 @@ def computeConnectedComp6(labels, start_label, max_labels):
     return cc_labels, n_comp
 
 # find sets of adjacent components
-# @njit
-def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres, connectInPosZdirec, connectInNegZdirec, border_comp_combined_new, border_comp_exist_combined_new):
+@njit
+def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres, connectInPosZdirec, connectInNegZdirec):
 
     for iz in [0, box[1]-box[0]-1]:
         for iy in range(0, box[3]-box[2]):
@@ -93,11 +93,6 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                             neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
                         else:
                             neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
-                            border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                            border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
-                    else:
-                        border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                        border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
                 elif iz == box[1]-box[0]-1:
                     if connectInPosZdirec:
@@ -106,15 +101,8 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                             neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
                         else:
                             neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
-                            border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                            border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
-                    else:
-                        border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                        border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
                 else:
-                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
-                    border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                    border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
+                    raise ValueError("Unknown Error")
 
     for iz in range(0, box[1]-box[0]):
         for iy in [0, box[3]-box[2]-1]:
@@ -127,8 +115,6 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
                 else:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
-                    border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                    border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
     for iz in range(0, box[1]-box[0]):
         for iy in range(0, box[3]-box[2]):
@@ -141,10 +127,8 @@ def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_co
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
                 else:
                     neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
-                    border_comp_combined_new[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]=border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]
-                    border_comp_exist_combined_new.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
-    return border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border
+    return neighbor_label_set_border
 
 # find sets of adjacent components
 @njit

@@ -64,10 +64,6 @@ for bz_global in z_range:
 
                 del border_comp_local, border_comp_exist_local
 
-    # TODO should be able to delete this
-    border_comp_combined_new = Dict.empty(key_type=types.int64,value_type=types.int64)
-    border_comp_exist_combined_new = {(2**30)}
-
     connectInPosZdirec = True
     connectInNegZdirec = True
 
@@ -77,18 +73,14 @@ for bz_global in z_range:
             # find box to iterative over all blocks
             box = [bz_global*param.bs_z,(bz_global+1)*param.bs_z,by*param.bs_y,(by+1)*param.bs_y,bx*param.bs_x,(bx+1)*param.bs_x]
             print(box)
-            _, _, neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
-                                                    border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec,
-                                                    border_comp_combined_new, border_comp_exist_combined_new)
-
-    border_comp_exist_combined_new.remove((2**30))
-    neighbor_label_set_border_global.remove((1,1))
+            neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
+                                                    border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec)
 
     output_folder = param.folder_path+"/z"+str(bz_global).zfill(4)+"/"
     makeFolder(output_folder)
     dumpToFile(neighbor_label_set_border_global, "neighbor_label_set_border_global", output_folder, "")
 
-    del border_comp_combined, border_comp_exist_combined, border_comp_combined_new, border_comp_exist_combined_new, neighbor_label_set_border_global
+    del border_comp_combined, border_comp_exist_combined, neighbor_label_set_border_global
 
 
 # final step

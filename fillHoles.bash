@@ -3,7 +3,7 @@ set -e
 
 echo "Execution started"
 
-# # # prepare folders
+# # # # prepare folders
 # python preparation.py
 # #
 # # # Execute step one
@@ -25,23 +25,8 @@ echo "Execution started"
 # do
 #   python stepTwoA.py $bz
 # done
-#
-# for bz in {2..15}
-# do
-#   python stepTwoB.py $bz 2
-# done
-#
-# for bz in {2..15}
-# do
-#   python stepTwoB.py $bz 3
-# done
-#
-# for bz in {2..15}
-# do
-#   python stepTwoB.py $bz 4
-# done
-#
-# python stepTwoC.py
+
+python stepTwoB.py
 
 echo "Step 2 finished"
 
