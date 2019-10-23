@@ -1,6 +1,7 @@
 import os
 import param
 import numpy as np
+import sys
 
 template = '''#!/bin/bash
 #
@@ -70,9 +71,13 @@ print(step00folderpath)
 makeFolder(step01folderpath)
 makeFolder(step02Afolderpath)
 makeFolder(step02Bfolderpath)
-makeFolder(step02Cfolderpath)
 makeFolder(step03folderpath)
 makeFolder(step04folderpath)
+
+# send no mails for normal jobs
+mail_std = "FAIL"
+# send mail for last job
+mail_last = "ALL"
 
 # Write Slurm for preparations file
 command = "preparation.py"
@@ -87,16 +92,9 @@ t = t.replace('{MEMORY}', "2000")
 t = t.replace('{PARTITION}', partition)
 t = t.replace('{MAIL}', mail_std)
 
-
-
 filename = step00folderpath + jobname + ".slurm"
 writeFile(filename, t)
 files_written += 1
-
-# send no mails for normal jobs
-mail_std = "FAIL"
-# send mail for last job
-mail_last = "ALL"
 
 # write slurm for step one
 for bz in range(param.z_start, param.z_start + param.n_blocks_z):
