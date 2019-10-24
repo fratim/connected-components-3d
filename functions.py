@@ -350,7 +350,7 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
     return associated_label, undetermined
 
 # fill detedted wholes and give non_wholes their ID (for visualization)
-def fillWholes(output_path,associated_label):
+def fillWholes(output_path,associated_label, bz):
 
     # create filename
     input_name = "cc_labels"
@@ -362,7 +362,7 @@ def fillWholes(output_path,associated_label):
 
     # use nopython to do actual computation
     cc_labels = fillwholesNoPython(box,cc_labels,associated_label)
-    output_name = ""
+    output_name = str(bz*128).zfill(4)
     writeData(output_path+output_name, cc_labels)
 
 @njit
