@@ -11,7 +11,7 @@ import pickle
 import param
 import sys
 
-from functions import fillWholes, readFromFile, readData
+from functions import fillWholes, readFromFile, readData, blockFolderPath
 
 # pass arguments
 if(len(sys.argv))!=4:
@@ -23,19 +23,27 @@ else:
 
 
 # STEP 3
+
+start_time_total = time.time()
+
+start_time_readpickle = time.time()
+output_folder = blockFolderPath(param.folder_path,bz,by,bx)
 output_name = ""
-associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
-associated_label_global.update(readFromFile("associated_label_global", param.folder_path, output_name))
+associated_label_block = Dict.empty(key_type=types.int64,value_type=types.int64)
+associated_label_block.update(readFromFile("associated_label_block", output_folder, output_name))
+time_readpickle = time.time()-start_time_readpickle
 
+
+
+start_time_fillWholes = time.time()
 output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
-fillWholes(output_path=output_folder,associated_label=associated_label_global, bz=bz)
+fillWholes(output_path=output_folder,associated_label=associated_label_block, bz=bz)
+time_fillWholes = time.time() - start_time_fillWholes
 
-# time_start = time.time()
-# output_path = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
-#
-# input_name = "cc_labels"
-# box = [1]
-# cc_labels = readData(box, output_path+input_name)
-# print("Tim needed:" + str(time.time()-time_start))
-# param.time_needed_step3 += time.time()-time_start
-# print("Tim needed step 3:" + str(param.time_needed_step3))
+time_total = time.time()-start_time_total
+
+g = open(param.step03_timing_filepath, "a+")
+g.write(    "total," + format(time_total, '.4f') + "," +
+            "pickleload," + format(time_readpickle, '.4f')+","+
+            "fillWholes," + format(time_fillWholes, '.4f')+"\n")
+g.close()

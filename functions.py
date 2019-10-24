@@ -148,7 +148,7 @@ def noPythonConnectWalls(label_set, MinWall, MaxWall):
 
 # find sets of adjacent components
 # @njit
-def findAdjLabelSetGlobal(box, output_path, label_set, yres, xres, border_contact,bz,by,bx):
+def findAdjLabelSetGlobal(output_path, label_set, yres, xres, border_contact,bz,by,bx):
 
     # Z direction
     ###################
@@ -414,6 +414,8 @@ def fillWholes(output_path,associated_label, bz):
 
     # read in data
     cc_labels = readData(box, output_path+input_name)
+
+    print(np.max(cc_labels[cc_labels<0]))
     box = [0,cc_labels.shape[0],0,cc_labels.shape[1],0,cc_labels.shape[2]]
 
     # use nopython to do actual computation
@@ -511,25 +513,6 @@ def readFromFile(object_name, output_path, output_name):
     f.close()
 
     return object
-
-def combineBoxes(box_a, box_b):
-
-    box_combined = box_b.copy()
-
-    if box_a[0]<box_b[0]:
-        box_combined[0] = box_a[0]
-    if box_a[1]>box_b[1]:
-        box_combined[1] = box_a[1]
-    if box_a[2]<box_b[2]:
-        box_combined[2] = box_a[2]
-    if box_a[3]>box_b[3]:
-        box_combined[2] = box_a[3]
-    if box_a[4]<box_b[4]:
-        box_combined[4] = box_a[4]
-    if box_a[5]>box_b[5]:
-        box_combined[5] = box_a[5]
-
-    return box_combined
 
 class dataBlock:
 
@@ -642,6 +625,7 @@ class dataBlock:
         box = [self.bz*self.bs_z,(self.bz+1)*self.bs_z,self.by*self.bs_y,(self.by+1)*self.bs_y,self.bx*self.bs_x,(self.bx+1)*self.bs_x]
         associated_label_local = Dict.empty(key_type=types.int64,value_type=types.int64)
 
+        start_time_cc_labels = time.time()
         cc_labels, n_comp = computeConnectedComp6(self.labels_in,label_start,max_labels_block)
 
         del self.labels_in
@@ -660,9 +644,16 @@ class dataBlock:
         writeData(output_folder+"xMinWall", cc_labels[: ,: ,0 ])
         writeData(output_folder+"xMaxWall", cc_labels[: ,: ,-1])
 
+        self.time_cc_labels = time.time()-start_time_cc_labels
+        start_time_AdjLabelLocal = time.time()
+
         neighbor_label_set_inside_local, neighbor_label_set_border_local = findAdjLabelSetLocal(box, cc_labels, self.yres, self.xres)
 
+        self.time_AdjLabelLocal = time.time()-start_time_AdjLabelLocal
+
         del cc_labels
+
+        start_time_assoc_labels = time.time()
 
         neighbor_label_set = neighbor_label_set_inside_local.union(neighbor_label_set_border_local)
         neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
@@ -670,15 +661,18 @@ class dataBlock:
         undetermined_local = set(neighbor_label_dict.keys())
         associated_label_local, undetermined_local = findAssociatedLabels(neighbor_label_dict=neighbor_label_dict, undetermined=undetermined_local, associated_label=associated_label_local)
 
+        self.time_assoc_labels = time.time()-start_time_assoc_labels
         del neighbor_label_set, neighbor_label_set_border_local, neighbor_label_dict
 
         self.n_comp=n_comp
 
         output_folder = output_path+"/z"+str(self.bz).zfill(4)+"y"+str(self.by).zfill(4)+"x"+str(self.bx).zfill(4)+"/"
 
+        start_time_writepickle = time.time()
         dumpToFile(neighbor_label_set_inside_local, "neighbor_label_set_inside_local", output_folder, "")
         dumpNumbaDictToFile(associated_label_local, "associated_label_local", output_folder, "")
         dumpToFile(undetermined_local, "undetermined_local", output_folder, "")
+        self.time_writepickle = time.time()-start_time_writepickle
 
     def setRes(self, zres,yres,xres):
         self.zres = zres

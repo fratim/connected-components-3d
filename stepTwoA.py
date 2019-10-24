@@ -13,82 +13,98 @@ import sys
 import math
 
 
-from functions import readFromFile, findAdjLabelSetGlobal, makeFolder, dumpToFile
+from functions import readFromFile, findAdjLabelSetGlobal, makeFolder, dumpToFile, blockFolderPath
 
-if(len(sys.argv))!=2:
-    raise ValueError(" Scripts needs exactley 3 input arguments (bz)")
+if(len(sys.argv))!=4:
+    raise ValueError(" Scripts needs exactley 3 input arguments (bz, vy, bx)")
 else:
-    bz_global = int(sys.argv[1])
+    bz = int(sys.argv[1])
+    by = int(sys.argv[2])
+    bx = int(sys.argv[3])
 
+# timing
+start_time_total = time.time()
 
-z_range = np.arange(param.z_start, param.z_start+param.n_blocks_z)
+# determine if Block is border block Z direc
+if bz<(param.z_start+param.n_blocks_z-1) and bz>param.z_start:
+    hasZBorder = False
+    onZMinBorder =  False
+    onZMaxBorder =  False
+elif bz<(param.z_start+param.n_blocks_z-1) and bz==param.z_start:
+    hasZBorder = True
+    onZMinBorder = True
+    onZMaxBorder = False
+elif bz==(param.z_start+param.n_blocks_z-1) and bz>param.z_start:
+    hasZBorder = True
+    onZMinBorder = False
+    onZMaxBorder = True
+elif bz==(param.z_start+param.n_blocks_z-1) and bz==param.z_start:
+    hasZBorder = True
+    onZMinBorder = True
+    onZMaxBorder = True
+else:
+    raise ValueError("Unknown Error Z!")
 
-if bz_global!=z_range[-1]:
-    bs_z = param.bs_z
-    bs_y = param.bs_y
-    bs_x = param.bs_x
-elif bz_global==z_range[-1]:
-    bs_z = param.bs_z_last
-    bs_y = param.bs_y
-    bs_x = param.bs_x
-else: raise ValueError("Unknown Error")
+# determine if Block is border block Y dirc
+if by<(param.y_start+param.n_blocks_y-1) and by>param.y_start:
+    hasYBorder = False
+    onYMinBorder = False
+    onYMaxBorder = False
+elif by<(param.y_start+param.n_blocks_y-1) and by==param.y_start:
+    hasYBorder = True
+    onYMinBorder = True
+    onYMaxBorder = False
+elif by==(param.y_start+param.n_blocks_y-1) and by>param.y_start:
+    hasYBorder = True
+    onYMinBorder = False
+    onYMaxBorder = True
+elif by==(param.y_start+param.n_blocks_y-1) and by==param.y_start:
+    hasYBorder = True
+    onYMinBorder = True
+    onYMaxBorder = True
+else:
+    raise ValueError("Unknown Error Y!")
 
-print("executing Step 2 calculations block " + str(bz_global), flush=True)
+# determine if Block is border block X direc
+if bx<(param.x_start+param.n_blocks_x-1) and bx>param.x_start:
+    hasXBorder = False
+    onXMinBorder = False
+    onXMaxBorder = False
+elif bx<(param.x_start+param.n_blocks_x-1) and bx==param.x_start:
+    hasXBorder = True
+    onXMinBorder = True
+    onXMaxBorder = False
+elif bx==(param.x_start+param.n_blocks_x-1) and bx>param.x_start:
+    hasXBorder = True
+    onXMinBorder = False
+    onXMaxBorder = True
+elif bx==(param.x_start+param.n_blocks_x-1) and bx==param.x_start:
+    hasXBorder = True
+    onXMinBorder = True
+    onXMaxBorder = True
+else:
+    raise ValueError("Unknown Error X!")
 
-
-border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
-border_comp_exist_combined = set()
 neighbor_label_set_border_global = {(1,1)}
 
-# determine if Block is border block
-if bz_global+1<=z_range[-1] and bz_global-1>=z_range[0]:
-    bz_range = [bz_global -1, bz_global, bz_global+1]
-    isBorder = False
-elif bz_global+1<=z_range[-1] and bz_global-1<z_range[0]:
-    bz_range = [bz_global, bz_global+1]
-    hasBorderLeft = True
-    hasBorderRight = False
-elif bz_global+1>z_range[-1] and bz_global-1>=z_range[0]:
-    bz_range = [bz_global-1, bz_global]
-    hasBorderLeft = False
-    hasBorderRight = True
-elif bz_global+1>z_range[-1] and bz_global-1<z_range[0]:
-    bz_range = [bz_global-1, bz_global]
-    hasBorderLeft = True
-    hasBorderRight = True
-else:
-    raise ValueError("Unknown Error!")
+border_contact = [onZMinBorder, onZMaxBorder, onYMinBorder, onYMaxBorder, onXMinBorder, onXMaxBorder]
 
-print(bz_range)
+start_time_AdjLabelGlobal = time.time()
+neighbor_label_set_border_global = findAdjLabelSetGlobal(param.folder_path,neighbor_label_set_border_global,param.yres,param.xres,border_contact,bz,by,bx)
+time_AdjLabelGlobal = time.time() - start_time_AdjLabelGlobal
 
-for bz in bz_range:
-    for by in range(param.y_start, param.y_start+param.n_blocks_y):
-        for bx in range(param.x_start, param.x_start+param.n_blocks_x):
+neighbor_label_set_border_global.remove((1,1))
 
-            output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
+output_folder = blockFolderPath(param.folder_path,bz,by,bx)
 
-            border_comp_local = readFromFile("border_comp_local", output_folder, "")
-            border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
-
-            border_comp_combined.update(border_comp_local)
-            border_comp_exist_combined = border_comp_exist_combined.union(border_comp_exist_local)
-
-            del border_comp_local, border_comp_exist_local
-
-connectInPosZdirec = True
-connectInNegZdirec = True
-
-for by in range(param.y_start, param.y_start+param.n_blocks_y):
-    for bx in range(param.x_start, param.x_start+param.n_blocks_x):
-
-        # find box to iterative over all blocks
-        box = [bz_global*bs_z,(bz_global+1)*bs_z,by*bs_y,(by+1)*bs_y,bx*bs_x,(bx+1)*bs_x]
-        print(box)
-        neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
-                                                border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec)
-
-output_folder = param.folder_path+"/z"+str(bz_global).zfill(4)+"/"
-makeFolder(output_folder)
+start_time_picklewrite = time.time()
 dumpToFile(neighbor_label_set_border_global, "neighbor_label_set_border_global", output_folder, "")
+time_picklewrite = time.time() - start_time_picklewrite
 
-del border_comp_combined, border_comp_exist_combined, neighbor_label_set_border_global
+time_total = time.time()-start_time_total
+
+g = open(param.step02A_timing_filepath, "a+")
+g.write(    "total," + format(time_total, '.4f')+ "," +
+            "AdjLabelGlobal," + format(time_AdjLabelGlobal, '.4f')+","+
+            "picklewrite," + format(time_picklewrite, '.4f')+"\n")
+g.close()

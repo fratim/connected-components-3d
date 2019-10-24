@@ -63,22 +63,26 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = "testwalls"
+outp_ID = "PrintTest"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
-#have to creat these in advance
+# have to creat these in advance
 error_path_preparation = data_path + sample_name + "/" + "error_files_preparation/"
 output_path_preparation = data_path + sample_name + "/" + "output_files_preparation/"
 
-#these are created by the preparations folder
+# these are created by the preparations folder
 error_path = folder_path+"error_files/"
 output_path = folder_path+"output_files/"
 
-#create file no save n_comp (number of cc3d components) for each procesed block
-n_comp_filepath = folder_path+"n_comp.txt"
+# create file no save n_comp (number of cc3d components) for each procesed block
+n_comp_filepath         = folder_path+"n_comp.txt"
+step01_timing_filepath  = folder_path+"step01_timing.txt"
+step02A_timing_filepath = folder_path+"step02A_timing.txt"
+step02B_timing_filepath = folder_path+"step02B_timing.txt"
+step03_timing_filepath  = folder_path+"step03_timing.txt"
 
-#memory need per block (in MB)
+# memory need per block (in MB)
 memory_needed = 80000 #int(1.1*bs_z*bs_y*bs_x*(8+8+2)/1000/1000)
 
 zres=bs_z*n_blocks_z
