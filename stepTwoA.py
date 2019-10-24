@@ -20,6 +20,9 @@ if(len(sys.argv))!=2:
 else:
     bz_global = int(sys.argv[1])
 
+
+z_range = np.arange(param.z_start, param.z_start+param.n_blocks_z)
+
 if bz_global!=z_range[-1]:
     bs_z = param.bs_z
     bs_y = param.bs_y
@@ -31,10 +34,6 @@ elif bz_global==z_range[-1]:
 else: raise ValueError("Unknown Error")
 
 print("executing Step 2 calculations block " + str(bz_global), flush=True)
-
-# STEP 2
-
-z_range = np.arange(param.z_start, param.z_start+param.n_blocks_z)
 
 
 border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
