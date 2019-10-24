@@ -7,6 +7,8 @@
 7. Try to find global label set by only looking one direction
 8. replace 2**30 by highest number
 9. Do not reload neighbor_label_set_border_global on every iteration, but load it all at the end
+10. Wall implementation
+11. change c++ code to use a map
 
 Questions:
 1. Why does int64 take values higher than the specified max?

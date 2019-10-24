@@ -20,6 +20,15 @@ if(len(sys.argv))!=2:
 else:
     bz_global = int(sys.argv[1])
 
+if bz_global!=z_range[-1]:
+    bs_z = param.bs_z
+    bs_y = param.bs_y
+    bs_x = param.bs_x
+elif bz_global==z_range[-1]:
+    bs_z = param.bs_z_last
+    bs_y = param.bs_y
+    bs_x = param.bs_x
+else: raise ValueError("Unknown Error")
 
 print("executing Step 2 calculations block " + str(bz_global), flush=True)
 
@@ -74,7 +83,7 @@ for by in range(param.y_start, param.y_start+param.n_blocks_y):
     for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
         # find box to iterative over all blocks
-        box = [bz_global*param.bs_z,(bz_global+1)*param.bs_z,by*param.bs_y,(by+1)*param.bs_y,bx*param.bs_x,(bx+1)*param.bs_x]
+        box = [bz_global*bs_z,(bz_global+1)*bs_z,by*bs_y,(by+1)*bs_y,bx*bs_x,(bx+1)*bs_x]
         print(box)
         neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
                                                 border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec)
