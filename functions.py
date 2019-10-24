@@ -78,55 +78,109 @@ def computeConnectedComp6(labels, start_label, max_labels):
 
     return cc_labels, n_comp
 
+# connect 2 wall parts
+def conntectWalls(neighbor_label_set_border, output_path, bz, by, bx, axis):
+
+    if axis == "z":
+        bz_min = bz+1
+        by_min = by
+        bx_min = bx
+    elif axis == "y":
+        bz_min = bz
+        by_min = by+1
+        bx_min = bx
+    elif axis == "x":
+        bz_min = bz
+        by_min = by
+        bx_min = bx+1
+    else:
+        raise ValueError("Unknown axis!")
+
+    print("making forward connection in " + axis)
+
+    # load wall of current block
+    output_folder_max = blockFolderPath(output_path,bz,by,bx)
+    MaxWall = readData(box=[1], filename=output_folder_max+axis+"MaxWall")
+
+    # load neighboring wall in positive z direction
+    output_folder_min = blockFolderPath(output_path,bz_min,by_min,bx_min)
+    MinWall = readData(box=[1], filename=output_folder_min+axis+"MinWall")
+
+    # check dimensions
+    if MinWall.shape != MaxWall.shape: raise ValueError("Walls dont have same dimension!!")
+
+    for ia in range(MaxWall.shape[0]):
+        for ib in range(MaxWall.shape[1]):
+            neighbor_label_set_border.add((MaxWall[ia,ib],MinWall[ia,ib]))
+            neighbor_label_set_border.add((MinWall[ia,ib],MaxWall[ia,ib]))
+
+    return neighbor_label_set_border
+
+def conntectWalltoBorder(neighbor_label_set_border, output_path, bz, by, bx, axis, direction):
+
+    if direction != "Max" and direction != "Min":
+        raise ValueError("Direction must be Max or Min")
+
+    print("making "  + direction + " connection in " + axis)
+
+    output_folder_max = output_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
+    wall = readData(box=[1], filename=output_folder_max+axis+direction+"Wall")
+
+    for ia in range(wall.shape[0]):
+        for ib in range(wall.shape[1]):
+            neighbor_label_set_border.add((wall[ia,ib],0x7FFFFFFFFFFFFFFF))
+
+    return neighbor_label_set_border
+
 # find sets of adjacent components
-@njit
-def findAdjLabelSetGlobal(box, neighbor_label_set_border, border_comp, border_comp_exist, yres, xres, connectInPosZdirec, connectInNegZdirec):
+# @njit
+def findAdjLabelSetGlobal(box, output_path, neighbor_label_set_border, yres, xres, border_contact,bz,by,bx):
 
-    for iz in [0, box[1]-box[0]-1]:
-        for iy in range(0, box[3]-box[2]):
-            for ix in range(0, box[5]-box[4]):
+    # Z direction
+    ###################
+    if border_contact[0]==1:
+        # connect min z wall to border
+        neighbor_label_set_border = conntectWalltoBorder(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="z", direction="Min")
+    #check if no border contact in z direction
+    if border_contact[1]==0:
+        # connect max z wall to next blocks z min wall
+        neighbor_label_set_border = conntectWalls(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="z")
+    elif border_contact[1]==1:
+        # connect max z wall to border
+        neighbor_label_set_border = conntectWalltoBorder(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="z", direction="Max")
+    else:
+        raise ValueError("Unknown Error")
 
-                if iz == 0:
-                    if connectInNegZdirec:
-                        if  IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)!=-1 and IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist:
-                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)]))
-                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0]-1,iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
-                        else:
-                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
+    # Y direction
+    ###################
+    if border_contact[2]==1:
+        # connect min z wall to border
+        neighbor_label_set_border = conntectWalltoBorder(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="y", direction="Min")
+    #check if no border contact in z direction
+    if border_contact[3]==0:
+        # connect max z wall to next blocks z min wall
+        neighbor_label_set_border = conntectWalls(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="y")
+    elif border_contact[3]==1:
+        # connect max z wall to border
+        neighbor_label_set_border = conntectWalltoBorder(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="y", direction="Max")
+    else:
+        raise ValueError("Unknown Error")
 
-                elif iz == box[1]-box[0]-1:
-                    if connectInPosZdirec:
-                        if IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres) in border_comp_exist and connectInPosZdirec:
-                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres)]))
-                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0]+1,iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
-                        else:
-                            neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
-                else:
-                    raise ValueError("Unknown Error")
 
-    for iz in range(0, box[1]-box[0]):
-        for iy in [0, box[3]-box[2]-1]:
-            for ix in range(0, box[5]-box[4]):
-                if iy == 0 and IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)!=-1 and IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres) in border_comp_exist:
-                        neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)]))
-                        neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]-1,ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
-                elif iy == box[3]-box[2]-1 and IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres)!=-1 and IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres) in border_comp_exist:
-                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres)]))
-                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2]+1,ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
-                else:
-                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
-
-    for iz in range(0, box[1]-box[0]):
-        for iy in range(0, box[3]-box[2]):
-            for ix in [0, box[5]-box[4]-1]:
-                if ix == 0 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)!=-1 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres) in border_comp_exist:
-                        neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)]))
-                        neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]-1,yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
-                elif ix == box[5]-box[4]-1 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres)!=-1 and IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres) in border_comp_exist:
-                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres)]))
-                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4]+1,yres,xres)], border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)]))
-                else:
-                    neighbor_label_set_border.add((border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)], 0x7FFFFFFFFFFFFFFF))
+    # X direction
+    ###################
+    if border_contact[4]==1:
+        # connect min z wall to border
+        neighbor_label_set_border = conntectWalltoBorder(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="x", direction="Min")
+    #check if no border contact in z direction
+    if border_contact[5]==0:
+        # connect max z wall to next blocks z min wall
+        neighbor_label_set_border = conntectWalls(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="x")
+    elif border_contact[5]==1:
+        # connect max z wall to border
+        neighbor_label_set_border = conntectWalltoBorder(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="x", direction="Max")
+    else:
+        raise ValueError("Unknown Error")
 
     return neighbor_label_set_border
 
@@ -136,9 +190,6 @@ def findAdjLabelSetLocal(box, cc_labels, yres, xres):
 
     neighbor_label_set_inside = set()
     neighbor_label_set_border = set()
-
-    border_comp = dict()
-    border_comp_exist = set()
 
     for iz in range(0, box[1]-box[0]-1):
         for iy in range(0, box[3]-box[2]-1):
@@ -176,9 +227,6 @@ def findAdjLabelSetLocal(box, cc_labels, yres, xres):
                         neighbor_label_set_inside.add((cc_labels[iz,iy,ix+1],cc_labels[iz,iy,ix]))
 
                 # write dict of border components
-                border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = cc_labels[iz,iy,ix]
-                border_comp_exist.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
-
                 neighbor_label_set_border.add((cc_labels[iz,iy,ix], 0x7FFFFFFFFFFFFFFF))
 
     for iz in range(0, box[1]-box[0]):
@@ -197,9 +245,6 @@ def findAdjLabelSetLocal(box, cc_labels, yres, xres):
                     if curr_comp != cc_labels[iz,iy,ix+1]:
                         neighbor_label_set_inside.add((cc_labels[iz,iy,ix],cc_labels[iz,iy,ix+1]))
                         neighbor_label_set_inside.add((cc_labels[iz,iy,ix+1],cc_labels[iz,iy,ix]))
-
-                border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = cc_labels[iz,iy,ix]
-                border_comp_exist.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
 
                 neighbor_label_set_border.add((cc_labels[iz,iy,ix], 0x7FFFFFFFFFFFFFFF))
 
@@ -220,12 +265,9 @@ def findAdjLabelSetLocal(box, cc_labels, yres, xres):
                         neighbor_label_set_inside.add((cc_labels[iz,iy,ix],cc_labels[iz,iy+1,ix]))
                         neighbor_label_set_inside.add((cc_labels[iz,iy+1,ix],cc_labels[iz,iy,ix]))
 
-                border_comp[IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres)] = cc_labels[iz,iy,ix]
-                border_comp_exist.add(IdiToIdx(iz+box[0],iy+box[2],ix+box[4],yres,xres))
-
                 neighbor_label_set_border.add((cc_labels[iz,iy,ix], 0x7FFFFFFFFFFFFFFF))
 
-    return neighbor_label_set_inside, neighbor_label_set_border, border_comp, border_comp_exist
+    return neighbor_label_set_inside, neighbor_label_set_border
 
 # set dict value undetermined set to 0
 def setUndeterminedtoNonHole(undetermined, associated_label):
@@ -584,9 +626,6 @@ class dataBlock:
     def computeStepOne(self, label_start, max_labels_block, output_path):
 
         box = [self.bz*self.bs_z,(self.bz+1)*self.bs_z,self.by*self.bs_y,(self.by+1)*self.bs_y,self.bx*self.bs_x,(self.bx+1)*self.bs_x]
-
-        border_comp_local = Dict.empty(key_type=types.int64,value_type=types.int64)
-        border_comp_exist_local = {(2**30)}
         associated_label_local = Dict.empty(key_type=types.int64,value_type=types.int64)
 
         cc_labels, n_comp = computeConnectedComp6(self.labels_in,label_start,max_labels_block)
@@ -599,8 +638,15 @@ class dataBlock:
         makeFolder(output_folder)
         writeData(output_folder+output_name, cc_labels)
 
-        neighbor_label_set_inside_local, neighbor_label_set_border_local, border_comp_local, border_comp_exist_local = findAdjLabelSetLocal(
-                                                                            box, cc_labels, self.yres, self.xres)
+        #save 6 walls to folder (needed for stitching)
+        writeData(output_folder+"zMinWall", cc_labels[0 ,: ,: ])
+        writeData(output_folder+"zMaxWall", cc_labels[-1,: ,: ])
+        writeData(output_folder+"yMinWall", cc_labels[: ,0 ,: ])
+        writeData(output_folder+"yMaxWall", cc_labels[: ,-1,: ])
+        writeData(output_folder+"xMinWall", cc_labels[: ,: ,0 ])
+        writeData(output_folder+"xMaxWall", cc_labels[: ,: ,-1])
+
+        neighbor_label_set_inside_local, neighbor_label_set_border_local = findAdjLabelSetLocal(box, cc_labels, self.yres, self.xres)
 
         del cc_labels
 
@@ -616,8 +662,6 @@ class dataBlock:
 
         output_folder = output_path+"/z"+str(self.bz).zfill(4)+"y"+str(self.by).zfill(4)+"x"+str(self.bx).zfill(4)+"/"
 
-        dumpNumbaDictToFile(border_comp_local, "border_comp_local", output_folder, "")
-        dumpToFile(border_comp_exist_local, "border_comp_exist_local", output_folder, "")
         dumpToFile(neighbor_label_set_inside_local, "neighbor_label_set_inside_local", output_folder, "")
         dumpNumbaDictToFile(associated_label_local, "associated_label_local", output_folder, "")
         dumpToFile(undetermined_local, "undetermined_local", output_folder, "")
@@ -641,6 +685,9 @@ def makeFolder(folder_path):
         raise ValueError("Folderpath " + folder_path + " already exists!")
     else:
         os.mkdir(folder_path)
+
+def blockFolderPath(output_path,bz,by,bx):
+    return output_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
 
 if __name__== "__main__":
   main()

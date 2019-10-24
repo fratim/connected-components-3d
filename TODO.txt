@@ -9,6 +9,8 @@
 9. Do not reload neighbor_label_set_border_global on every iteration, but load it all at the end
 10. Wall implementation
 11. change c++ code to use a map
+12. Implement last block size also for x and y direction
+13. Idea: Cut associated label in blockwise parts and save them to corresponding block
 
 Questions:
 1. Are we anyway interested in the diameter of dendroits?

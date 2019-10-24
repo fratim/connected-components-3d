@@ -19,77 +19,95 @@ print("executing Step 2 calculations...", flush=True)
 
 # STEP 2
 z_range = np.arange(param.z_start, param.z_start+param.n_blocks_z)
+y_range = np.arange(param.y_start, param.y_start+param.n_blocks_y)
+x_range = np.arange(param.x_start, param.x_start+param.n_blocks_x)
+
 
 # iteration 1 (2 blocks)
-for bz_global in z_range:
-
-    if bz_global!=z_range[-1]:
-        bs_z = param.bs_z
-        bs_y = param.bs_y
-        bs_x = param.bs_x
-    elif bz_global==z_range[-1]:
-        bs_z = param.bs_z_last
-        bs_y = param.bs_y
-        bs_x = param.bs_x
-    else: raise ValueError("Unknown Error")
-
-    border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
-    border_comp_exist_combined = set()
-    neighbor_label_set_border_global = {(1,1)}
-
-    # determine if Block is border block
-    if bz_global+1<=z_range[-1] and bz_global-1>=z_range[0]:
-        bz_range = [bz_global -1, bz_global, bz_global+1]
-        isBorder = False
-    elif bz_global+1<=z_range[-1] and bz_global-1<z_range[0]:
-        bz_range = [bz_global, bz_global+1]
-        hasBorderLeft = True
-        hasBorderRight = False
-    elif bz_global+1>z_range[-1] and bz_global-1>=z_range[0]:
-        bz_range = [bz_global-1, bz_global]
-        hasBorderLeft = False
-        hasBorderRight = True
-    elif bz_global+1>z_range[-1] and bz_global-1<z_range[0]:
-        bz_range = [bz_global-1, bz_global]
-        hasBorderLeft = True
-        hasBorderRight = True
-    else:
-        raise ValueError("Unknown Error!")
-
-    print(bz_range)
-
-    for bz in bz_range:
-        for by in range(param.y_start, param.y_start+param.n_blocks_y):
-            for bx in range(param.x_start, param.x_start+param.n_blocks_x):
-
-                output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
-
-                border_comp_local = readFromFile("border_comp_local", output_folder, "")
-                border_comp_exist_local = readFromFile("border_comp_exist_local", output_folder, "")
-
-                border_comp_combined.update(border_comp_local)
-                border_comp_exist_combined = border_comp_exist_combined.union(border_comp_exist_local)
-
-                del border_comp_local, border_comp_exist_local
-
-    connectInPosZdirec = True
-    connectInNegZdirec = True
-
+for bz in range(param.z_start, param.z_start+param.n_blocks_z):
     for by in range(param.y_start, param.y_start+param.n_blocks_y):
         for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
-            # find box to iterative over all blocks
-            box = [bz_global*bs_z,(bz_global+1)*bs_z,by*bs_y,(by+1)*bs_y,bx*bs_x,(bx+1)*bs_x]
-            print(box)
-            neighbor_label_set_border_global = findAdjLabelSetGlobal(box, neighbor_label_set_border_global,
-                                                    border_comp_combined, border_comp_exist_combined, param.yres, param.xres, connectInPosZdirec, connectInNegZdirec)
+            if bz!=z_range[-1]:
+                bs_z = param.bs_z
+                bs_y = param.bs_y
+                bs_x = param.bs_x
+            elif bz==z_range[-1]:
+                bs_z = param.bs_z_last
+                bs_y = param.bs_y
+                bs_x = param.bs_x
+            else: raise ValueError("Unknown Error")
 
-    output_folder = param.folder_path+"/z"+str(bz_global).zfill(4)+"/"
-    makeFolder(output_folder)
-    dumpToFile(neighbor_label_set_border_global, "neighbor_label_set_border_global", output_folder, "")
+            # determine if Block is border block Z direc
+            if bz<(param.z_start+param.n_blocks_z-1) and bz>param.z_start:
+                hasZBorder = False
+                onZMinBorder =  False
+                onZMaxBorder =  False
+            elif bz<(param.z_start+param.n_blocks_z-1) and bz==param.z_start:
+                hasZBorder = True
+                onZMinBorder = True
+                onZMaxBorder = False
+            elif bz==(param.z_start+param.n_blocks_z-1) and bz>param.z_start:
+                hasZBorder = True
+                onZMinBorder = False
+                onZMaxBorder = True
+            elif bz==(param.z_start+param.n_blocks_z-1) and bz==param.z_start:
+                hasZBorder = True
+                onZMinBorder = True
+                onZMaxBorder = True
+            else:
+                raise ValueError("Unknown Error Z!")
 
-    del border_comp_combined, border_comp_exist_combined, neighbor_label_set_border_global
+            # determine if Block is border block Y dirc
+            if by<(param.y_start+param.n_blocks_y-1) and by>param.y_start:
+                hasYBorder = False
+                onYMinBorder = False
+                onYMaxBorder = False
+            elif by<(param.y_start+param.n_blocks_y-1) and by==param.y_start:
+                hasYBorder = True
+                onYMinBorder = True
+                onYMaxBorder = False
+            elif by==(param.y_start+param.n_blocks_y-1) and by>param.y_start:
+                hasYBorder = True
+                onYMinBorder = False
+                onYMaxBorder = True
+            elif by==(param.y_start+param.n_blocks_y-1) and by==param.y_start:
+                hasYBorder = True
+                onYMinBorder = True
+                onYMaxBorder = True
+            else:
+                raise ValueError("Unknown Error Y!")
 
+            # determine if Block is border block X direc
+            if bx<(param.x_start+param.n_blocks_x-1) and bx>param.x_start:
+                hasXBorder = False
+                onXMinBorder = False
+                onXMaxBorder = False
+            elif bx<(param.x_start+param.n_blocks_x-1) and bx==param.x_start:
+                hasXBorder = True
+                onXMinBorder = True
+                onXMaxBorder = False
+            elif bx==(param.x_start+param.n_blocks_x-1) and bx>param.x_start:
+                hasXBorder = True
+                onXMinBorder = False
+                onXMaxBorder = True
+            elif bx==(param.x_start+param.n_blocks_x-1) and bx==param.x_start:
+                hasXBorder = True
+                onXMinBorder = True
+                onXMaxBorder = True
+            else:
+                raise ValueError("Unknown Error X!")
+
+            neighbor_label_set_border_global = {(1,1)}
+
+            border_contact = [onZMinBorder, onZMaxBorder, onYMinBorder, onYMaxBorder, onXMinBorder, onXMaxBorder]
+
+            box = [bz*bs_z,(bz+1)*bs_z,by*bs_y,(by+1)*bs_y,bx*bs_x,(bx+1)*bs_x]
+
+            neighbor_label_set_border_global = findAdjLabelSetGlobal(box,param.folder_path,neighbor_label_set_border_global,param.yres,param.xres,border_contact,bz,by,bx)
+
+            output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
+            dumpToFile(neighbor_label_set_border_global, "neighbor_label_set_border_global", output_folder, "")
 
 # final step
 neighbor_label_set_inside_global = set()
@@ -102,7 +120,7 @@ for bz in range(param.z_start, param.z_start+param.n_blocks_z):
     for by in range(param.y_start, param.y_start+param.n_blocks_y):
         for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
-            output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"/"
+            output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
             neighbor_label_set_border_global = readFromFile("neighbor_label_set_border_global", output_folder, "")
             neighbor_label_set_border_global_combined = neighbor_label_set_border_global_combined.union(neighbor_label_set_border_global)
 

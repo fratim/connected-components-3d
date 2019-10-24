@@ -63,7 +63,7 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = "testNew"
+outp_ID = "testwalls"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
