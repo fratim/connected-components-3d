@@ -20,20 +20,18 @@ print("executing Step 2 calculations...", flush=True)
 # STEP 2
 z_range = np.arange(param.z_start, param.z_start+param.n_blocks_z)
 
-if bz!=z_range[-1]:
-    bs_z = param.bs_z
-    bs_y = param.bs_y
-    bs_x = param.bs_x
-elif bz==z_range[-1]:
-    bs_z = param.bs_z_last
-    bs_y = param.bs_y
-    bs_x = param.bs_x
-else: raise ValueError("Unknown Error")
-
-
-
 # iteration 1 (2 blocks)
 for bz_global in z_range:
+
+    if bz_global!=z_range[-1]:
+        bs_z = param.bs_z
+        bs_y = param.bs_y
+        bs_x = param.bs_x
+    elif bz_global==z_range[-1]:
+        bs_z = param.bs_z_last
+        bs_y = param.bs_y
+        bs_x = param.bs_x
+    else: raise ValueError("Unknown Error")
 
     border_comp_combined = Dict.empty(key_type=types.int64,value_type=types.int64)
     border_comp_exist_combined = set()

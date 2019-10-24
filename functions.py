@@ -405,7 +405,7 @@ def concatBlocks(z_start, y_start, x_start, n_blocks_z, n_blocks_y, n_blocks_x, 
             for bx in range(x_start, x_start+n_blocks_x):
 
 
-                input_name = "/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/" + "block_filled"
+                input_name = "/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/" + str(bz*128).zfill(4)
 
                 if bz==z_start and by==y_start and bx==x_start:
                     labels_concat =  np.zeros((bs_z*n_blocks_z,bs_y*n_blocks_y,bs_x*n_blocks_x),dtype=np.uint16)

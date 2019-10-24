@@ -1,10 +1,11 @@
 import math
 
-# this exact code was used to computye Zebrafinch ground turth, which is saved (read-only) in the folder /n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/allFilesFullSize/seg_filled
+# this exact code was used to computye Zebrafinch ground turth, which is saved (read-only)
+# in the folder /n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/allFilesFullSize/seg_filled
 
 
 # Header file for block processing, includes parameters and paths
-isCluster = True
+isCluster = False
 
 if isCluster:
     output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
@@ -44,25 +45,25 @@ if not isCluster:
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     # sample_name = "ZF_concat_6to7_0512_0512"
-    sample_name = "ZF_concat_2to5_2048_2048"
+    sample_name = "ZF_concat_2to15_0256_0256"
 
     # compute number of blocks and block size
     bs_z = 128
-    bs_z_last = 68
-    n_blocks_z = 4
+    bs_z_last = 128
+    n_blocks_z = 14
 
-    bs_y = 2048
-    n_blocks_y = 1
+    bs_y = 128
+    n_blocks_y = 2
 
-    bs_x = 2048
-    n_blocks_x = 1
+    bs_x = 128
+    n_blocks_x = 2
 
     # this has to set here and in the bash script
     z_start = 2
     y_start = 0
     x_start = 0
 
-outp_ID = "allFilesFullSize"
+outp_ID = "testNew"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
