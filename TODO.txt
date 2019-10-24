@@ -1,4 +1,4 @@
-#TODO slices_start:
+#TODO
 
 1. Implement start_label into c++ code (so far shifted in python)
 4. flush all print messages
@@ -11,4 +11,7 @@
 11. change c++ code to use a map
 
 Questions:
-1. Why does int64 take values higher than the specified max?
+1. Are we anyway interested in the diameter of dendroits?
+2. Do we have code to find the distance from border field?
+3. Are there biological aspects to consider, when choosing the visual center?
+4. (Quite some implementation work - Should we run statistics on all of zebrafinch?)

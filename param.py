@@ -1,5 +1,8 @@
 import math
 
+# this exact code was used to computye Zebrafinch ground turth, which is saved (read-only) in the folder /n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/allFilesFullSize/seg_filled
+
+
 # Header file for block processing, includes parameters and paths
 isCluster = True
 
