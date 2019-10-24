@@ -79,7 +79,7 @@ def computeConnectedComp6(labels, start_label, max_labels):
     return cc_labels, n_comp
 
 # connect 2 wall parts
-def conntectWalls(neighbor_label_set_border, output_path, bz, by, bx, axis):
+def conntectWalls(label_set, output_path, bz, by, bx, axis):
 
     if axis == "z":
         bz_min = bz+1
@@ -109,45 +109,59 @@ def conntectWalls(neighbor_label_set_border, output_path, bz, by, bx, axis):
     # check dimensions
     if MinWall.shape != MaxWall.shape: raise ValueError("Walls dont have same dimension!!")
 
-    for ia in range(MaxWall.shape[0]):
-        for ib in range(MaxWall.shape[1]):
-            neighbor_label_set_border.add((MaxWall[ia,ib],MinWall[ia,ib]))
-            neighbor_label_set_border.add((MinWall[ia,ib],MaxWall[ia,ib]))
+    label_set = noPythonConnectWalls(label_set, MinWall, MaxWall)
 
-    return neighbor_label_set_border
+    return label_set
 
-def conntectWalltoBorder(neighbor_label_set_border, output_path, bz, by, bx, axis, direction):
+def conntectWalltoBorder(label_set, output_path, bz, by, bx, axis, direction):
 
     if direction != "Max" and direction != "Min":
         raise ValueError("Direction must be Max or Min")
 
     print("making "  + direction + " connection in " + axis)
 
-    output_folder_max = output_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
+    output_folder_max = blockFolderPath(output_path,bz,by,bx)
     wall = readData(box=[1], filename=output_folder_max+axis+direction+"Wall")
 
+    label_set = noPythonWallBorder(label_set, wall)
+
+    return label_set
+
+@njit
+def noPythonWallBorder(label_set, wall):
     for ia in range(wall.shape[0]):
         for ib in range(wall.shape[1]):
-            neighbor_label_set_border.add((wall[ia,ib],0x7FFFFFFFFFFFFFFF))
+            label_set.add((wall[ia,ib],0x7FFFFFFFFFFFFFFF))
+    return label_set
 
-    return neighbor_label_set_border
+@njit
+def noPythonConnectWalls(label_set, MinWall, MaxWall):
+    # check dimensions
+    if MinWall.shape != MaxWall.shape: raise ValueError("Walls dont have same dimension!!")
+
+    for ia in range(MaxWall.shape[0]):
+        for ib in range(MaxWall.shape[1]):
+            label_set.add((MaxWall[ia,ib],MinWall[ia,ib]))
+            label_set.add((MinWall[ia,ib],MaxWall[ia,ib]))
+
+    return label_set
 
 # find sets of adjacent components
 # @njit
-def findAdjLabelSetGlobal(box, output_path, neighbor_label_set_border, yres, xres, border_contact,bz,by,bx):
+def findAdjLabelSetGlobal(box, output_path, label_set, yres, xres, border_contact,bz,by,bx):
 
     # Z direction
     ###################
     if border_contact[0]==1:
         # connect min z wall to border
-        neighbor_label_set_border = conntectWalltoBorder(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="z", direction="Min")
+        label_set = conntectWalltoBorder(label_set=label_set, output_path=output_path, bz=bz, by=by, bx=bx, axis="z", direction="Min")
     #check if no border contact in z direction
     if border_contact[1]==0:
         # connect max z wall to next blocks z min wall
-        neighbor_label_set_border = conntectWalls(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="z")
+        label_set = conntectWalls(label_set=label_set, output_path=output_path, bz=bz, by=by, bx=bx, axis="z")
     elif border_contact[1]==1:
         # connect max z wall to border
-        neighbor_label_set_border = conntectWalltoBorder(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="z", direction="Max")
+        label_set = conntectWalltoBorder(label_set=label_set, output_path=output_path, bz=bz, by=by, bx=bx, axis="z", direction="Max")
     else:
         raise ValueError("Unknown Error")
 
@@ -155,14 +169,14 @@ def findAdjLabelSetGlobal(box, output_path, neighbor_label_set_border, yres, xre
     ###################
     if border_contact[2]==1:
         # connect min z wall to border
-        neighbor_label_set_border = conntectWalltoBorder(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="y", direction="Min")
+        label_set = conntectWalltoBorder(label_set=label_set, output_path=output_path, bz=bz, by=by, bx=bx, axis="y", direction="Min")
     #check if no border contact in z direction
     if border_contact[3]==0:
         # connect max z wall to next blocks z min wall
-        neighbor_label_set_border = conntectWalls(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="y")
+        label_set = conntectWalls(label_set=label_set, output_path=output_path, bz=bz, by=by, bx=bx, axis="y")
     elif border_contact[3]==1:
         # connect max z wall to border
-        neighbor_label_set_border = conntectWalltoBorder(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="y", direction="Max")
+        label_set = conntectWalltoBorder(label_set=label_set, output_path=output_path, bz=bz, by=by, bx=bx, axis="y", direction="Max")
     else:
         raise ValueError("Unknown Error")
 
@@ -171,18 +185,18 @@ def findAdjLabelSetGlobal(box, output_path, neighbor_label_set_border, yres, xre
     ###################
     if border_contact[4]==1:
         # connect min z wall to border
-        neighbor_label_set_border = conntectWalltoBorder(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="x", direction="Min")
+        label_set = conntectWalltoBorder(label_set=label_set, output_path=output_path, bz=bz, by=by, bx=bx, axis="x", direction="Min")
     #check if no border contact in z direction
     if border_contact[5]==0:
         # connect max z wall to next blocks z min wall
-        neighbor_label_set_border = conntectWalls(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="x")
+        label_set = conntectWalls(label_set=label_set, output_path=output_path, bz=bz, by=by, bx=bx, axis="x")
     elif border_contact[5]==1:
         # connect max z wall to border
-        neighbor_label_set_border = conntectWalltoBorder(neighbor_label_set_border=neighbor_label_set_border, output_path=output_path, bz=bz, by=by, bx=bx, axis="x", direction="Max")
+        label_set = conntectWalltoBorder(label_set=label_set, output_path=output_path, bz=bz, by=by, bx=bx, axis="x", direction="Max")
     else:
         raise ValueError("Unknown Error")
 
-    return neighbor_label_set_border
+    return label_set
 
 # find sets of adjacent components
 @njit
