@@ -122,25 +122,27 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
 
 # write slurm for step two A
 for bz in range(param.z_start, param.z_start + param.n_blocks_z):
+    for by in range(param.y_start, param.y_start + param.n_blocks_y):
+        for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
-    command = "stepTwoA.py" + " " + str(bz)
-    jobname = "step02A"+param.outp_ID+"_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+            command = "stepTwoA.py" + " " + str(bz) + " " + str(by) + " " + str(bx) 
+            jobname = "step02A"+param.outp_ID+"_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
-    t = template
-    t = t.replace('{JOBNAME}', jobname)
-    t = t.replace('{COMMAND}', command)
-    t = t.replace('{ERROR_PATH}', param.error_path)
-    t = t.replace('{OUTPUT_PATH}', param.output_path)
-    t = t.replace('{MEMORY}', str(memory_std))
-    t = t.replace('{PARTITION}', partition)
-    if bz == param.z_start+param.n_blocks_z-1:
-        t = t.replace('{MAIL}', mail_last)
-    else:
-        t = t.replace('{MAIL}', mail_std)
+            t = template
+            t = t.replace('{JOBNAME}', jobname)
+            t = t.replace('{COMMAND}', command)
+            t = t.replace('{ERROR_PATH}', param.error_path)
+            t = t.replace('{OUTPUT_PATH}', param.output_path)
+            t = t.replace('{MEMORY}', str(memory_std))
+            t = t.replace('{PARTITION}', partition)
+            if bz == param.z_start+param.n_blocks_z-1:
+                t = t.replace('{MAIL}', mail_last)
+            else:
+                t = t.replace('{MAIL}', mail_std)
 
-    filename = step02Afolderpath + jobname + ".slurm"
-    writeFile(filename, t)
-    files_written += 1
+            filename = step02Afolderpath + jobname + ".slurm"
+            writeFile(filename, t)
+            files_written += 1
 
 # Write Slurm for step two B
 command = "stepTwoB.py"
