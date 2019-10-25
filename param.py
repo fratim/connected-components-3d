@@ -5,7 +5,7 @@ import math
 
 
 # Header file for block processing, includes parameters and paths
-isCluster = False
+isCluster = True
 
 if isCluster:
     output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
@@ -14,8 +14,8 @@ if isCluster:
 
     # compute number of blocks and block size
     bs_z = 128
-    bs_z_last = 68
-    n_blocks_z = 45
+    bs_z_last = 128
+    n_blocks_z = 20
 
     bs_y = 5456
     n_blocks_y = 1
@@ -63,7 +63,7 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = "PrintTest"
+outp_ID = "Step2WallImplementation"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
