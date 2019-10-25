@@ -3,9 +3,9 @@
 1. Implement start_label into c++ code (so far shifted in python)
 4. flush all print messages
 5. try to copy neighbor_label dict over steps, so far have to create new in step2
-8. replace 2**30 by highest number
 11. change c++ code to use a map
 12. Implement last block size also for x and y direction
+13. Parallelize border label computation in AdjLabelLocal
 
 Questions:
 1. Are we anyway interested in the diameter of dendroits?
@@ -14,3 +14,7 @@ Questions:
 4. (Quite some implementation work - Should we run statistics on all of zebrafinch?)
 5. How to efficiently save dicts and sets?
 6. Should I use a linear index for everything?
+7. I use 0x7FFFFFFFFFFFFFFF as the number for the border, is that fine?
+
+Comments:
+1. Current speed. 4.6 million voxels per second

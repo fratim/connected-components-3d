@@ -415,7 +415,6 @@ def fillWholes(output_path,associated_label, bz):
     # read in data
     cc_labels = readData(box, output_path+input_name)
 
-    print(np.max(cc_labels[cc_labels<0]))
     box = [0,cc_labels.shape[0],0,cc_labels.shape[1],0,cc_labels.shape[2]]
 
     # use nopython to do actual computation

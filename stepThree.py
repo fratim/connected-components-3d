@@ -34,7 +34,6 @@ associated_label_block.update(readFromFile("associated_label_block", output_fold
 time_readpickle = time.time()-start_time_readpickle
 
 
-
 start_time_fillWholes = time.time()
 output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
 fillWholes(output_path=output_folder,associated_label=associated_label_block, bz=bz)

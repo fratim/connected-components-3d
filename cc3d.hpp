@@ -49,43 +49,48 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdint>
+#include <unordered_map>
+
+using namespace std;
 
 namespace cc3d {
 
 template <typename T>
 class DisjointSet {
 public:
-  T *ids;
-  size_t length;
+  // T *ids;
+  // size_t length;
+
+  unordered_map<int, int> parent;
 
   DisjointSet () {
-    length = 65536;
-    ids = new T[length]();
+    // unordered_map<int64_t, int64_t> parent;
   }
 
   DisjointSet (size_t len) {
-    length = len;
-    ids = new T[length]();
+    // length = len;
+    // ids = new T[length]();
+    // unordered_map<int64_t, int64_t> parent;
   }
 
-  DisjointSet (const DisjointSet &cpy) {
-    length = cpy.length;
-    ids = new T[length]();
-
-    for (int i = 0; i < length; i++) {
-      ids[i] = cpy.ids[i];
-    }
-  }
+  // DisjointSet (const DisjointSet &cpy) {
+  //   length = cpy.length;
+  //   ids = new T[length]();
+  //
+  //   for (int i = 0; i < length; i++) {
+  //     ids[i] = cpy.ids[i];
+  //   }
+  // }
 
   ~DisjointSet () {
-    delete []ids;
+    parent.clear();
   }
 
   T root (T n) {
-    T i = ids[n];
-    while (i != ids[i]) {
-      ids[i] = ids[ids[i]]; // path compression
-      i = ids[i];
+    T i = parent[n];
+    while (i != parent[i]) {
+      parent[i] = parent[parent[i]]; // path compression
+      i = parent[i];
     }
 
     return i;
@@ -96,13 +101,9 @@ public:
   }
 
   void add(T p) {
-    if (p >= length) {
-      printf("Connected Components Error: Label %d cannot be mapped to union-find array of length %lu.\n", p, length);
-      throw "maximum length exception";
-    }
-
-    if (ids[p] == 0) {
-      ids[p] = p;
+    //check if this component already is in the keys, if not, add it
+    if (parent.find(p) == parent.end()) {
+      parent[p] = p;
     }
   }
 
@@ -114,25 +115,25 @@ public:
     T i = root(p);
     T j = root(q);
 
-    if (i == 0) {
-      add(p);
-      i = p;
-    }
+    // if (i == 0) {
+    //   add(p);
+    //   i = p;
+    // }
 
-    if (j == 0) {
-      add(q);
-      j = q;
-    }
+    // if (j == 0) {
+    //   add(q);
+    //   j = q;
+    // }
 
-    ids[i] = j;
+    parent[i] = j;
   }
 
-  void print() {
-    for (int i = 0; i < 15; i++) {
-      printf("%d, ", ids[i]);
-    }
-    printf("\n");
-  }
+  // void print() {
+  //   for (int i = 0; i < 15; i++) {
+  //     printf("%d, ", ids[i]);
+  //   }
+  //   printf("\n");
+  // }
 
   // would be easy to write remove.
   // Will be O(n).
