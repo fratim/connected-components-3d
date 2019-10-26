@@ -64,10 +64,12 @@ public:
   unordered_map<int, int> parent;
 
   DisjointSet () {
+    parent.reserve(8000000);
     // unordered_map<int64_t, int64_t> parent;
   }
 
   DisjointSet (size_t len) {
+    parent.reserve(8000000);
     // length = len;
     // ids = new T[length]();
     // unordered_map<int64_t, int64_t> parent;
@@ -87,13 +89,19 @@ public:
   }
 
   T root (T n) {
-    T i = parent[n];
-    while (i != parent[i]) {
-      parent[i] = parent[parent[i]]; // path compression
-      i = parent[i];
+    // T i = parent[n];
+    // while (i != parent[i]) {
+    //   parent[i] = parent[parent[i]]; // path compression
+    //   i = parent[i];
+    // }
+    // return i;
+
+    if (n != parent[n]){
+      parent[n]=root(parent[n]);
     }
 
-    return i;
+    return parent[n];
+
   }
 
   bool find (T p, T q) {
@@ -701,6 +709,7 @@ int64_t* connected_components3d_6(
     }
   }
 
+  printf("Max next_label is: %ld\n", (long)(next_label));
   return relabel(out_labels, voxels, next_label, equivalences);
 }
 
