@@ -47,7 +47,7 @@ for bz in zrange[::4]:
     for y_block in range(3):
         for x_block in range(3):
             # outp_folder = blockFolderPath(param.folder_path,z_block,y_block,x_block)
-	    chunk = block_a[:,y_block:(y_block+1):bs_y,x_block:(x_block+1):bs_x]
-	    print(y_block,x_block)
-        print(chunk.shape)
-        writeData(param.folder_path+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(x_block).zfill(2),chunk)
+    	    chunk = block_a[:,y_block:(y_block+1):bs_y,x_block:(x_block+1):bs_x]
+    	    print(y_block,x_block)
+            print(chunk.shape)
+            writeData(param.folder_path+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(x_block).zfill(2),chunk)
