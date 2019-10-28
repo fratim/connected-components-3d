@@ -57,12 +57,6 @@ def computeConnectedComp26(labels):
     n_comp = np.max(cc_labels) + 1
 
     del cc_labels
-    # print("Conntected Regions found: " + str(n_comp))
-
-    # determine indices, numbers and counts for the connected regions
-    # unique, counts = np.unique(cc_labels, return_counts=True)
-    # print("Conntected regions and associated points: ")
-    # print(dict(zip(unique, counts)))
 
     return n_comp
 
@@ -96,7 +90,7 @@ def conntectWalls(label_set, output_path, bz, by, bx, axis):
     else:
         raise ValueError("Unknown axis!")
 
-    print("making forward connection in " + axis)
+    print("making forward connection in " + axis, flush=True)
 
     # load wall of current block
     output_folder_max = blockFolderPath(output_path,bz,by,bx)
@@ -118,7 +112,7 @@ def conntectWalltoBorder(label_set, output_path, bz, by, bx, axis, direction):
     if direction != "Max" and direction != "Min":
         raise ValueError("Direction must be Max or Min")
 
-    print("making "  + direction + " connection in " + axis)
+    print("making "  + direction + " connection in " + axis, flush=True)
 
     output_folder_max = blockFolderPath(output_path,bz,by,bx)
     wall = readData(box=[1], filename=output_folder_max+axis+direction+"Wall")
@@ -316,8 +310,6 @@ def writeNeighborLabelDict(neighbor_label_dict, neighbor_label_set):
         else:
             continue
 
-    # print("time to get neighbor_label_dict dict: " + str(time.time()-time_start))
-
     return neighbor_label_dict
 
 # create string of connected components that are a whole
@@ -399,8 +391,6 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
             # delte open set
             del open
 
-    # print("time to get associated label dict: " + str(time.time()-time_start))
-
     if len(undetermined)>0:
         raise ValueError("Unknown Error")
 
@@ -416,7 +406,7 @@ def removeDetComp(neighbor_label_set, isHole, isNotHole):
         elem = neighbor_label_set.pop()
         if elem[0] in isHole or elem[0] in isNotHole:
             continue
-            print("removed: " + str(elem))
+            print("removed: " + str(elem), flush=True)
         else:
             neighbor_label_set_out.add(elem)
 
@@ -456,7 +446,6 @@ def concatFiles(box, slices_s, slices_e, output_path, data_path):
 
     for i in range(slices_s,slices_e+1):
         sample_name = str(i*128).zfill(4)
-        print(str("Processing file " + sample_name).format(sample_name), end='\r')
         if i is slices_s:
             labels_concat = readData(box, data_path+sample_name)
         else:
@@ -466,7 +455,7 @@ def concatFiles(box, slices_s, slices_e, output_path, data_path):
             labels_concat = np.concatenate((labels_old,labels_temp),axis=0)
             del labels_temp
 
-    print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape))
+    print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape), flush=True)
     writeData(output_path, labels_concat)
 
     del labels_concat
@@ -474,7 +463,7 @@ def concatFiles(box, slices_s, slices_e, output_path, data_path):
 def concatBlocks(z_start, y_start, x_start, n_blocks_z, n_blocks_y, n_blocks_x, bs_z, bs_y, bs_x, output_path):
 
     for bz in range(z_start, z_start+n_blocks_z):
-        print("processing z block " + str(bz))
+        print("processing z block " + str(bz), flush=True)
         for by in range(y_start, y_start+n_blocks_y):
             for bx in range(x_start, x_start+n_blocks_x):
 
@@ -485,7 +474,7 @@ def concatBlocks(z_start, y_start, x_start, n_blocks_z, n_blocks_y, n_blocks_x, 
                     labels_concat =  np.zeros((bs_z*n_blocks_z,bs_y*n_blocks_y,bs_x*n_blocks_x),dtype=np.uint16)
                 box=[0,bs_z,0,bs_y,0,bs_x]
                 labels_concat[(bz-z_start)*bs_z:((bz-z_start)+1)*bs_z,(by-y_start)*bs_y:(by-y_start+1)*bs_y,(bx-x_start)*bs_x:(bx-x_start+1)*bs_x] = readData(box, filename=output_path+input_name)
-    print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape))
+    print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape), flush=True)
     output_name = "filled"
     writeData(output_path+output_name, labels_concat)
 
@@ -502,7 +491,6 @@ def IdxToIdi(iv, yres, xres):
 def IdiToIdx(iz, iy, ix, yres, xres):
     if (iz<param.bs_z*param.z_start or iy<param.bs_y*param.y_start or ix<param.bs_x*param.x_start
             or iy >= param.bs_y*(param.y_start+param.n_blocks_y) or ix >= param.bs_x*(param.x_start+param.n_blocks_x)):
-        # print(iz,iy,ix)
         raise ValueError("Out of bounds IditoIdx")
         return -1
     else:
@@ -546,7 +534,6 @@ class dataBlock:
 
         for i in range(self.slices_start,self.slices_end+1):
             sample_name = str(i*128).zfill(4)
-            print(str("Processing file " + sample_name).format(sample_name), end='\r')
             if i is self.slices_start:
                 labels_concat = readData(self.box_concat, self.data_path+sample_name)
             else:
@@ -556,13 +543,13 @@ class dataBlock:
                 labels_concat = np.concatenate((labels_old,labels_temp),axis=0)
                 del labels_temp
 
-        print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape))
+        print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape), flush=True)
         writeData(self.folder_path+self.sample_name, labels_concat)
 
         del labels_concat
 
     def evaluateWholes(self, ID_A, ID_B):
-        print("Evaluating wholes...")
+        print("Evaluating wholes...", flush=True)
         # load gt wholes
         gt_wholes_filepath = self.folder_path+"/"+ID_A+"/"+"wholes"
         box = [1]
@@ -577,7 +564,7 @@ class dataBlock:
             if np.max(wholes_gt)>32767 or np.max(wholes_inBlocks)>32767:
                 raise ValueError("Cannot convert wholes to int16 (max is >32767)")
         except:
-            print("Cannot convert wholes to int16 (max is >32767) -  ignored this Error")
+            print("Cannot convert wholes to int16 (max is >32767) -  ignored this Error", flush=True)
 
         wholes_gt = wholes_gt.astype(np.int16)
         wholes_inBlocks = wholes_inBlocks.astype(np.int16)
@@ -586,14 +573,14 @@ class dataBlock:
         # free some RAM
         del wholes_gt, wholes_inBlocks
 
-        print("Freed memory")
+        print("Freed memory", flush=True)
 
         if np.min(diff)<0:
             FP = diff.copy()
             FP[FP>0]=0
             n_points_FP = np.count_nonzero(FP)
             n_comp_FP = computeConnectedComp26(FP)-1
-            print("FP classifications (points/components): " + str(n_points_FP) + "/ " +str(n_comp_FP))
+            print("FP classifications (points/components): " + str(n_points_FP) + "/ " +str(n_comp_FP), flush=True)
 
             # unique_values = np.unique(FP)
             # for u in unique_values:
@@ -605,18 +592,18 @@ class dataBlock:
 
             del FP
         else:
-            print("No FP classification")
+            print("No FP classification", flush=True)
 
         if np.max(diff)>0:
             FN = diff.copy()
             FN[FN<0]=0
             n_points_FN = np.count_nonzero(FN)
             n_comp_FN = computeConnectedComp26(FN)-1
-            print("FN classifications (points/components): " + str(n_points_FN) + "/ " +str(n_comp_FN))
+            print("FN classifications (points/components): " + str(n_points_FN) + "/ " +str(n_comp_FN), flush=True)
             del FN
 
         else:
-            print("No FN classification")
+            print("No FN classification", flush=True)
 
         output_name = 'diff_wholes_'+ID_A+"_"+ID_B
         writeData(self.folder_path+"/"+ID_B+"/"+output_name, diff)

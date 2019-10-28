@@ -68,9 +68,6 @@ for bz in range(param.z_start, param.z_start+param.n_blocks_z):
             label_start = -1*block_number*param.max_labels_block-1
             label_end = label_start - param.max_labels_block
 
-            print("label_start: " + str(label_start))
-            print("label_end: " + str(label_end))
-
             associated_label_block = {key: value for key, value in associated_label_global.items() if (key>label_end and key<=label_start)}
 
             output_folder = blockFolderPath(param.folder_path,bz,by,bx)

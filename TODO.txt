@@ -1,8 +1,5 @@
 #TODO
 
-1. Implement start_label into c++ code (so far shifted in python)
-4. flush all print messages
-5. try to copy neighbor_label dict over steps, so far have to create new in step2
 12. Implement last block size also for x and y direction
 14. Idea: how to get rid off the huge overhead in memory allocation, due to array of size(number of voxels).
     How about we give it a size, and if this size is exceeded (very unlikely), then we just use size(num of voxels)?

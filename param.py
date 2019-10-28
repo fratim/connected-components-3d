@@ -13,14 +13,13 @@ if isCluster:
     sample_name = ""
 
     # compute number of blocks and block size
-    bs_z = 128
-    bs_z_last = 128
+    max_bs_z = 128
     n_blocks_z = 20
 
-    bs_y = 5456
+    max_bs_y = 5456
     n_blocks_y = 1
 
-    bs_x = 5332
+    max_bs_x = 5332
     n_blocks_x = 1
 
     # start slice of zebrafinch block
@@ -48,14 +47,13 @@ if not isCluster:
     sample_name = "ZF_concat_2to15_0256_0256"
 
     # compute number of blocks and block size
-    bs_z = 128
-    bs_z_last = 128
+    max_bs_z= 128
     n_blocks_z = 14
 
-    bs_y = 128
+    max_bs_y = 128
     n_blocks_y = 2
 
-    bs_x = 128
+    max_bs_x = 128
     n_blocks_x = 2
 
     # this has to set here and in the bash script
@@ -89,7 +87,7 @@ zres=bs_z*n_blocks_z
 yres=bs_y*n_blocks_y
 xres=bs_x*n_blocks_x
 
-max_labels_block = bs_z*bs_y*bs_x
+max_labels_block = max_bs_z*max_bs_y*max_bs_x
 
 #step Two iterations needed:
 iterations_needed  = math.ceil(math.log(n_blocks_z)/math.log(2))
