@@ -49,59 +49,46 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdint>
-#include <unordered_map>
-
-using namespace std;
 
 namespace cc3d {
 
 template <typename T>
 class DisjointSet {
 public:
-  // T *ids;
-  // size_t length;
-
-  unordered_map<int, int> parent;
+  T *ids;
+  size_t length;
 
   DisjointSet () {
-    parent.reserve(8000000);
-    // unordered_map<int64_t, int64_t> parent;
+    length = 65536;
+    ids = new T[length]();
   }
 
   DisjointSet (size_t len) {
-    parent.reserve(8000000);
-    // length = len;
-    // ids = new T[length]();
-    // unordered_map<int64_t, int64_t> parent;
+    length = len;
+    ids = new T[length]();
   }
 
-  // DisjointSet (const DisjointSet &cpy) {
-  //   length = cpy.length;
-  //   ids = new T[length]();
-  //
-  //   for (int i = 0; i < length; i++) {
-  //     ids[i] = cpy.ids[i];
-  //   }
-  // }
+  DisjointSet (const DisjointSet &cpy) {
+    length = cpy.length;
+    ids = new T[length]();
+
+    for (int i = 0; i < length; i++) {
+      ids[i] = cpy.ids[i];
+    }
+  }
 
   ~DisjointSet () {
-    parent.clear();
+    delete []ids;
   }
 
   T root (T n) {
-    // T i = parent[n];
-    // while (i != parent[i]) {
-    //   parent[i] = parent[parent[i]]; // path compression
-    //   i = parent[i];
-    // }
-    // return i;
-
-    if (n != parent[n]){
-      parent[n]=root(parent[n]);
+    T i = ids[n];
+    while (i != ids[i]) {
+      ids[i] = ids[ids[i]]; // path compression
+      i = ids[i];
     }
 
-    return parent[n];
-
+    return i;
   }
 
   bool find (T p, T q) {
@@ -109,9 +96,13 @@ public:
   }
 
   void add(T p) {
-    //check if this component already is in the keys, if not, add it
-    if (parent.find(p) == parent.end()) {
-      parent[p] = p;
+    if (p >= length) {
+      printf("Connected Components Error: Label %d cannot be mapped to union-find array of length %lu.\n", p, length);
+      throw "maximum length exception";
+    }
+
+    if (ids[p] == 0) {
+      ids[p] = p;
     }
   }
 
@@ -123,25 +114,25 @@ public:
     T i = root(p);
     T j = root(q);
 
-    // if (i == 0) {
-    //   add(p);
-    //   i = p;
-    // }
+    if (i == 0) {
+      add(p);
+      i = p;
+    }
 
-    // if (j == 0) {
-    //   add(q);
-    //   j = q;
-    // }
+    if (j == 0) {
+      add(q);
+      j = q;
+    }
 
-    parent[i] = j;
+    ids[i] = j;
   }
 
-  // void print() {
-  //   for (int i = 0; i < 15; i++) {
-  //     printf("%d, ", ids[i]);
-  //   }
-  //   printf("\n");
-  // }
+  void print() {
+    for (int i = 0; i < 15; i++) {
+      printf("%d, ", ids[i]);
+    }
+    printf("\n");
+  }
 
   // would be easy to write remove.
   // Will be O(n).
@@ -709,7 +700,6 @@ int64_t* connected_components3d_6(
     }
   }
 
-  printf("Max next_label is: %ld\n", (long)(next_label));
   return relabel(out_labels, voxels, next_label, equivalences);
 }
 

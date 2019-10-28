@@ -6,6 +6,8 @@
 11. change c++ code to use a map
 12. Implement last block size also for x and y direction
 13. Parallelize border label computation in AdjLabelLocal
+14. Idea: how to get rid off the huge overhead in memory allocation, due to array of size(number of voxels).
+    How about we give it a size, and if this size is exceeded (very unlikely), then we just use size(num of voxels)?
 
 Questions:
 1. Are we anyway interested in the diameter of dendroits?

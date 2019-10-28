@@ -14,4 +14,4 @@ print("time needed: " + str(time.time()-time_start))
 
 print("n_comp is: " + str(n_comp))
 
-writeData("/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/cc_test/cc_labels_reserve", cc_labels)
+writeData("/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/cc_test/cc_labels_map", cc_labels)
