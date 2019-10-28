@@ -21,7 +21,7 @@ from functions import readData, makeFolder, blockFolderPath, writeData
 zrange = np.arange(param.z_start,param.z_start+param.n_blocks_z)
 
 for bz in zrange[::4]:
-	
+
     print( "bz is: " + str(bz), flush=True)
     z_block = 0
 
@@ -49,5 +49,5 @@ for bz in zrange[::4]:
             # outp_folder = blockFolderPath(param.folder_path,z_block,y_block,x_block)
 	    chunk = block_a[:,y_block:(y_block+1):bs_y,x_block:(x_block+1):bs_x]
 	    print(y_block,x_block)
-            print(chunk.shape)
-            writeData(param.folder_path+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(x_block).zfill(2),chunk)
+        print(chunk.shape)
+        writeData(param.folder_path+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(x_block).zfill(2),chunk)
