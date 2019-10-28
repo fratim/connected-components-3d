@@ -5,7 +5,7 @@ import math
 
 
 # Header file for block processing, includes parameters and paths
-isCluster = False
+isCluster = True
 
 if isCluster:
     output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
@@ -14,7 +14,7 @@ if isCluster:
 
     # compute number of blocks and block size
     max_bs_z = 128
-    n_blocks_z = 20
+    n_blocks_z = 45
 
     max_bs_y = 5456
     n_blocks_y = 1
@@ -61,7 +61,7 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = "NeighborLabel"
+outp_ID = ""
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
@@ -83,9 +83,9 @@ step03_info_filepath  = folder_path+"step03_info.txt"
 # memory need per block (in MB)
 memory_needed = 80000 #int(1.1*bs_z*bs_y*bs_x*(8+8+2)/1000/1000)
 
-zres=bs_z*n_blocks_z
-yres=bs_y*n_blocks_y
-xres=bs_x*n_blocks_x
+#zres=bs_z*n_blocks_z
+#yes=bs_y*n_blocks_y
+#xres=bs_x*n_blocks_x
 
 max_labels_block = max_bs_z*max_bs_y*max_bs_x
 
