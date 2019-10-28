@@ -103,8 +103,9 @@ time_picklewrite = time.time() - start_time_picklewrite
 
 time_total = time.time()-start_time_total
 
-g = open(param.step02A_timing_filepath, "a+")
-g.write(    "total," + format(time_total, '.4f')+ "," +
-            "AdjLabelGlobal," + format(time_AdjLabelGlobal, '.4f')+","+
-            "picklewrite," + format(time_picklewrite, '.4f')+"\n")
+g = open(param.step02A_info_filepath, "a+")
+g.write(    "bz/by/bx,"+str(bz).zfill(4)+","+str(by).zfill(4)+","+str(bx).zfill(4)+","
+            "total_time," + format(time_total, '.4f')+ "," +
+            "AdjLabelGlobal_time," + format(time_AdjLabelGlobal, '.4f')+","+
+            "picklewrite_time," + format(time_picklewrite, '.4f')+"\n")
 g.close()

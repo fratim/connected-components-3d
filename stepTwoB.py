@@ -17,45 +17,47 @@ from functions import readFromFile, writeNeighborLabelDict, findAssociatedLabels
 start_time_total = time.time()
 
 # final step
-neighbor_label_set_inside_global = set()
+neighbor_label_set_border_global_combined = set()
 associated_label_global = Dict.empty(key_type=types.int64,value_type=types.int64)
 undetermined_global = set()
-neighbor_label_set_border_global_combined = set()
+neighbor_label_dict = dict()
 
+#timing
 start_time_pickleload = time.time()
 
-# load sets by iterating over all folders (expected to be small)
+# load sets by iterating over all folders (expected to be small time consumption)
 for bz in range(param.z_start, param.z_start+param.n_blocks_z):
     for by in range(param.y_start, param.y_start+param.n_blocks_y):
         for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
-            output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
-            neighbor_label_set_border_global = readFromFile("neighbor_label_set_border_global", output_folder, "")
-            neighbor_label_set_border_global_combined = neighbor_label_set_border_global_combined.union(neighbor_label_set_border_global)
+            output_folder = blockFolderPath(param.folder_path, bz,by,bx)
 
-            output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
-            neighbor_label_set_inside_local = readFromFile("neighbor_label_set_inside_local", output_folder, "")
+            neighbor_label_set_border_global = readFromFile("neighbor_label_set_border_global", output_folder, "")
             associated_label_local = readFromFile("associated_label_local", output_folder, "")
             undetermined_local = readFromFile("undetermined_local", output_folder, "")
-            neighbor_label_set_inside_global = neighbor_label_set_inside_global.union(neighbor_label_set_inside_local)
+            neighbor_label_dict_reduced_local = readFromFile("neighbor_label_dict_reduced", output_folder, "")
+
+            neighbor_label_set_border_global_combined = neighbor_label_set_border_global_combined.union(neighbor_label_set_border_global)
             associated_label_global.update(associated_label_local)
             undetermined_global = undetermined_global.union(undetermined_local)
+            neighbor_label_dict.update(neighbor_label_dict_reduced_local)
 
-            del neighbor_label_set_border_global, neighbor_label_set_inside_local, associated_label_local, undetermined_local
+            del neighbor_label_set_border_global, associated_label_local, undetermined_local
+
+len_label_set_border = len(neighbor_label_set_border_global_combined)
 
 time_pickleload = time.time() - start_time_pickleload
-
 start_time_findAssocLabelGlobal = time.time()
-#unify label set inside and outside
-neighbor_label_set = neighbor_label_set_inside_global.union(neighbor_label_set_border_global_combined)
 
 #compute associated label global
-neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
-associated_label_global, undetermined_global = findAssociatedLabels(neighbor_label_dict, undetermined_global, associated_label_global)
-associated_label_global = setUndeterminedtoNonHole(undetermined_global, associated_label_global)
+neighbor_label_dict = writeNeighborLabelDict(neighbor_label_dict=neighbor_label_dict, neighbor_label_set=neighbor_label_set_border_global_combined)
+associated_label_global, undetermined_global, isHole, isNotHole = findAssociatedLabels(neighbor_label_dict, undetermined_global, associated_label_global)
+associated_label_global = setUndeterminedtoNonHole(undetermined_global.copy(), associated_label_global)
+
+n_Holes = len(isHole)
+n_NotHoles = len(isNotHole)+len(undetermined_global)
 
 time_findAssocLabelGlobal = time.time() - start_time_findAssocLabelGlobal
-
 start_time_splitandwritepickle = time.time()
 
 for bz in range(param.z_start, param.z_start+param.n_blocks_z):
@@ -65,6 +67,9 @@ for bz in range(param.z_start, param.z_start+param.n_blocks_z):
             block_number = (bz)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx
             label_start = -1*block_number*param.max_labels_block-1
             label_end = label_start - param.max_labels_block
+
+            print("label_start: " + str(label_start))
+            print("label_end: " + str(label_end))
 
             associated_label_block = {key: value for key, value in associated_label_global.items() if (key>label_end and key<=label_start)}
 
@@ -76,9 +81,15 @@ for bz in range(param.z_start, param.z_start+param.n_blocks_z):
 time_splitandwritepickle = time.time()-start_time_splitandwritepickle
 time_total = time.time()-start_time_total
 
-g = open(param.step02B_timing_filepath, "a+")
-g.write(    "total," + format(time_total, '.4f') + "," +
-            "pickleload," + format(time_pickleload, '.4f')+","+
-            "findAssocLabelGlobal," + format(time_findAssocLabelGlobal, '.4f')+","+
-            "splitandwritepickle," + format(time_splitandwritepickle, '.4f')+"\n")
+len_associated_label_global = len(associated_label_global)
+
+g = open(param.step02B_info_filepath, "a+")
+g.write(    "total_time," + format(time_total, '.4f') + "," +
+            "pickleload_time," + format(time_pickleload, '.4f')+","+
+            "findAssocLabelGlobal_time," + format(time_findAssocLabelGlobal, '.4f')+","+
+            "splitandwritepickle_time," + format(time_splitandwritepickle, '.4f')+","+
+            "len_label_set_border," + str(len_label_set_border).zfill(8)+","+
+            "len_associated_label_global," + str(len_associated_label_global).zfill(8)+","+
+            "n_Holes," + str(n_Holes).zfill(8)+","+
+            "n_NotHoles," + str(n_NotHoles).zfill(8)+"\n")
 g.close()

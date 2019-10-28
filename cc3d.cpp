@@ -2805,6 +2805,7 @@ static const char __pyx_k_signatures[] = "signatures";
 static const char __pyx_k_ImportError[] = "ImportError";
 static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_PickleError[] = "PickleError";
+static const char __pyx_k_start_label[] = "start_label";
 static const char __pyx_k_C_CONTIGUOUS[] = "C_CONTIGUOUS";
 static const char __pyx_k_F_CONTIGUOUS[] = "F_CONTIGUOUS";
 static const char __pyx_k_RuntimeError[] = "RuntimeError";
@@ -3034,6 +3035,7 @@ static PyObject *__pyx_n_s_signatures;
 static PyObject *__pyx_n_s_size;
 static PyObject *__pyx_n_s_split;
 static PyObject *__pyx_n_s_start;
+static PyObject *__pyx_n_s_start_label;
 static PyObject *__pyx_n_s_step;
 static PyObject *__pyx_n_s_stop;
 static PyObject *__pyx_kp_s_strided_and_direct;
@@ -3062,7 +3064,7 @@ static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_voxels;
 static PyObject *__pyx_n_s_zeros;
-static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_data, int64_t __pyx_v_max_labels, int64_t __pyx_v_connectivity); /* proto */
+static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_data, int64_t __pyx_v_start_label, int64_t __pyx_v_max_labels, int64_t __pyx_v_connectivity); /* proto */
 static PyObject *__pyx_pf_4cc3d_2region_graph(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_signatures, PyObject *__pyx_v_args, PyObject *__pyx_v_kwargs, CYTHON_UNUSED PyObject *__pyx_v_defaults); /* proto */
 static PyObject *__pyx_pf_4cc3d_4__pyx_fuse_0region_graph(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_labels, int8_t __pyx_v_connectivity); /* proto */
 static PyObject *__pyx_pf_4cc3d_6__pyx_fuse_1region_graph(CYTHON_UNUSED PyObject *__pyx_self, PyArrayObject *__pyx_v_labels, int8_t __pyx_v_connectivity); /* proto */
@@ -3181,7 +3183,7 @@ static PyObject *__pyx_codeobj__51;
 /* "cc3d.pyx":67
  *   pass
  * 
- * def connected_components(data, int64_t max_labels=-1, int64_t connectivity=26):             # <<<<<<<<<<<<<<
+ * def connected_components(data, int64_t start_label=-1, int64_t max_labels=-1, int64_t connectivity=26):             # <<<<<<<<<<<<<<
  *   """
  *   ndarray connected_components(data, int64_t max_labels=-1, int64_t connectivity=26)
  */
@@ -3192,18 +3194,21 @@ static char __pyx_doc_4cc3d_connected_components[] = "\n  ndarray connected_comp
 static PyMethodDef __pyx_mdef_4cc3d_1connected_components = {"connected_components", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_4cc3d_1connected_components, METH_VARARGS|METH_KEYWORDS, __pyx_doc_4cc3d_connected_components};
 static PyObject *__pyx_pw_4cc3d_1connected_components(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_data = 0;
+  int64_t __pyx_v_start_label;
   int64_t __pyx_v_max_labels;
   int64_t __pyx_v_connectivity;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("connected_components (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_data,&__pyx_n_s_max_labels,&__pyx_n_s_connectivity,0};
-    PyObject* values[3] = {0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_data,&__pyx_n_s_start_label,&__pyx_n_s_max_labels,&__pyx_n_s_connectivity,0};
+    PyObject* values[4] = {0,0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
         case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
         CYTHON_FALLTHROUGH;
         case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
@@ -3221,14 +3226,20 @@ static PyObject *__pyx_pw_4cc3d_1connected_components(PyObject *__pyx_self, PyOb
         CYTHON_FALLTHROUGH;
         case  1:
         if (kw_args > 0) {
-          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_max_labels);
+          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_start_label);
           if (value) { values[1] = value; kw_args--; }
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (kw_args > 0) {
-          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_connectivity);
+          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_max_labels);
           if (value) { values[2] = value; kw_args--; }
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (kw_args > 0) {
+          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_connectivity);
+          if (value) { values[3] = value; kw_args--; }
         }
       }
       if (unlikely(kw_args > 0)) {
@@ -3236,6 +3247,8 @@ static PyObject *__pyx_pw_4cc3d_1connected_components(PyObject *__pyx_self, PyOb
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
         case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
         CYTHON_FALLTHROUGH;
         case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
@@ -3247,32 +3260,37 @@ static PyObject *__pyx_pw_4cc3d_1connected_components(PyObject *__pyx_self, PyOb
     }
     __pyx_v_data = values[0];
     if (values[1]) {
-      __pyx_v_max_labels = __Pyx_PyInt_As_int64_t(values[1]); if (unlikely((__pyx_v_max_labels == ((int64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 67, __pyx_L3_error)
+      __pyx_v_start_label = __Pyx_PyInt_As_int64_t(values[1]); if (unlikely((__pyx_v_start_label == ((int64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 67, __pyx_L3_error)
+    } else {
+      __pyx_v_start_label = ((int64_t)-1L);
+    }
+    if (values[2]) {
+      __pyx_v_max_labels = __Pyx_PyInt_As_int64_t(values[2]); if (unlikely((__pyx_v_max_labels == ((int64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 67, __pyx_L3_error)
     } else {
       __pyx_v_max_labels = ((int64_t)-1L);
     }
-    if (values[2]) {
-      __pyx_v_connectivity = __Pyx_PyInt_As_int64_t(values[2]); if (unlikely((__pyx_v_connectivity == ((int64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 67, __pyx_L3_error)
+    if (values[3]) {
+      __pyx_v_connectivity = __Pyx_PyInt_As_int64_t(values[3]); if (unlikely((__pyx_v_connectivity == ((int64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 67, __pyx_L3_error)
     } else {
       __pyx_v_connectivity = ((int64_t)26);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("connected_components", 0, 1, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 67, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("connected_components", 0, 1, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 67, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("cc3d.connected_components", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4cc3d_connected_components(__pyx_self, __pyx_v_data, __pyx_v_max_labels, __pyx_v_connectivity);
+  __pyx_r = __pyx_pf_4cc3d_connected_components(__pyx_self, __pyx_v_data, __pyx_v_start_label, __pyx_v_max_labels, __pyx_v_connectivity);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_data, int64_t __pyx_v_max_labels, int64_t __pyx_v_connectivity) {
+static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_data, int64_t __pyx_v_start_label, int64_t __pyx_v_max_labels, int64_t __pyx_v_connectivity) {
   PyObject *__pyx_v_dims = NULL;
   PyObject *__pyx_v_order = NULL;
   PyObject *__pyx_v_shape = NULL;
@@ -3961,7 +3979,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview64u = data
  *     labels = connected_components3d[uint64_t](
  *       &arr_memview64u[0,0,0],             # <<<<<<<<<<<<<<
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]
  */
     __pyx_t_14 = 0;
@@ -3987,7 +4005,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
 
     /* "cc3d.pyx":143
  *       &arr_memview64u[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]             # <<<<<<<<<<<<<<
  *     )
  *   elif dtype == np.uint32:
@@ -4008,9 +4026,9 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview64u = data
  *     labels = connected_components3d[uint64_t](             # <<<<<<<<<<<<<<
  *       &arr_memview64u[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  */
-    __pyx_v_labels = cc3d::connected_components3d<uint64_t>((&(*((uint64_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview64u.data + __pyx_t_14 * __pyx_v_arr_memview64u.strides[0]) ) + __pyx_t_15 * __pyx_v_arr_memview64u.strides[1]) ) + __pyx_t_16 * __pyx_v_arr_memview64u.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
+    __pyx_v_labels = cc3d::connected_components3d<uint64_t>((&(*((uint64_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview64u.data + __pyx_t_14 * __pyx_v_arr_memview64u.strides[0]) ) + __pyx_t_15 * __pyx_v_arr_memview64u.strides[1]) ) + __pyx_t_16 * __pyx_v_arr_memview64u.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_start_label, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_17, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
 
     /* "cc3d.pyx":138
  *   dtype = data.dtype
@@ -4056,7 +4074,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview32u = data
  *     labels = connected_components3d[uint32_t](
  *       &arr_memview32u[0,0,0],             # <<<<<<<<<<<<<<
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]
  */
     __pyx_t_19 = 0;
@@ -4082,7 +4100,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
 
     /* "cc3d.pyx":150
  *       &arr_memview32u[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]             # <<<<<<<<<<<<<<
  *     )
  *   elif dtype == np.uint16:
@@ -4103,9 +4121,9 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview32u = data
  *     labels = connected_components3d[uint32_t](             # <<<<<<<<<<<<<<
  *       &arr_memview32u[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  */
-    __pyx_v_labels = cc3d::connected_components3d<uint32_t>((&(*((uint32_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview32u.data + __pyx_t_19 * __pyx_v_arr_memview32u.strides[0]) ) + __pyx_t_20 * __pyx_v_arr_memview32u.strides[1]) ) + __pyx_t_21 * __pyx_v_arr_memview32u.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_22, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
+    __pyx_v_labels = cc3d::connected_components3d<uint32_t>((&(*((uint32_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview32u.data + __pyx_t_19 * __pyx_v_arr_memview32u.strides[0]) ) + __pyx_t_20 * __pyx_v_arr_memview32u.strides[1]) ) + __pyx_t_21 * __pyx_v_arr_memview32u.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_start_label, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_22, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
 
     /* "cc3d.pyx":145
  *       <int64_t*>&out_labels[0]
@@ -4151,7 +4169,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview16u = data
  *     labels = connected_components3d[uint16_t](
  *       &arr_memview16u[0,0,0],             # <<<<<<<<<<<<<<
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]
  */
     __pyx_t_24 = 0;
@@ -4177,7 +4195,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
 
     /* "cc3d.pyx":157
  *       &arr_memview16u[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]             # <<<<<<<<<<<<<<
  *     )
  *   elif dtype in (np.uint8, np.bool):
@@ -4198,9 +4216,9 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview16u = data
  *     labels = connected_components3d[uint16_t](             # <<<<<<<<<<<<<<
  *       &arr_memview16u[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  */
-    __pyx_v_labels = cc3d::connected_components3d<uint16_t>((&(*((uint16_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview16u.data + __pyx_t_24 * __pyx_v_arr_memview16u.strides[0]) ) + __pyx_t_25 * __pyx_v_arr_memview16u.strides[1]) ) + __pyx_t_26 * __pyx_v_arr_memview16u.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_27, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
+    __pyx_v_labels = cc3d::connected_components3d<uint16_t>((&(*((uint16_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview16u.data + __pyx_t_24 * __pyx_v_arr_memview16u.strides[0]) ) + __pyx_t_25 * __pyx_v_arr_memview16u.strides[1]) ) + __pyx_t_26 * __pyx_v_arr_memview16u.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_start_label, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_27, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
 
     /* "cc3d.pyx":152
  *       <int64_t*>&out_labels[0]
@@ -4290,7 +4308,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview8u = data.astype(np.uint8)
  *     labels = connected_components3d[uint8_t](
  *       &arr_memview8u[0,0,0],             # <<<<<<<<<<<<<<
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]
  */
     __pyx_t_29 = 0;
@@ -4316,7 +4334,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
 
     /* "cc3d.pyx":164
  *       &arr_memview8u[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]             # <<<<<<<<<<<<<<
  *     )
  *   elif dtype == np.int64:
@@ -4337,9 +4355,9 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview8u = data.astype(np.uint8)
  *     labels = connected_components3d[uint8_t](             # <<<<<<<<<<<<<<
  *       &arr_memview8u[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  */
-    __pyx_v_labels = cc3d::connected_components3d<uint8_t>((&(*((uint8_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview8u.data + __pyx_t_29 * __pyx_v_arr_memview8u.strides[0]) ) + __pyx_t_30 * __pyx_v_arr_memview8u.strides[1]) ) + __pyx_t_31 * __pyx_v_arr_memview8u.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_32, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
+    __pyx_v_labels = cc3d::connected_components3d<uint8_t>((&(*((uint8_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview8u.data + __pyx_t_29 * __pyx_v_arr_memview8u.strides[0]) ) + __pyx_t_30 * __pyx_v_arr_memview8u.strides[1]) ) + __pyx_t_31 * __pyx_v_arr_memview8u.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_start_label, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_32, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
 
     /* "cc3d.pyx":159
  *       <int64_t*>&out_labels[0]
@@ -4385,7 +4403,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview64 = data
  *     labels = connected_components3d[int64_t](
  *       &arr_memview64[0,0,0],             # <<<<<<<<<<<<<<
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]
  */
     __pyx_t_34 = 0;
@@ -4411,7 +4429,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
 
     /* "cc3d.pyx":171
  *       &arr_memview64[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]             # <<<<<<<<<<<<<<
  *     )
  *   elif dtype == np.int32:
@@ -4432,9 +4450,9 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview64 = data
  *     labels = connected_components3d[int64_t](             # <<<<<<<<<<<<<<
  *       &arr_memview64[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  */
-    __pyx_v_labels = cc3d::connected_components3d<int64_t>((&(*((int64_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview64.data + __pyx_t_34 * __pyx_v_arr_memview64.strides[0]) ) + __pyx_t_35 * __pyx_v_arr_memview64.strides[1]) ) + __pyx_t_36 * __pyx_v_arr_memview64.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_37, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
+    __pyx_v_labels = cc3d::connected_components3d<int64_t>((&(*((int64_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview64.data + __pyx_t_34 * __pyx_v_arr_memview64.strides[0]) ) + __pyx_t_35 * __pyx_v_arr_memview64.strides[1]) ) + __pyx_t_36 * __pyx_v_arr_memview64.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_start_label, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_37, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
 
     /* "cc3d.pyx":166
  *       <int64_t*>&out_labels[0]
@@ -4480,7 +4498,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview32 = data
  *     labels = connected_components3d[int32_t](
  *       &arr_memview32[0,0,0],             # <<<<<<<<<<<<<<
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]
  */
     __pyx_t_39 = 0;
@@ -4506,7 +4524,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
 
     /* "cc3d.pyx":178
  *       &arr_memview32[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]             # <<<<<<<<<<<<<<
  *     )
  *   elif dtype == np.int16:
@@ -4527,9 +4545,9 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview32 = data
  *     labels = connected_components3d[int32_t](             # <<<<<<<<<<<<<<
  *       &arr_memview32[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  */
-    __pyx_v_labels = cc3d::connected_components3d<int32_t>((&(*((int32_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview32.data + __pyx_t_39 * __pyx_v_arr_memview32.strides[0]) ) + __pyx_t_40 * __pyx_v_arr_memview32.strides[1]) ) + __pyx_t_41 * __pyx_v_arr_memview32.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_42, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
+    __pyx_v_labels = cc3d::connected_components3d<int32_t>((&(*((int32_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview32.data + __pyx_t_39 * __pyx_v_arr_memview32.strides[0]) ) + __pyx_t_40 * __pyx_v_arr_memview32.strides[1]) ) + __pyx_t_41 * __pyx_v_arr_memview32.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_start_label, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_42, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
 
     /* "cc3d.pyx":173
  *       <int64_t*>&out_labels[0]
@@ -4575,7 +4593,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview16 = data
  *     labels = connected_components3d[int16_t](
  *       &arr_memview16[0,0,0],             # <<<<<<<<<<<<<<
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]
  */
     __pyx_t_44 = 0;
@@ -4601,7 +4619,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
 
     /* "cc3d.pyx":185
  *       &arr_memview16[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]             # <<<<<<<<<<<<<<
  *     )
  *   elif dtype == np.int8:
@@ -4622,9 +4640,9 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview16 = data
  *     labels = connected_components3d[int16_t](             # <<<<<<<<<<<<<<
  *       &arr_memview16[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  */
-    __pyx_v_labels = cc3d::connected_components3d<int16_t>((&(*((int16_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview16.data + __pyx_t_44 * __pyx_v_arr_memview16.strides[0]) ) + __pyx_t_45 * __pyx_v_arr_memview16.strides[1]) ) + __pyx_t_46 * __pyx_v_arr_memview16.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_47, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
+    __pyx_v_labels = cc3d::connected_components3d<int16_t>((&(*((int16_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview16.data + __pyx_t_44 * __pyx_v_arr_memview16.strides[0]) ) + __pyx_t_45 * __pyx_v_arr_memview16.strides[1]) ) + __pyx_t_46 * __pyx_v_arr_memview16.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_start_label, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_47, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
 
     /* "cc3d.pyx":180
  *       <int64_t*>&out_labels[0]
@@ -4670,7 +4688,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview8 = data
  *     labels = connected_components3d[int8_t](
  *       &arr_memview8[0,0,0],             # <<<<<<<<<<<<<<
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]
  */
     __pyx_t_49 = 0;
@@ -4696,7 +4714,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
 
     /* "cc3d.pyx":192
  *       &arr_memview8[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  *       <int64_t*>&out_labels[0]             # <<<<<<<<<<<<<<
  *     )
  *   else:
@@ -4717,9 +4735,9 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
  *     arr_memview8 = data
  *     labels = connected_components3d[int8_t](             # <<<<<<<<<<<<<<
  *       &arr_memview8[0,0,0],
- *       sx, sy, sz, max_labels, connectivity,
+ *       sx, sy, sz, start_label, max_labels, connectivity,
  */
-    __pyx_v_labels = cc3d::connected_components3d<int8_t>((&(*((int8_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview8.data + __pyx_t_49 * __pyx_v_arr_memview8.strides[0]) ) + __pyx_t_50 * __pyx_v_arr_memview8.strides[1]) ) + __pyx_t_51 * __pyx_v_arr_memview8.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_52, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
+    __pyx_v_labels = cc3d::connected_components3d<int8_t>((&(*((int8_t *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_arr_memview8.data + __pyx_t_49 * __pyx_v_arr_memview8.strides[0]) ) + __pyx_t_50 * __pyx_v_arr_memview8.strides[1]) ) + __pyx_t_51 * __pyx_v_arr_memview8.strides[2]) )))), __pyx_v_sx, __pyx_v_sy, __pyx_v_sz, __pyx_v_start_label, __pyx_v_max_labels, __pyx_v_connectivity, ((int64_t *)(&(*__Pyx_BufPtrStrided1d(int64_t *, __pyx_pybuffernd_out_labels.rcbuffer->pybuffer.buf, __pyx_t_52, __pyx_pybuffernd_out_labels.diminfo[0].strides)))));
 
     /* "cc3d.pyx":187
  *       <int64_t*>&out_labels[0]
@@ -5053,7 +5071,7 @@ static PyObject *__pyx_pf_4cc3d_connected_components(CYTHON_UNUSED PyObject *__p
   /* "cc3d.pyx":67
  *   pass
  * 
- * def connected_components(data, int64_t max_labels=-1, int64_t connectivity=26):             # <<<<<<<<<<<<<<
+ * def connected_components(data, int64_t start_label=-1, int64_t max_labels=-1, int64_t connectivity=26):             # <<<<<<<<<<<<<<
  *   """
  *   ndarray connected_components(data, int64_t max_labels=-1, int64_t connectivity=26)
  */
@@ -40092,6 +40110,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_size, __pyx_k_size, sizeof(__pyx_k_size), 0, 0, 1, 1},
   {&__pyx_n_s_split, __pyx_k_split, sizeof(__pyx_k_split), 0, 0, 1, 1},
   {&__pyx_n_s_start, __pyx_k_start, sizeof(__pyx_k_start), 0, 0, 1, 1},
+  {&__pyx_n_s_start_label, __pyx_k_start_label, sizeof(__pyx_k_start_label), 0, 0, 1, 1},
   {&__pyx_n_s_step, __pyx_k_step, sizeof(__pyx_k_step), 0, 0, 1, 1},
   {&__pyx_n_s_stop, __pyx_k_stop, sizeof(__pyx_k_stop), 0, 0, 1, 1},
   {&__pyx_kp_s_strided_and_direct, __pyx_k_strided_and_direct, sizeof(__pyx_k_strided_and_direct), 0, 0, 1, 0},
@@ -40439,14 +40458,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "cc3d.pyx":67
  *   pass
  * 
- * def connected_components(data, int64_t max_labels=-1, int64_t connectivity=26):             # <<<<<<<<<<<<<<
+ * def connected_components(data, int64_t start_label=-1, int64_t max_labels=-1, int64_t connectivity=26):             # <<<<<<<<<<<<<<
  *   """
  *   ndarray connected_components(data, int64_t max_labels=-1, int64_t connectivity=26)
  */
-  __pyx_tuple__41 = PyTuple_Pack(21, __pyx_n_s_data, __pyx_n_s_max_labels, __pyx_n_s_connectivity, __pyx_n_s_dims, __pyx_n_s_order, __pyx_n_s_shape, __pyx_n_s_sx, __pyx_n_s_sy, __pyx_n_s_sz, __pyx_n_s_arr_memview8u, __pyx_n_s_arr_memview16u, __pyx_n_s_arr_memview32u, __pyx_n_s_arr_memview64u, __pyx_n_s_arr_memview8, __pyx_n_s_arr_memview16, __pyx_n_s_arr_memview32, __pyx_n_s_arr_memview64, __pyx_n_s_voxels, __pyx_n_s_out_labels, __pyx_n_s_dtype, __pyx_n_s_labels); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __pyx_tuple__41 = PyTuple_Pack(22, __pyx_n_s_data, __pyx_n_s_start_label, __pyx_n_s_max_labels, __pyx_n_s_connectivity, __pyx_n_s_dims, __pyx_n_s_order, __pyx_n_s_shape, __pyx_n_s_sx, __pyx_n_s_sy, __pyx_n_s_sz, __pyx_n_s_arr_memview8u, __pyx_n_s_arr_memview16u, __pyx_n_s_arr_memview32u, __pyx_n_s_arr_memview64u, __pyx_n_s_arr_memview8, __pyx_n_s_arr_memview16, __pyx_n_s_arr_memview32, __pyx_n_s_arr_memview64, __pyx_n_s_voxels, __pyx_n_s_out_labels, __pyx_n_s_dtype, __pyx_n_s_labels); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(0, 67, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__41);
   __Pyx_GIVEREF(__pyx_tuple__41);
-  __pyx_codeobj__42 = (PyObject*)__Pyx_PyCode_New(3, 0, 21, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__41, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cc3d_pyx, __pyx_n_s_connected_components, 67, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__42)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __pyx_codeobj__42 = (PyObject*)__Pyx_PyCode_New(4, 0, 22, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__41, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cc3d_pyx, __pyx_n_s_connected_components, 67, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__42)) __PYX_ERR(0, 67, __pyx_L1_error)
 
   /* "cc3d.pyx":210
  *     return out_labels.reshape( (sx), order=order)
@@ -40984,7 +41003,7 @@ if (!__Pyx_RefNanny) {
   /* "cc3d.pyx":67
  *   pass
  * 
- * def connected_components(data, int64_t max_labels=-1, int64_t connectivity=26):             # <<<<<<<<<<<<<<
+ * def connected_components(data, int64_t start_label=-1, int64_t max_labels=-1, int64_t connectivity=26):             # <<<<<<<<<<<<<<
  *   """
  *   ndarray connected_components(data, int64_t max_labels=-1, int64_t connectivity=26)
  */

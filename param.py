@@ -5,7 +5,7 @@ import math
 
 
 # Header file for block processing, includes parameters and paths
-isCluster = True
+isCluster = False
 
 if isCluster:
     output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
@@ -63,7 +63,7 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = "Step2WallImplementation"
+outp_ID = "NeighborLabel"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 
@@ -77,10 +77,10 @@ output_path = folder_path+"output_files/"
 
 # create file no save n_comp (number of cc3d components) for each procesed block
 n_comp_filepath         = folder_path+"n_comp.txt"
-step01_timing_filepath  = folder_path+"step01_timing.txt"
-step02A_timing_filepath = folder_path+"step02A_timing.txt"
-step02B_timing_filepath = folder_path+"step02B_timing.txt"
-step03_timing_filepath  = folder_path+"step03_timing.txt"
+step01_info_filepath  = folder_path+"step01_info.txt"
+step02A_info_filepath = folder_path+"step02A_info.txt"
+step02B_info_filepath = folder_path+"step02B_info.txt"
+step03_info_filepath  = folder_path+"step03_info.txt"
 
 # memory need per block (in MB)
 memory_needed = 80000 #int(1.1*bs_z*bs_y*bs_x*(8+8+2)/1000/1000)

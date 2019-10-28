@@ -41,8 +41,9 @@ time_fillWholes = time.time() - start_time_fillWholes
 
 time_total = time.time()-start_time_total
 
-g = open(param.step03_timing_filepath, "a+")
-g.write(    "total," + format(time_total, '.4f') + "," +
-            "pickleload," + format(time_readpickle, '.4f')+","+
-            "fillWholes," + format(time_fillWholes, '.4f')+"\n")
+g = open(param.step03_info_filepath, "a+")
+g.write(    "bz/by/bx,"+str(bz).zfill(4)+","+str(by).zfill(4)+","+str(bx).zfill(4)+","
+            "total_time," + format(time_total, '.4f') + "," +
+            "pickleload_time," + format(time_readpickle, '.4f')+","+
+            "fillWholes_time," + format(time_fillWholes, '.4f')+"\n")
 g.close()

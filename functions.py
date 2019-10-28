@@ -147,7 +147,6 @@ def noPythonConnectWalls(label_set, MinWall, MaxWall):
     return label_set
 
 # find sets of adjacent components
-# @njit
 def findAdjLabelSetGlobal(output_path, label_set, yres, xres, border_contact,bz,by,bx):
 
     # Z direction
@@ -200,10 +199,12 @@ def findAdjLabelSetGlobal(output_path, label_set, yres, xres, border_contact,bz,
 
 # find sets of adjacent components
 @njit
-def findAdjLabelSetLocal(box, cc_labels, yres, xres):
+def findAdjLabelSetLocal(cc_labels, yres, xres):
 
     neighbor_label_set_inside = set()
     neighbor_label_set_border = set()
+
+    box = [0,cc_labels.shape[0],0,cc_labels.shape[0],0,cc_labels.shape[0]]
 
     for iz in range(0, box[1]-box[0]-1):
         for iy in range(0, box[3]-box[2]-1):
@@ -297,10 +298,10 @@ def setUndeterminedtoNonHole(undetermined, associated_label):
     return associated_label
 
 # get neighbor label dict from neighbor label set
-def writeNeighborLabelDict(neighbor_label_set):
+def writeNeighborLabelDict(neighbor_label_dict, neighbor_label_set):
 
-    neighbor_label_dict = dict()
-    # time_start = time.time()
+    if neighbor_label_dict == False:
+        neighbor_label_dict = dict()
 
     for s in range(len(neighbor_label_set)):
         pair = neighbor_label_set.pop()
@@ -324,6 +325,8 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
 
     # time_start = time.time()
     border_contact = set()
+    isHole = set()
+    isNotHole = set()
 
     counter = 0
 
@@ -335,13 +338,10 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
         query_comp = undetermined.pop()
 
         #check if it has only one neighbor and this neighbor is a neuron
-        try:
-            if len(neighbor_label_dict[query_comp])==1 and neighbor_label_dict[query_comp][0]!=0x7FFFFFFFFFFFFFFF and neighbor_label_dict[query_comp][0]>0:
+        if len(neighbor_label_dict[query_comp])==1 and neighbor_label_dict[query_comp][0]!=0x7FFFFFFFFFFFFFFF and neighbor_label_dict[query_comp][0]>0:
                 associated_label[query_comp] = neighbor_label_dict[query_comp][0]
-        except:
-            print(query_comp)
-            print(neighbor_label_dict[query_comp])
-            raise ValueError("ERROR")
+                isHole.add(query_comp)
+
         # otherwise unroll neighbors to identify
         else:
 
@@ -383,16 +383,19 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
             # check again if there is only one positive neighbor and that it is not boundary and it is a neuron, if so, it is a hole
                 if len(list(filter(lambda a: a>0, neighbor_label_dict[query_comp])))==1:
                     associated_label[query_comp] = np.max(neighbor_label_dict[query_comp])
+                    isHole.add(query_comp)
                     for elem in neighbor_label_dict[query_comp]:
                         if elem < 0:
                             associated_label[elem]=np.max(neighbor_label_dict[query_comp])
                             undetermined.discard(elem)
+                            isHole.add(elem)
                 else:
                     associated_label[query_comp] = 0
                     for elem in neighbor_label_dict[query_comp]:
                         if elem < 0:
                             associated_label[elem]=0
                             undetermined.discard(elem)
+                            isNotHole.add(query_comp)
             # delte open set
             del open
 
@@ -403,7 +406,21 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
 
     undetermined = undetermined.union(border_contact)
 
-    return associated_label, undetermined
+    return associated_label, undetermined, isHole, isNotHole
+
+def removeDetComp(neighbor_label_set, isHole, isNotHole):
+
+    neighbor_label_set_out = set()
+
+    for _ in range(len(neighbor_label_set)):
+        elem = neighbor_label_set.pop()
+        if elem[0] in isHole or elem[0] in isNotHole:
+            continue
+            print("removed: " + str(elem))
+        else:
+            neighbor_label_set_out.add(elem)
+
+    return neighbor_label_set_out
 
 # fill detedted wholes and give non_wholes their ID (for visualization)
 def fillWholes(output_path,associated_label, bz):
@@ -486,6 +503,7 @@ def IdiToIdx(iz, iy, ix, yres, xres):
     if (iz<param.bs_z*param.z_start or iy<param.bs_y*param.y_start or ix<param.bs_x*param.x_start
             or iy >= param.bs_y*(param.y_start+param.n_blocks_y) or ix >= param.bs_x*(param.x_start+param.n_blocks_x)):
         # print(iz,iy,ix)
+        raise ValueError("Out of bounds IditoIdx")
         return -1
     else:
         return iz * yres * xres + iy * xres + ix
@@ -619,23 +637,20 @@ class dataBlock:
         self.by=by
         self.bx=bx
 
-    def computeStepOne(self, label_start, max_labels_block, output_path):
-
-        box = [self.bz*self.bs_z,(self.bz+1)*self.bs_z,self.by*self.bs_y,(self.by+1)*self.bs_y,self.bx*self.bs_x,(self.bx+1)*self.bs_x]
-        associated_label_local = Dict.empty(key_type=types.int64,value_type=types.int64)
+    def computeStepOne(self, label_start, output_path):
 
         start_time_cc_labels = time.time()
-        cc_labels, n_comp = computeConnectedComp6(self.labels_in,label_start,max_labels_block)
+        # compute connected component labels
+        cc_labels, n_comp = computeConnectedComp6(self.labels_in,label_start,param.max_labels_block)
 
         del self.labels_in
 
         output_name = "cc_labels"
-        output_folder = output_path+"/z"+str(self.bz).zfill(4)+"y"+str(self.by).zfill(4)+"x"+str(self.bx).zfill(4)+"/"
+        output_folder = blockFolderPath(output_path,self.bz,self.by,self.bx)
 
+        #save output and slices of walls
         makeFolder(output_folder)
         writeData(output_folder+output_name, cc_labels)
-
-        #save 6 walls to folder (needed for stitching)
         writeData(output_folder+"zMinWall", cc_labels[0 ,: ,: ])
         writeData(output_folder+"zMaxWall", cc_labels[-1,: ,: ])
         writeData(output_folder+"yMinWall", cc_labels[: ,0 ,: ])
@@ -646,7 +661,8 @@ class dataBlock:
         self.time_cc_labels = time.time()-start_time_cc_labels
         start_time_AdjLabelLocal = time.time()
 
-        neighbor_label_set_inside_local, neighbor_label_set_border_local = findAdjLabelSetLocal(box, cc_labels, self.yres, self.xres)
+        # find the set of adjacent labels, both inside the volume and the ones connected to the local border
+        neighbor_label_set_inside_local, neighbor_label_set_border_local = findAdjLabelSetLocal(cc_labels, self.yres, self.xres)
 
         self.time_AdjLabelLocal = time.time()-start_time_AdjLabelLocal
 
@@ -654,23 +670,36 @@ class dataBlock:
 
         start_time_assoc_labels = time.time()
 
+        # for identification of local wholes that do not cross the border, unify both sets and write a dict of the corresponding neighbors for each component
         neighbor_label_set = neighbor_label_set_inside_local.union(neighbor_label_set_border_local)
-        neighbor_label_dict = writeNeighborLabelDict(neighbor_label_set)
+        neighbor_label_dict = writeNeighborLabelDict(neighbor_label_dict=False, neighbor_label_set=neighbor_label_set)
 
+        # create a set of undtermined components, at this stage all components in the block and find associated labels of components that can be identified already
         undetermined_local = set(neighbor_label_dict.keys())
-        associated_label_local, undetermined_local = findAssociatedLabels(neighbor_label_dict=neighbor_label_dict, undetermined=undetermined_local, associated_label=associated_label_local)
+        associated_label_local = Dict.empty(key_type=types.int64,value_type=types.int64)
+        associated_label_local, undetermined_local, isHole, isNotHole = findAssociatedLabels(neighbor_label_dict=neighbor_label_dict, undetermined=undetermined_local, associated_label=associated_label_local)
 
         self.time_assoc_labels = time.time()-start_time_assoc_labels
+
         del neighbor_label_set, neighbor_label_set_border_local, neighbor_label_dict
 
-        self.n_comp=n_comp
+        self.n_comp = n_comp
+        self.n_Holes = len(isHole)
+        self.n_NotHoles = len(isNotHole)
 
-        output_folder = output_path+"/z"+str(self.bz).zfill(4)+"y"+str(self.by).zfill(4)+"x"+str(self.bx).zfill(4)+"/"
+        # remove alrady detected hole components from neighbor label set local and write the according neighbor label dict of components that are not yet determined
+        neighbor_label_set_inside_local_reduced  = removeDetComp(neighbor_label_set_inside_local.copy(), isHole, isNotHole)
+        neighbor_label_dict_reduced = writeNeighborLabelDict(neighbor_label_dict=False, neighbor_label_set=neighbor_label_set_inside_local_reduced)
+        self.size_label_set_inside = len(neighbor_label_set_inside_local)
+        self.size_label_set_inside_reduced = len(neighbor_label_set_inside_local_reduced)
 
+        # write components that are needed for later steps to files
+        output_folder = blockFolderPath(output_path,self.bz,self.by,self.bx)
         start_time_writepickle = time.time()
-        dumpToFile(neighbor_label_set_inside_local, "neighbor_label_set_inside_local", output_folder, "")
         dumpNumbaDictToFile(associated_label_local, "associated_label_local", output_folder, "")
         dumpToFile(undetermined_local, "undetermined_local", output_folder, "")
+        dumpToFile(neighbor_label_dict_reduced, "neighbor_label_dict_reduced", output_folder, "")
+
         self.time_writepickle = time.time()-start_time_writepickle
 
     def setRes(self, zres,yres,xres):

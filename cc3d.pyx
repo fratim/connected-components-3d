@@ -45,7 +45,7 @@ __VERSION__ = '1.4.1'
 cdef extern from "cc3d.hpp" namespace "cc3d":
   cdef int64_t* connected_components3d[T](
     T* in_labels,
-    int64_t sx, int64_t sy, int64_t sz,
+    int64_t sx, int64_t sy, int64_t sz, int64_t start_label,
     int64_t max_labels, int64_t connectivity,
     int64_t* out_labels
   )
@@ -64,7 +64,7 @@ class DimensionError(Exception):
   """The array has the wrong number of dimensions."""
   pass
 
-def connected_components(data, int64_t max_labels=-1, int64_t connectivity=26):
+def connected_components(data, int64_t start_label=-1, int64_t max_labels=-1, int64_t connectivity=26):
   """
   ndarray connected_components(data, int64_t max_labels=-1, int64_t connectivity=26)
 
@@ -139,56 +139,56 @@ def connected_components(data, int64_t max_labels=-1, int64_t connectivity=26):
     arr_memview64u = data
     labels = connected_components3d[uint64_t](
       &arr_memview64u[0,0,0],
-      sx, sy, sz, max_labels, connectivity,
+      sx, sy, sz, start_label, max_labels, connectivity,
       <int64_t*>&out_labels[0]
     )
   elif dtype == np.uint32:
     arr_memview32u = data
     labels = connected_components3d[uint32_t](
       &arr_memview32u[0,0,0],
-      sx, sy, sz, max_labels, connectivity,
+      sx, sy, sz, start_label, max_labels, connectivity,
       <int64_t*>&out_labels[0]
     )
   elif dtype == np.uint16:
     arr_memview16u = data
     labels = connected_components3d[uint16_t](
       &arr_memview16u[0,0,0],
-      sx, sy, sz, max_labels, connectivity,
+      sx, sy, sz, start_label, max_labels, connectivity,
       <int64_t*>&out_labels[0]
     )
   elif dtype in (np.uint8, np.bool):
     arr_memview8u = data.astype(np.uint8)
     labels = connected_components3d[uint8_t](
       &arr_memview8u[0,0,0],
-      sx, sy, sz, max_labels, connectivity,
+      sx, sy, sz, start_label, max_labels, connectivity,
       <int64_t*>&out_labels[0]
     )
   elif dtype == np.int64:
     arr_memview64 = data
     labels = connected_components3d[int64_t](
       &arr_memview64[0,0,0],
-      sx, sy, sz, max_labels, connectivity,
+      sx, sy, sz, start_label, max_labels, connectivity,
       <int64_t*>&out_labels[0]
     )
   elif dtype == np.int32:
     arr_memview32 = data
     labels = connected_components3d[int32_t](
       &arr_memview32[0,0,0],
-      sx, sy, sz, max_labels, connectivity,
+      sx, sy, sz, start_label, max_labels, connectivity,
       <int64_t*>&out_labels[0]
     )
   elif dtype == np.int16:
     arr_memview16 = data
     labels = connected_components3d[int16_t](
       &arr_memview16[0,0,0],
-      sx, sy, sz, max_labels, connectivity,
+      sx, sy, sz, start_label, max_labels, connectivity,
       <int64_t*>&out_labels[0]
     )
   elif dtype == np.int8:
     arr_memview8 = data
     labels = connected_components3d[int8_t](
       &arr_memview8[0,0,0],
-      sx, sy, sz, max_labels, connectivity,
+      sx, sy, sz, start_label, max_labels, connectivity,
       <int64_t*>&out_labels[0]
     )
   else:
