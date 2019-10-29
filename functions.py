@@ -435,6 +435,7 @@ def fillwholesNoPython(box,cc_labels,associated_label):
             for ix in range(box[4], box[5]):
 
                 if cc_labels[iz,iy,ix] < 0:
+                    print(cc_labels[iz,iy,ix])
                     cc_labels[iz,iy,ix] = associated_label[cc_labels[iz,iy,ix]]
                 else:
                     continue
@@ -611,8 +612,8 @@ class dataBlock:
 
     def readLabels(self, data_path, sample_name, bz, by, bx):
         if param.isCluster:
-        	# filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
-            filename = data_path+"/"+sample_name+"/"+"z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
+            filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
+            #filename = data_path+"/"+sample_name+"/"+"z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
         else:
         	filename = data_path+"/"+sample_name+"/"+"cut_z_"+ str((bz)).zfill(4)+"y_"+ str(by).zfill(4)+"x_"+ str(bx).zfill(4)
         box = [1]
