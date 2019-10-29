@@ -90,7 +90,7 @@ neighbor_label_set_border_global = {(1,1)}
 border_contact = [onZMinBorder, onZMaxBorder, onYMinBorder, onYMaxBorder, onXMinBorder, onXMaxBorder]
 
 start_time_AdjLabelGlobal = time.time()
-neighbor_label_set_border_global = findAdjLabelSetGlobal(param.folder_path,neighbor_label_set_border_global,param.yres,param.xres,border_contact,bz,by,bx)
+neighbor_label_set_border_global = findAdjLabelSetGlobal(param.folder_path,neighbor_label_set_border_global,border_contact,bz,by,bx)
 time_AdjLabelGlobal = time.time() - start_time_AdjLabelGlobal
 
 neighbor_label_set_border_global.remove((1,1))

@@ -140,7 +140,7 @@ def noPythonConnectWalls(label_set, MinWall, MaxWall):
     return label_set
 
 # find sets of adjacent components
-def findAdjLabelSetGlobal(output_path, label_set, yres, xres, border_contact,bz,by,bx):
+def findAdjLabelSetGlobal(output_path, label_set, border_contact,bz,by,bx):
 
     # Z direction
     ###################
@@ -192,7 +192,7 @@ def findAdjLabelSetGlobal(output_path, label_set, yres, xres, border_contact,bz,
 
 # find sets of adjacent components
 @njit
-def findAdjLabelSetLocal(cc_labels, yres, xres):
+def findAdjLabelSetLocal(cc_labels):
 
     neighbor_label_set_inside = set()
     neighbor_label_set_border = set()
@@ -649,7 +649,7 @@ class dataBlock:
         start_time_AdjLabelLocal = time.time()
 
         # find the set of adjacent labels, both inside the volume and the ones connected to the local border
-        neighbor_label_set_inside_local, neighbor_label_set_border_local = findAdjLabelSetLocal(cc_labels, self.yres, self.xres)
+        neighbor_label_set_inside_local, neighbor_label_set_border_local = findAdjLabelSetLocal(cc_labels)
 
         self.time_AdjLabelLocal = time.time()-start_time_AdjLabelLocal
 
