@@ -47,10 +47,25 @@ def writeFile(filename, data):
         with open(filename, 'w') as fd:
             fd.write(data)
 
-if(len(sys.argv))!=2:
-    raise ValueError(" Scripts needs cluster partition as input")
+
+if(len(sys.argv))!=5:
+    raise ValueError(" Scripts needs 4 cluster partitions as input, put 0 if not less desired")
 else:
-    partition = sys.argv[1]
+    n_part = 1
+    partitions = ["0","0","0","0"]
+
+    if sys.argv[1]!="0"
+        partitions[0] = sys.argv[1]
+        n_part +=1
+    if sys.argv[2]!="0"
+        partitions[1] = sys.argv[2]
+        n_part +=1
+    if sys.argv[3]!="0"
+        partitions[2] = sys.argv[3]
+        n_part +=1
+    if sys.argv[4]!="0"
+        partitions[3] = sys.argv[4]
+        n_part +=1
 
 files_written = 0
 
@@ -89,7 +104,7 @@ t = t.replace('{COMMAND}', command)
 t = t.replace('{ERROR_PATH}', param.error_path_preparation)
 t = t.replace('{OUTPUT_PATH}', param.output_path_preparation)
 t = t.replace('{MEMORY}', "2000")
-t = t.replace('{PARTITION}', partition)
+t = t.replace('{PARTITION}', partitions[np.random.randint(0,n_part)])
 t = t.replace('{MAIL}', mail_std)
 
 filename = step00folderpath + jobname + ".slurm"
@@ -110,7 +125,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
             t = t.replace('{ERROR_PATH}', param.error_path)
             t = t.replace('{OUTPUT_PATH}', param.output_path)
             t = t.replace('{MEMORY}', str(memory_std))
-            t = t.replace('{PARTITION}', partition)
+            t = t.replace('{PARTITION}', partitions[np.random.randint(0,n_part)])
             if bz == param.z_start+param.n_blocks_z-1:
                 t = t.replace('{MAIL}', mail_last)
             else:
@@ -125,7 +140,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
     for by in range(param.y_start, param.y_start + param.n_blocks_y):
         for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
-            command = "stepTwoA.py" + " " + str(bz) + " " + str(by) + " " + str(bx) 
+            command = "stepTwoA.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
             jobname = "step02A"+param.outp_ID+"_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
 
             t = template
@@ -134,7 +149,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
             t = t.replace('{ERROR_PATH}', param.error_path)
             t = t.replace('{OUTPUT_PATH}', param.output_path)
             t = t.replace('{MEMORY}', str(memory_std))
-            t = t.replace('{PARTITION}', partition)
+            t = t.replace('{PARTITION}', partitions[np.random.randint(0,n_part)])
             if bz == param.z_start+param.n_blocks_z-1:
                 t = t.replace('{MAIL}', mail_last)
             else:
@@ -154,7 +169,7 @@ t = t.replace('{COMMAND}', command)
 t = t.replace('{ERROR_PATH}', param.error_path)
 t = t.replace('{OUTPUT_PATH}', param.output_path)
 t = t.replace('{MEMORY}', str(memory_std))
-t = t.replace('{PARTITION}', partition)
+t = t.replace('{PARTITION}', partitions[np.random.randint(0,n_part)])
 t = t.replace('{MAIL}', mail_last)
 
 filename = step02Bfolderpath + jobname + ".slurm"
@@ -175,7 +190,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
             t = t.replace('{ERROR_PATH}', param.error_path)
             t = t.replace('{OUTPUT_PATH}', param.output_path)
             t = t.replace('{MEMORY}', str(memory_std))
-            t = t.replace('{PARTITION}', partition)
+            t = t.replace('{PARTITION}', partitions[np.random.randint(0,n_part)])
             if bz == param.z_start+param.n_blocks_z-1:
                 t = t.replace('{MAIL}', mail_last)
             else:
@@ -195,7 +210,7 @@ t = t.replace('{COMMAND}', command)
 t = t.replace('{ERROR_PATH}', param.error_path)
 t = t.replace('{OUTPUT_PATH}', param.output_path)
 t = t.replace('{MEMORY}', str(memory_step04))
-t = t.replace('{PARTITION}', partition)
+t = t.replace('{PARTITION}', partitions[np.random.randint(0,n_part)])
 t = t.replace('{MAIL}', mail_last)
 
 filename = step04folderpath + jobname + ".slurm"
