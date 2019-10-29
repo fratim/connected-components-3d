@@ -51,19 +51,19 @@ def writeFile(filename, data):
 if(len(sys.argv))!=5:
     raise ValueError(" Scripts needs 4 cluster partitions as input, put 0 if not less desired")
 else:
-    n_part = 1
+    n_part = 0
     partitions = ["0","0","0","0"]
 
-    if sys.argv[1]!="0"
+    if sys.argv[1]!="0":
         partitions[0] = sys.argv[1]
         n_part +=1
-    if sys.argv[2]!="0"
+    if sys.argv[2]!="0":
         partitions[1] = sys.argv[2]
         n_part +=1
-    if sys.argv[3]!="0"
+    if sys.argv[3]!="0":
         partitions[2] = sys.argv[3]
         n_part +=1
-    if sys.argv[4]!="0"
+    if sys.argv[4]!="0":
         partitions[3] = sys.argv[4]
         n_part +=1
 
