@@ -20,7 +20,7 @@ bs_x = 2048
 from functions import readData, makeFolder, blockFolderPath, writeData
 zrange = np.arange(param.z_start,param.z_start+param.n_blocks_z)
 
-for bz in [0]:
+for bz in zrange[::4]:
 
     z_block = int(bz/4)
     print( "bz is: " + str(bz), flush=True)
