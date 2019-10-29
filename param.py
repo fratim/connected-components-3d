@@ -5,7 +5,7 @@ import math
 
 
 # Header file for block processing, includes parameters and paths
-isCluster = False
+isCluster = True
 
 if isCluster:
     output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
