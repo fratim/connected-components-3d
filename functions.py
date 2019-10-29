@@ -15,7 +15,6 @@ import sys
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
 
-
 def ReadH5File(filename,box):
     # return the first h5 dataset from this file
     with h5py.File(filename, 'r') as hf:
@@ -689,11 +688,6 @@ class dataBlock:
         dumpToFile(neighbor_label_dict_reduced, "neighbor_label_dict_reduced", output_folder, "")
 
         self.time_writepickle = time.time()-start_time_writepickle
-
-    def setRes(self, zres,yres,xres):
-        self.zres = zres
-        self.yres = yres
-        self.xres = xres
 
 def compareOutp(output_path, sample_name, ID_B):
     vizWholes = True
