@@ -44,11 +44,11 @@ if not isCluster:
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     # sample_name = "ZF_concat_6to7_0512_0512"
-    sample_name = "ZF_concat_2to15_0256_0256"
+    sample_name = "ZF_concat_2to14_0256_0256"
 
     # compute number of blocks and block size
     max_bs_z= 128
-    n_blocks_z = 14
+    n_blocks_z = 13
 
     max_bs_y = 128
     n_blocks_y = 2
