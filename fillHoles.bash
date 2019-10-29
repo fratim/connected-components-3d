@@ -31,10 +31,10 @@ echo "Execution started"
 #     done
 #   done
 # done
-#
-# python stepTwoB.py
-#
-# echo "Step 2 finished"
+
+python stepTwoB.py
+
+echo "Step 2 finished"
 
 # execute step 3 (fill holes)
 for bz in {2..15}

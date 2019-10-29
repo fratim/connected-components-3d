@@ -60,20 +60,22 @@ n_NotHoles = len(isNotHole)+len(undetermined_global)
 time_findAssocLabelGlobal = time.time() - start_time_findAssocLabelGlobal
 start_time_splitandwritepickle = time.time()
 
-for bz in range(param.z_start, param.z_start+param.n_blocks_z):
-    for by in range(param.y_start, param.y_start+param.n_blocks_y):
-        for bx in range(param.x_start, param.x_start+param.n_blocks_x):
+# for bz in range(param.z_start, param.z_start+param.n_blocks_z):
+#     for by in range(param.y_start, param.y_start+param.n_blocks_y):
+#         for bx in range(param.x_start, param.x_start+param.n_blocks_x):
+#
+#             block_number = (bz)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx
+#             label_start = -1*block_number*param.max_labels_block-1
+#             label_end = label_start - param.max_labels_block
+#
+#             associated_label_block = {key: value for key, value in associated_label_global.items() if (key>label_end and key<=label_start)}
+#
+#             output_folder = blockFolderPath(param.folder_path,bz,by,bx)
+#             #save associated label global
+#             output_name = ""
+#             dumpNumbaDictToFile(associated_label_block, "associated_label_block", output_folder, output_name)
 
-            block_number = (bz)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx
-            label_start = -1*block_number*param.max_labels_block-1
-            label_end = label_start - param.max_labels_block
-
-            associated_label_block = {key: value for key, value in associated_label_global.items() if (key>label_end and key<=label_start)}
-
-            output_folder = blockFolderPath(param.folder_path,bz,by,bx)
-            #save associated label global
-            output_name = ""
-            dumpNumbaDictToFile(associated_label_block, "associated_label_block", output_folder, output_name)
+dumpNumbaDictToFile(associated_label_global, "associated_label_block", param.folder_path, "")
 
 time_splitandwritepickle = time.time()-start_time_splitandwritepickle
 time_total = time.time()-start_time_total
