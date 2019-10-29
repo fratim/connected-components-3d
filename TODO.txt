@@ -9,5 +9,5 @@ Questions:
 5. Intro to thinning algorithm
 
 Comments:
-1. Current speed. 4.6 million voxels per second
-2. Map functions in c++ are much slower (factor 10 (unordered), 100(ordered))
+1. Current speed. 4.6 million voxels per second.
+2. Map functions in c++ are much slower (factor 10 (unordered), 100(ordered)), even though memory is also set to 0, not only initialized.

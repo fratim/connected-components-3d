@@ -612,7 +612,8 @@ class dataBlock:
 
     def readLabels(self, data_path, sample_name, bz, by, bx):
         if param.isCluster:
-        	filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
+        	# filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
+            filename = data_path+"/"+sample_name+"/"+"z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(x_block).zfill(2)
         else:
         	filename = data_path+"/"+sample_name+"/"+"cut_z_"+ str((bz)).zfill(4)+"y_"+ str(by).zfill(4)+"x_"+ str(bx).zfill(4)
         box = [1]
