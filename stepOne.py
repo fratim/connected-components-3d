@@ -38,8 +38,6 @@ currBlock.readLabels(data_path=param.data_path, sample_name=param.sample_name,
 
 time_read_labels = time.time()-start_time_read_labels
 
-currBlock.setRes(zres=param.zres,yres=param.yres,xres=param.xres)
-
 currBlock.computeStepOne(label_start=label_start, output_path=param.folder_path)
 
 time_total = time.time()-start_time_total
