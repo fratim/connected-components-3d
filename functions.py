@@ -399,17 +399,19 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
 
 def removeDetComp(neighbor_label_set, isHole, isNotHole):
 
-    neighbor_label_set_out = set()
+    neighbor_label_set_reduced = set()
 
     for _ in range(len(neighbor_label_set)):
         elem = neighbor_label_set.pop()
         if elem[0] in isHole or elem[0] in isNotHole:
+            # print("removed: " + str(elem), flush=True)
             continue
-            print("removed: " + str(elem), flush=True)
         else:
-            neighbor_label_set_out.add(elem)
+            neighbor_label_set_reduced.add(elem)
 
-    return neighbor_label_set_out
+    # print(neighbor_label_set_reduced)
+    return neighbor_label_set_reduced
+
 
 # fill detedted wholes and give non_wholes their ID (for visualization)
 def fillWholes(output_path,associated_label, bz):
@@ -660,7 +662,7 @@ class dataBlock:
 
         # for identification of local wholes that do not cross the border, unify both sets and write a dict of the corresponding neighbors for each component
         neighbor_label_set = neighbor_label_set_inside_local.union(neighbor_label_set_border_local)
-        neighbor_label_dict = writeNeighborLabelDict(neighbor_label_dict=False, neighbor_label_set=neighbor_label_set)
+        neighbor_label_dict = writeNeighborLabelDict(neighbor_label_dict=False, neighbor_label_set=neighbor_label_set.copy())
 
         # create a set of undtermined components, at this stage all components in the block and find associated labels of components that can be identified already
         undetermined_local = set(neighbor_label_dict.keys())
@@ -676,9 +678,9 @@ class dataBlock:
         self.n_NotHoles = len(isNotHole)
 
         # remove alrady detected hole components from neighbor label set local and write the according neighbor label dict of components that are not yet determined
-        neighbor_label_set_inside_local_reduced  = removeDetComp(neighbor_label_set_inside_local.copy(), isHole, isNotHole)
-        neighbor_label_dict_reduced = writeNeighborLabelDict(neighbor_label_dict=False, neighbor_label_set=neighbor_label_set_inside_local_reduced)
         self.size_label_set_inside = len(neighbor_label_set_inside_local)
+        neighbor_label_set_inside_local_reduced  = removeDetComp(neighbor_label_set_inside_local, isHole, isNotHole)
+        neighbor_label_dict_reduced = writeNeighborLabelDict(neighbor_label_dict=False, neighbor_label_set=neighbor_label_set_inside_local_reduced.copy())
         self.size_label_set_inside_reduced = len(neighbor_label_set_inside_local_reduced)
 
         # write components that are needed for later steps to files

@@ -58,7 +58,7 @@ time_pickleload = time.time() - start_time_pickleload
 start_time_findAssocLabelGlobal = time.time()
 
 #compute associated label global
-neighbor_label_dict = writeNeighborLabelDict(neighbor_label_dict=neighbor_label_dict, neighbor_label_set=neighbor_label_set_border_global_combined)
+neighbor_label_dict = writeNeighborLabelDict(neighbor_label_dict=neighbor_label_dict, neighbor_label_set=neighbor_label_set_border_global_combined.copy())
 associated_label_global, undetermined_global, isHole, isNotHole = findAssociatedLabels(neighbor_label_dict, undetermined_global, associated_label_global)
 associated_label_global = setUndeterminedtoNonHole(undetermined_global.copy(), associated_label_global)
 
