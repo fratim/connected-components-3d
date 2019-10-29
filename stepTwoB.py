@@ -41,7 +41,7 @@ for bz in range(param.z_start, param.z_start+param.n_blocks_z):
                 print("Assoc_label!")
                 print(bz,by,bx)
 
-    	    if -2 in undetermined_local:
+            if -2 in undetermined_local:
                 print("undet local!")
                 print(bz,by,bx)
 
