@@ -16,16 +16,17 @@ from functions import makeFolder
 
 
 # make these folders and give error if they exist
-makeFolder(param.folder_path)
-makeFolder(param.error_path)
-makeFolder(param.output_path)
+#makeFolder(param.folder_path)
+#makeFolder(param.error_path)
+#makeFolder(param.output_path)
 makeFolder(param.code_run_path)
 
 shutil.copyfile(param.code_path+"param.py", param.code_run_path+"param.py")
 shutil.copyfile(param.code_path+"functions.py", param.code_run_path+"functions.py")
-shutil.copyfile(param.code_path+"StepOne.py", param.code_run_path+"StepOne.py")
-shutil.copyfile(param.code_path+"StepTwoA.py", param.code_run_path+"StepTwoA.py")
-shutil.copyfile(param.code_path+"StepTwoB.py", param.code_run_path+"StepTwoB.py")
-shutil.copyfile(param.code_path+"StepThree.py", param.code_run_path+"StepThree.py")
+shutil.copyfile(param.code_path+"preparation.py", param.code_run_path+"preparation.py")
+shutil.copyfile(param.code_path+"stepOne.py", param.code_run_path+"stepOne.py")
+shutil.copyfile(param.code_path+"stepTwoA.py", param.code_run_path+"stepTwoA.py")
+shutil.copyfile(param.code_path+"stepTwoB.py", param.code_run_path+"stepTwoB.py")
+shutil.copyfile(param.code_path+"stepThree.py", param.code_run_path+"stepThree.py")
 
 print("Created output folders and code folder at " + param.code_run_path)

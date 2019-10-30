@@ -64,14 +64,10 @@ if not isCluster:
 
 outp_ID = "1to20New"
 
-folder_path = data_path + sample_name + "/" + outp_ID + "/"
+folder_path = data_path + sample_name + "/" + outp_ID + "/xxxxx"
 
 # folder to which the current code is copied and where it is run from
-code_run_path = data_path + sample_name + "/" + "code/"
-
-# have to creat these in advance
-error_path_preparation = data_path + sample_name + "/" + "error_files_preparation/"
-output_path_preparation = data_path + sample_name + "/" + "output_files_preparation/"
+code_run_path = folder_path + "code/"
 
 # these are created by the preparations folder
 error_path = folder_path+"error_files/"
@@ -85,6 +81,6 @@ step02B_info_filepath = folder_path+"step02B_info.txt"
 step03_info_filepath  = folder_path+"step03_info.txt"
 
 # memory need per block (in MB)
-memory_needed = 80000 #int(1.1*bs_z*bs_y*bs_x*(8+8+2)/1000/1000)
+memory_needed = 60000 #int(1.1*bs_z*bs_y*bs_x*(8+8+2)/1000/1000)
 
 max_labels_block = max_bs_z*max_bs_y*max_bs_x
