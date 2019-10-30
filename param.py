@@ -61,7 +61,7 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = ""
+outp_ID = "1to20New"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 

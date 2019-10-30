@@ -37,6 +37,22 @@ for bz in range(param.z_start, param.z_start+param.n_blocks_z):
             undetermined_local = readFromFile("undetermined_local", output_folder, "")
             neighbor_label_dict_reduced_local = readFromFile("neighbor_label_dict_reduced", output_folder, "")
 
+            if -2 in undetermined_local:
+                print(bz,by,bx)
+                print("undetermined")
+
+            if -2 in neighbor_label_dict_reduced_local.keys():
+                print(bz,by,bx)
+                print("neighbor label dict")
+
+            if -2 in associated_label_local.keys():
+                print(bz,by,bx)
+                print("assoc label")
+
+            if -2 in neighbor_label_set_border_global:
+                print(bz,by,bx)
+                print("neighbor_label_set_border_global")
+
             neighbor_label_set_border_global_combined = neighbor_label_set_border_global_combined.union(neighbor_label_set_border_global)
             associated_label_global.update(associated_label_local)
             undetermined_global = undetermined_global.union(undetermined_local)

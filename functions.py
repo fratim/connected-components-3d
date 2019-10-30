@@ -412,7 +412,6 @@ def removeDetComp(neighbor_label_set, isHole, isNotHole):
     # print(neighbor_label_set_reduced)
     return neighbor_label_set_reduced
 
-
 # fill detedted wholes and give non_wholes their ID (for visualization)
 def fillWholes(output_path,associated_label, bz):
 
