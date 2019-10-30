@@ -197,7 +197,7 @@ def findAdjLabelSetLocal(cc_labels):
     neighbor_label_set_inside = set()
     neighbor_label_set_border = set()
 
-    box = [0,cc_labels.shape[0],0,cc_labels.shape[0],0,cc_labels.shape[0]]
+    box = [0,cc_labels.shape[0],0,cc_labels.shape[1],0,cc_labels.shape[2]]
 
     for iz in range(0, box[1]-box[0]-1):
         for iy in range(0, box[3]-box[2]-1):
