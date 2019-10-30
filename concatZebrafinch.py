@@ -21,19 +21,22 @@ z_index = 0
 from functions import readData, makeFolder, blockFolderPath, writeData
 zrange = np.arange(param.z_start,param.z_start+param.n_blocks_z)
 
-sample_name = "labels_512_2048_2048"
+sample_name = "stacked_512_2048_2048"
 folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
 
 for z_block in range(12):
     for y_block in range(3):
         filename = folder_path+"/"+sample_name+"/"+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(0).zfill(2)
         block_0 = readData(box=[1],filename=filename)
+	print(block_0.shape)
 
         filename = folder_path+"/"+sample_name+"/"+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(1).zfill(2)
         block_1 = readData(box=[1],filename=filename)
+	print(block_1.shape)
 
         filename = folder_path+"/"+sample_name+"/"+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(2).zfill(2)
         block_2 = readData(box=[1],filename=filename)
+	print(block_3.shape)
 
         x_block = np.concatenate((block_0,block_1,block_2),axis=2)
 	print(x_block.shape)
