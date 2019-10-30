@@ -10,6 +10,7 @@ isCluster = True
 if isCluster:
     output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
     data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
+    code_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
     sample_name = ""
 
     # compute number of blocks and block size
@@ -43,7 +44,7 @@ if isCluster:
 if not isCluster:
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
     data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-    # sample_name = "ZF_concat_6to7_0512_0512"
+    code_path = ""
     sample_name = "ZF_concat_2to14_0256_0256"
 
     # compute number of blocks and block size
@@ -64,6 +65,9 @@ if not isCluster:
 outp_ID = "1to20New"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
+
+# folder to which the current code is copied and where it is run from
+code_run_path = data_path + sample_name + "/" + "code/"
 
 # have to creat these in advance
 error_path_preparation = data_path + sample_name + "/" + "error_files_preparation/"

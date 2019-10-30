@@ -10,6 +10,7 @@ import os
 import pickle
 import param
 import sys
+import shutil
 
 from functions import makeFolder
 
@@ -18,5 +19,12 @@ from functions import makeFolder
 makeFolder(param.folder_path)
 makeFolder(param.error_path)
 makeFolder(param.output_path)
+makeFolder(param.code_run_path)
 
-print("Created output folders")
+shutil.copyfile(param.code_path+"param.py", param.code_run_path+"param.py")
+shutil.copyfile(param.code_path+"StepOne.py", param.code_run_path+"StepOne.py")
+shutil.copyfile(param.code_path+"StepTwoA.py", param.code_run_path+"StepTwoA.py")
+shutil.copyfile(param.code_path+"StepTwoB.py", param.code_run_path+"StepTwoB.py")
+shutil.copyfile(param.code_path+"StepThree.py", param.code_run_path+"StepThree.py")
+
+print("Created output folders and code folder at " + param.code_run_path)

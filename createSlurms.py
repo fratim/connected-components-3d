@@ -25,7 +25,7 @@ source activate fillholes
 
 export PYTHONPATH=$PYTHONPATH:/n/home12/tfranzmeyer/
 
-cd /n/home12/tfranzmeyer/Code/connected-components-3d/
+cd {RUNCODEDIRECTORY}
 
 python {COMMAND}
 
@@ -72,6 +72,9 @@ files_written = 0
 memory_std = param.memory_needed
 memory_step04 = memory_std*param.n_blocks_z*param.n_blocks_y*param.n_blocks_x
 
+code_directory = param.code_run_path
+template = template.replace('{RUNCODEDIRECTORY}', code_directory)
+
 SLURM_OUTPUT_FOLDER = '/n/home12/tfranzmeyer/slurm_files/'
 
 step00folderpath = SLURM_OUTPUT_FOLDER+"step00/"
@@ -82,7 +85,6 @@ step03folderpath = SLURM_OUTPUT_FOLDER+"step03/"
 step04folderpath = SLURM_OUTPUT_FOLDER+"step04/"
 
 makeFolder(step00folderpath)
-print(step00folderpath)
 makeFolder(step01folderpath)
 makeFolder(step02Afolderpath)
 makeFolder(step02Bfolderpath)
@@ -90,9 +92,9 @@ makeFolder(step03folderpath)
 makeFolder(step04folderpath)
 
 # send no mails for normal jobs
-mail_std = "FAIL"
+mail_std = "NONE"
 # send mail for last job
-mail_last = "ALL"
+mail_last = "NONE"
 
 # Write Slurm for preparations file
 command = "preparation.py"
