@@ -20,7 +20,7 @@ bs_x = 2048
 from functions import readData, makeFolder, blockFolderPath, writeData
 zrange = np.arange(0,45)
 
-sample_name = "stacked_512_2048_2048"
+sample_name = ""
 folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
 
 for bz in zrange[::4]:
