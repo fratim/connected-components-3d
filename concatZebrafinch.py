@@ -39,6 +39,7 @@ for z_block in range(12):
         print(block_3.shape)
 
         x_block = np.concatenate((block_0,block_1,block_2),axis=2)
+        print("X Block:")
         print(x_block.shape)
 
         if y_block == 0:
@@ -46,10 +47,13 @@ for z_block in range(12):
         else:
             y_block = np.concatenate((y_block,x_block),axis=1)
 
+        print("Y Block:")
+        print("Z is " + str(z_block))
         print(y_block.shape)
 
     for i in range(4):
         chunk = y_block[i*128:((i+1)*128),:,:]
+        print("Chunk " + str(i))
         print(chunk.shape)
         writeData(folder_path+"/"+sample_name+"/"+str(z_index).zfill(4),chunk)
         z_index+=128
