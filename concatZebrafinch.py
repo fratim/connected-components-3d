@@ -25,7 +25,11 @@ sample_name = "stacked_512_2048_2048"
 folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
 
 for z_block in range(12):
+    print("Z is " + str(z_block))
+
     for y_block in range(3):
+        print("Y is " + str(z_block))
+
         filename = folder_path+"/"+sample_name+"/"+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(0).zfill(2)
         block_0 = readData(box=[1],filename=filename)
         print(block_0.shape)
@@ -36,7 +40,7 @@ for z_block in range(12):
 
         filename = folder_path+"/"+sample_name+"/"+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(2).zfill(2)
         block_2 = readData(box=[1],filename=filename)
-        print(block_3.shape)
+        print(block_2.shape)
 
         x_block = np.concatenate((block_0,block_1,block_2),axis=2)
         print("X Block:")
@@ -45,10 +49,11 @@ for z_block in range(12):
         if y_block == 0:
             y_block=x_block.copy()
         else:
-            y_block = np.concatenate((y_block,x_block),axis=1)
+            y_old = y_block.copy()
+            del y_block
+            y_block = np.concatenate((y_old,x_block),axis=1)
 
         print("Y Block:")
-        print("Z is " + str(z_block))
         print(y_block.shape)
 
     for i in range(4):
