@@ -11,8 +11,8 @@ template = '''#!/bin/bash
 #SBATCH -n 1                                                 # Number of cores
 #SBATCH -N 1                                                 # Ensure that all cores are on one matching
 #SBATCH --mem={MEMORY}                                       # CPU memory in MBs
-#SBATCH -t 0-2:00                                            # time in dd-hh:mm to run the code for
-#SBATCH --mail-type={MAIL}                                   # send all email types (start, end, error, etc.)
+#SBATCH -t 0-{HOURS}:00                                            # time in dd-hh:mm to run the code for
+#SBATCH --mail-type=NONE                                   # send all email types (start, end, error, etc.)
 #SBATCH --mail-user=tfranzmeyer@g.harvard.edu                # email address to send to
 #SBATCH -o {OUTPUT_PATH}/{JOBNAME}.out                       # where to write the log files
 #SBATCH -e {ERROR_PATH}/{JOBNAME}.err                        # where to write the error files
@@ -69,20 +69,16 @@ else:
 
 files_written = 0
 
-memory_std = param.memory_needed
-memory_step04 = memory_std*param.n_blocks_z*param.n_blocks_y*param.n_blocks_x
+template = template.replace('{RUNCODEDIRECTORY}', param.code_run_path)
+template = template.replace('{HOURS}', param.run_hours)
 
-code_directory = param.code_run_path
-template = template.replace('{RUNCODEDIRECTORY}', code_directory)
 
 SLURM_OUTPUT_FOLDER = param.slurm_path
 
-step00folderpath = SLURM_OUTPUT_FOLDER+"step00/"
 step01folderpath = SLURM_OUTPUT_FOLDER+"step01/"
 step02Afolderpath = SLURM_OUTPUT_FOLDER+"step02A/"
 step02Bfolderpath = SLURM_OUTPUT_FOLDER+"step02B/"
 step03folderpath = SLURM_OUTPUT_FOLDER+"step03/"
-step04folderpath = SLURM_OUTPUT_FOLDER+"step04/"
 
 makeFolder(step00folderpath)
 makeFolder(step01folderpath)
@@ -90,11 +86,6 @@ makeFolder(step02Afolderpath)
 makeFolder(step02Bfolderpath)
 makeFolder(step03folderpath)
 makeFolder(step04folderpath)
-
-# send no mails for normal jobs
-mail_std = "NONE"
-# send mail for last job
-mail_last = "NONE"
 
 # Write Slurm for preparations file
 command = "preparation.py"
@@ -113,13 +104,8 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
             t = t.replace('{COMMAND}', command)
             t = t.replace('{ERROR_PATH}', param.error_path)
             t = t.replace('{OUTPUT_PATH}', param.output_path)
-            t = t.replace('{MEMORY}', str(memory_std))
+            t = t.replace('{MEMORY}', param.memory_step01)
             t = t.replace('{PARTITION}', partitions[np.random.randint(0,n_part)])
-            if bz == param.z_start+param.n_blocks_z-1:
-                t = t.replace('{MAIL}', mail_last)
-            else:
-                t = t.replace('{MAIL}', mail_std)
-
             filename = step01folderpath + jobname + ".slurm"
             writeFile(filename, t)
             files_written += 1
@@ -137,12 +123,8 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
             t = t.replace('{COMMAND}', command)
             t = t.replace('{ERROR_PATH}', param.error_path)
             t = t.replace('{OUTPUT_PATH}', param.output_path)
-            t = t.replace('{MEMORY}', str(memory_std))
+            t = t.replace('{MEMORY}', param.memory_step02A)
             t = t.replace('{PARTITION}', partitions[np.random.randint(0,n_part)])
-            if bz == param.z_start+param.n_blocks_z-1:
-                t = t.replace('{MAIL}', mail_last)
-            else:
-                t = t.replace('{MAIL}', mail_std)
 
             filename = step02Afolderpath + jobname + ".slurm"
             writeFile(filename, t)
@@ -157,9 +139,8 @@ t = t.replace('{JOBNAME}', jobname)
 t = t.replace('{COMMAND}', command)
 t = t.replace('{ERROR_PATH}', param.error_path)
 t = t.replace('{OUTPUT_PATH}', param.output_path)
-t = t.replace('{MEMORY}', str(memory_std))
+t = t.replace('{MEMORY}', param.memory_step02B)
 t = t.replace('{PARTITION}', partitions[np.random.randint(0,n_part)])
-t = t.replace('{MAIL}', mail_last)
 
 filename = step02Bfolderpath + jobname + ".slurm"
 writeFile(filename, t)
@@ -178,32 +159,12 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
             t = t.replace('{COMMAND}', command)
             t = t.replace('{ERROR_PATH}', param.error_path)
             t = t.replace('{OUTPUT_PATH}', param.output_path)
-            t = t.replace('{MEMORY}', str(memory_std))
+            t = t.replace('{MEMORY}', param.memory_step03)
             t = t.replace('{PARTITION}', partitions[np.random.randint(0,n_part)])
-            if bz == param.z_start+param.n_blocks_z-1:
-                t = t.replace('{MAIL}', mail_last)
-            else:
-                t = t.replace('{MAIL}', mail_std)
 
             filename = step03folderpath + jobname + ".slurm"
             writeFile(filename, t)
             files_written += 1
 
-# Write Slurm for step four
-command = "stepFour.py"
-jobname = "step04"+"_"+param.outp_ID
-
-t = template
-t = t.replace('{JOBNAME}', jobname)
-t = t.replace('{COMMAND}', command)
-t = t.replace('{ERROR_PATH}', param.error_path)
-t = t.replace('{OUTPUT_PATH}', param.output_path)
-t = t.replace('{MEMORY}', str(memory_step04))
-t = t.replace('{PARTITION}', partitions[np.random.randint(0,n_part)])
-t = t.replace('{MAIL}', mail_last)
-
-filename = step04folderpath + jobname + ".slurm"
-writeFile(filename, t)
-files_written += 1
 
 print ("Files written: " + str(files_written))

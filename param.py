@@ -81,6 +81,11 @@ step02B_info_filepath = folder_path+"step02B_info.txt"
 step03_info_filepath  = folder_path+"step03_info.txt"
 
 # memory need per block (in MB)
-memory_needed = 60000 #int(1.1*bs_z*bs_y*bs_x*(8+8+2)/1000/1000)
+memory_step01 = str(int(1.1*max_bs_z*max_bs_y*max_bs_x*(8+8+8)/1000/1000))
+memory_step02A = str(int(memory_step01*0.05))
+memory_step02B = str(int(memory_step01*0.5))
+memory_step03 = str(int(memory_step01*0.67))
+
+run_hours = 2
 
 max_labels_block = max_bs_z*max_bs_y*max_bs_x
