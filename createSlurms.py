@@ -80,12 +80,10 @@ step02Afolderpath = SLURM_OUTPUT_FOLDER+"step02A/"
 step02Bfolderpath = SLURM_OUTPUT_FOLDER+"step02B/"
 step03folderpath = SLURM_OUTPUT_FOLDER+"step03/"
 
-makeFolder(step00folderpath)
 makeFolder(step01folderpath)
 makeFolder(step02Afolderpath)
 makeFolder(step02Bfolderpath)
 makeFolder(step03folderpath)
-makeFolder(step04folderpath)
 
 # Write Slurm for preparations file
 command = "preparation.py"
@@ -97,7 +95,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
         for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
             command = "stepOne.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
-            jobname = "step01"+"_"+param.outp_ID+"_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+            jobname = "S01"+"_"+param.outp_ID+"_" +"z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
 
             t = template
             t = t.replace('{JOBNAME}', jobname)
@@ -116,7 +114,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
         for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
             command = "stepTwoA.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
-            jobname = "step02A"+param.outp_ID+"_" +"z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+            jobname = "S2A"+param.outp_ID+"_" +"z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
 
             t = template
             t = t.replace('{JOBNAME}', jobname)
@@ -152,7 +150,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
         for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
             command = "stepThree.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
-            jobname = "step03"+"_"+param.outp_ID+"_"+ "z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)
+            jobname = "S3"+"_"+param.outp_ID+"_"+ "z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
 
             t = template
             t = t.replace('{JOBNAME}', jobname)

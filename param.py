@@ -11,11 +11,11 @@ if isCluster:
     output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
     data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
     code_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
-    sample_name = "stacked_512_2048_2048"
+    sample_name = "stacked_256"
 
     # compute number of blocks and block size
-    max_bs_z = 512
-    n_blocks_z = 12
+    max_bs_z = 256
+    n_blocks_z = 23
 
     max_bs_y = 2048
     n_blocks_y = 3
@@ -81,11 +81,12 @@ step02B_info_filepath = folder_path+"step02B_info.txt"
 step03_info_filepath  = folder_path+"step03_info.txt"
 
 # memory need per block (in MB)
-memory_step01 = str(int(1.1*max_bs_z*max_bs_y*max_bs_x*(8+8+8)/1000/1000))
-memory_step02A = str(int(memory_step01*0.05))
-memory_step02B = str(int(memory_step01*0.5))
-memory_step03 = str(int(memory_step01*0.67))
+memory_step01_number = int(1.1*max_bs_z*max_bs_y*max_bs_x*(8+8+8)/1000/1000)
+memory_step01 = str(memory_step01_number)
+memory_step02A = str(int(memory_step01_number*0.05))
+memory_step02B = str(int(memory_step01_number*0.5))
+memory_step03 = str(int(memory_step01_number*0.67))
 
-run_hours = 2
+run_hours = str(2)
 
 max_labels_block = max_bs_z*max_bs_y*max_bs_x
