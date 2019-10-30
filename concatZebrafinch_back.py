@@ -18,7 +18,7 @@ bs_x = 2048
 
 #make Zebrafinch blocks into chunks of size 512x2048x2048 (smaller if on edge)
 from functions import readData, makeFolder, blockFolderPath, writeData
-zrange = np.arange(param.z_start,param.z_start+param.n_blocks_z)
+zrange = np.arange(0,45)
 
 for bz in zrange[::4]:
 
