@@ -75,7 +75,7 @@ memory_step04 = memory_std*param.n_blocks_z*param.n_blocks_y*param.n_blocks_x
 code_directory = param.code_run_path
 template = template.replace('{RUNCODEDIRECTORY}', code_directory)
 
-SLURM_OUTPUT_FOLDER = '/n/home12/tfranzmeyer/slurm_files/'
+SLURM_OUTPUT_FOLDER = param.slurm_path
 
 step00folderpath = SLURM_OUTPUT_FOLDER+"step00/"
 step01folderpath = SLURM_OUTPUT_FOLDER+"step01/"
