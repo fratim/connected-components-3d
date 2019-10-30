@@ -28,7 +28,7 @@ for z_block in range(12):
     print("Z is " + str(z_block))
 
     for y_block in range(3):
-        print("Y is " + str(z_block))
+        print("Y is " + str(y_block))
 
         filename = folder_path+"/"+sample_name+"/"+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(0).zfill(2)
         block_0 = readData(box=[1],filename=filename)
@@ -42,22 +42,20 @@ for z_block in range(12):
         block_2 = readData(box=[1],filename=filename)
         print(block_2.shape)
 
-        x_block = np.concatenate((block_0,block_1,block_2),axis=2)
+        x_data = np.concatenate((block_0,block_1,block_2),axis=2)
         print("X Block:")
-        print(x_block.shape)
+        print(x_data.shape)
 
         if y_block == 0:
-            y_block=x_block.copy()
+            y_data=x_data.copy()
         else:
-            y_old = y_block.copy()
-            del y_block
-            y_block = np.concatenate((y_old,x_block),axis=1)
+            y_data = np.concatenate((y_data,x_data),axis=1)
 
         print("Y Block:")
-        print(y_block.shape)
+        print(y_data.shape)
 
     for i in range(4):
-        chunk = y_block[i*128:((i+1)*128),:,:]
+        chunk = y_data[i*128:((i+1)*128),:,:]
         print("Chunk " + str(i))
         print(chunk.shape)
         writeData(folder_path+"/"+sample_name+"/"+str(z_index).zfill(4),chunk)
