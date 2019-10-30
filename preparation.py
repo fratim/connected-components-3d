@@ -22,6 +22,7 @@ makeFolder(param.output_path)
 makeFolder(param.code_run_path)
 
 shutil.copyfile(param.code_path+"param.py", param.code_run_path+"param.py")
+shutil.copyfile(param.code_path+"functions.py", param.code_run_path+"functions.py")
 shutil.copyfile(param.code_path+"StepOne.py", param.code_run_path+"StepOne.py")
 shutil.copyfile(param.code_path+"StepTwoA.py", param.code_run_path+"StepTwoA.py")
 shutil.copyfile(param.code_path+"StepTwoB.py", param.code_run_path+"StepTwoB.py")
