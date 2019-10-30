@@ -76,22 +76,22 @@ n_NotHoles = len(isNotHole)+len(undetermined_global)
 time_findAssocLabelGlobal = time.time() - start_time_findAssocLabelGlobal
 start_time_splitandwritepickle = time.time()
 
-# for bz in range(param.z_start, param.z_start+param.n_blocks_z):
-#     for by in range(param.y_start, param.y_start+param.n_blocks_y):
-#         for bx in range(param.x_start, param.x_start+param.n_blocks_x):
-#
-#             block_number = (bz)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx
-#             label_start = -1*block_number*param.max_labels_block-1
-#             label_end = label_start - param.max_labels_block
-#
-#             associated_label_block = {key: value for key, value in associated_label_global.items() if (key>label_end and key<=label_start)}
-#
-#             output_folder = blockFolderPath(param.folder_path,bz,by,bx)
-#             #save associated label global
-#             output_name = ""
-#             dumpNumbaDictToFile(associated_label_block, "associated_label_block", output_folder, output_name)
+for bz in range(param.z_start, param.z_start+param.n_blocks_z):
+    for by in range(param.y_start, param.y_start+param.n_blocks_y):
+        for bx in range(param.x_start, param.x_start+param.n_blocks_x):
 
-dumpNumbaDictToFile(associated_label_global, "associated_label_block", param.folder_path, "")
+            block_number = (bz)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx
+            label_start = -1*block_number*param.max_labels_block-1
+            label_end = label_start - param.max_labels_block
+
+            associated_label_block = {key: value for key, value in associated_label_global.items() if (key>label_end and key<=label_start)}
+
+            output_folder = blockFolderPath(param.folder_path,bz,by,bx)
+            #save associated label global
+            output_name = ""
+            dumpNumbaDictToFile(associated_label_block, "associated_label_block", output_folder, output_name)
+
+# dumpNumbaDictToFile(associated_label_global, "associated_label_block", param.folder_path, "")
 
 time_splitandwritepickle = time.time()-start_time_splitandwritepickle
 time_total = time.time()-start_time_total
@@ -103,8 +103,8 @@ g.write(    "total_time," + format(time_total, '.4f') + "," +
             "pickleload_time," + format(time_pickleload, '.4f')+","+
             "findAssocLabelGlobal_time," + format(time_findAssocLabelGlobal, '.4f')+","+
             "splitandwritepickle_time," + format(time_splitandwritepickle, '.4f')+","+
-            "len_label_set_border," + str(len_label_set_border).zfill(8)+","+
-            "len_associated_label_global," + str(len_associated_label_global).zfill(8)+","+
-            "n_Holes," + str(n_Holes).zfill(8)+","+
-            "n_NotHoles," + str(n_NotHoles).zfill(8)+"\n")
+            "len_label_set_border," + str(len_label_set_border).zfill(16)+","+
+            "len_associated_label_global," + str(len_associated_label_global).zfill(16)+","+
+            "n_Holes," + str(n_Holes).zfill(16)+","+
+            "n_NotHoles," + str(n_NotHoles).zfill(16)+"\n")
 g.close()

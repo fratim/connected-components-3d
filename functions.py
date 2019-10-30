@@ -426,7 +426,7 @@ def fillWholes(output_path,associated_label, bz):
 
     # use nopython to do actual computation
     cc_labels = fillwholesNoPython(box,cc_labels,associated_label)
-    output_name = "filled"
+    output_name = str(bz).zfill(4)
     writeData(output_path+output_name, cc_labels)
 
 @njit

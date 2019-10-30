@@ -30,8 +30,8 @@ start_time_readpickle = time.time()
 output_folder = blockFolderPath(param.folder_path,bz,by,bx)
 output_name = ""
 associated_label_block = Dict.empty(key_type=types.int64,value_type=types.int64)
-# associated_label_block.update(readFromFile("associated_label_block", output_folder, output_name))
-associated_label_block.update(readFromFile("associated_label_block", param.folder_path, output_name))
+associated_label_block.update(readFromFile("associated_label_block", output_folder, output_name))
+# associated_label_block.update(readFromFile("associated_label_block", param.folder_path, output_name))
 time_readpickle = time.time()-start_time_readpickle
 
 
