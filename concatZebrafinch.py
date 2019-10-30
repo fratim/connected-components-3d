@@ -28,18 +28,18 @@ for z_block in range(12):
     for y_block in range(3):
         filename = folder_path+"/"+sample_name+"/"+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(0).zfill(2)
         block_0 = readData(box=[1],filename=filename)
-	print(block_0.shape)
+        print(block_0.shape)
 
         filename = folder_path+"/"+sample_name+"/"+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(1).zfill(2)
         block_1 = readData(box=[1],filename=filename)
-	print(block_1.shape)
+        print(block_1.shape)
 
         filename = folder_path+"/"+sample_name+"/"+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(2).zfill(2)
         block_2 = readData(box=[1],filename=filename)
-	print(block_3.shape)
+        print(block_3.shape)
 
         x_block = np.concatenate((block_0,block_1,block_2),axis=2)
-	print(x_block.shape)
+        print(x_block.shape)
 
         if y_block == 0:
             y_block=x_block.copy()
