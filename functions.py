@@ -437,6 +437,7 @@ def fillwholesNoPython(box,cc_labels,associated_label):
             for ix in range(box[4], box[5]):
 
                 if cc_labels[iz,iy,ix] < 0:
+                    print(cc_labels[iz,iy,ix])
                     cc_labels[iz,iy,ix] = associated_label[cc_labels[iz,iy,ix]]
                 else:
                     continue
