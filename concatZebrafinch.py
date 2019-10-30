@@ -60,3 +60,5 @@ for z_block in range(12):
         print(chunk.shape)
         writeData(folder_path+"/"+sample_name+"/"+str(z_index).zfill(4),chunk)
         z_index+=128
+
+    del chunk, block_0, block_1, block_2, x_data, y_data
