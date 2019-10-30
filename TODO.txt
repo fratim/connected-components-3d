@@ -1,8 +1,5 @@
 #TODO
 
-12. Implement last block size also for x and y direction
-14. Idea: how to get rid off the huge overhead in memory allocation, due to array of size(number of voxels).
-    How about we give it a size, and if this size is exceeded (very unlikely), then we just use size(num of voxels)?
 
 Questions:
 4. (Postponed - Should we run statistics on all of zebrafinch?)
@@ -11,4 +8,3 @@ Questions:
 
 Comments:
 1. Current speed. 4.6 million voxels per second.
-2. Map functions in c++ are much slower (factor 10 (unordered), 100(ordered)), even though memory is also set to 0, not only initialized.
