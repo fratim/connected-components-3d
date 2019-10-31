@@ -26,10 +26,10 @@ folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
 outp_ID = "allBlocksProcessed"
 
 for z_block in range(12):
-    print("Z is " + str(z_block))
+    print("Z is " + str(z_block),flush=True)
 
     for y_block in range(3):
-        print("Y is " + str(y_block))
+        print("Y is " + str(y_block),flush=True)
 
         filename = folder_path+"/"+sample_name+"/"+outp_ID+"/z"+str(z_block).zfill(4)+"y"+str(y_block).zfill(4)+"x"+str(0).zfill(4)+"/"+str(z_block).zfill(4)
         block_0 = readData(box=[1],filename=filename)
@@ -39,13 +39,13 @@ for z_block in range(12):
         block_1 = readData(box=[1],filename=filename)
         print(block_1.shape)
 
-        filename = folder_path+"/"+sample_name+"/"+outp_ID"/z"+str(z_block).zfill(4)+"y"+str(y_block).zfill(4)+"x"+str(2).zfill(4)+"/"+str(z_block).zfill(4)
+        filename = folder_path+"/"+sample_name+"/"+outp_ID+"/z"+str(z_block).zfill(4)+"y"+str(y_block).zfill(4)+"x"+str(2).zfill(4)+"/"+str(z_block).zfill(4)
         block_2 = readData(box=[1],filename=filename)
         print(block_2.shape)
 
         x_data = np.concatenate((block_0,block_1,block_2),axis=2)
         print("X Block:")
-        print(x_data.shape)
+        print(x_data.shape,flush=True)
 
         if y_block == 0:
             y_data=x_data.copy()
@@ -53,12 +53,12 @@ for z_block in range(12):
             y_data = np.concatenate((y_data,x_data),axis=1)
 
         print("Y Block:")
-        print(y_data.shape)
+        print(y_data.shape,flush=True)
 
     for i in range(4):
         chunk = y_data[i*128:((i+1)*128),:,:]
-        print("Chunk " + str(i))
-        print(chunk.shape)
+        print("Chunk " + str(i),flush=True)
+        print(chunk.shape,flush=True)
         writeData(folder_path+"/"+sample_name+"/"+outp_ID+"/"+str(z_index).zfill(4),chunk)
         z_index+=128
 
