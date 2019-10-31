@@ -37,7 +37,7 @@ time_readpickle = time.time()-start_time_readpickle
 start_time_cutdict = time.time()
 associated_label_block = {key: value for key, value in associated_label_global.items() if (key>label_end and key<=label_start)}
 associated_label = Dict.empty(key_type=types.int64,value_type=types.int64)
-associatel_label.update(associated_label_block)
+associated_label.update(associated_label_block)
 time_cutdict = time.time()-start_time_cutdict
 
 start_time_fillWholes = time.time()

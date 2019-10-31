@@ -11,7 +11,7 @@ import sys
 import pickle
 import param
 
-# bs_z = 512
+# bs_z = 256
 bs_y = 2048
 bs_x = 2048
 
@@ -21,10 +21,10 @@ z_index = 0
 from functions import readData, makeFolder, blockFolderPath, writeData
 zrange = np.arange(param.z_start,param.z_start+param.n_blocks_z)
 
-sample_name = "stacked_512_2048_2048"
+sample_name = "stacked_256"
 folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
 
-for z_block in range(12):
+for z_block in range(23):
     print("Z is " + str(z_block))
 
     for y_block in range(3):
@@ -54,7 +54,7 @@ for z_block in range(12):
         print("Y Block:")
         print(y_data.shape)
 
-    for i in range(4):
+    for i in range(2):
         chunk = y_data[i*128:((i+1)*128),:,:]
         print("Chunk " + str(i))
         print(chunk.shape)

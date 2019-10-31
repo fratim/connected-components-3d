@@ -85,7 +85,7 @@ memory_step01_number = int(1.1*max_bs_z*max_bs_y*max_bs_x*(8+8+8)/1000/1000)
 memory_step01 = str(memory_step01_number)
 memory_step02A = str(int(memory_step01_number*0.05))
 memory_step02B = str(int(memory_step01_number*0.5))
-memory_step03 = str(int(memory_step01_number*0.67))
+memory_step03 = str(int(memory_step01_number*1))
 
 run_hours = str(2)
 

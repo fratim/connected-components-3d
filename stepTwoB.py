@@ -78,7 +78,7 @@ start_time_writepickle = time.time()
 
 dumpNumbaDictToFile(associated_label_global, "associated_label_global", param.folder_path, "")
 
-time_writepickle = time.time()-start_time_splitandwritepickle
+time_writepickle = time.time()-start_time_writepickle
 time_total = time.time()-start_time_total
 
 len_associated_label_global = len(associated_label_global)
