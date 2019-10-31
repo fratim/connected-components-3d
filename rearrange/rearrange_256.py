@@ -23,6 +23,7 @@ zrange = np.arange(param.z_start,param.z_start+param.n_blocks_z)
 
 sample_name = "stacked_256"
 folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
+outp_ID = "allBlocksProcessed"
 
 for z_block in range(23):
     print("Z is " + str(z_block))
@@ -30,15 +31,15 @@ for z_block in range(23):
     for y_block in range(3):
         print("Y is " + str(y_block))
 
-        filename = folder_path+"/"+sample_name+"/"+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(0).zfill(2)
+        filename = folder_path+"/"+sample_name+"/"+outp_ID+"/z"+str(z_block).zfill(4)+"y"+str(y_block).zfill(4)+"x"+str(0).zfill(4)+"/seg_filled"
         block_0 = readData(box=[1],filename=filename)
         print(block_0.shape)
 
-        filename = folder_path+"/"+sample_name+"/"+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(1).zfill(2)
+        filename = folder_path+"/"+sample_name+"/"+outp_ID+"/z"+str(z_block).zfill(4)+"y"+str(y_block).zfill(4)+"x"+str(1).zfill(4)+"/seg_filled"
         block_1 = readData(box=[1],filename=filename)
         print(block_1.shape)
 
-        filename = folder_path+"/"+sample_name+"/"+"/z"+str(z_block).zfill(2)+"y"+str(y_block).zfill(2)+"x"+str(2).zfill(2)
+        filename = folder_path+"/"+sample_name+"/"+outp_ID+"/z"+str(z_block).zfill(4)+"y"+str(y_block).zfill(4)+"x"+str(2).zfill(4)+"/seg_filled"
         block_2 = readData(box=[1],filename=filename)
         print(block_2.shape)
 
@@ -58,7 +59,7 @@ for z_block in range(23):
         chunk = y_data[i*128:((i+1)*128),:,:]
         print("Chunk " + str(i))
         print(chunk.shape)
-        writeData(folder_path+"/"+sample_name+"/"+str(z_index).zfill(4),chunk)
+        writeData(folder_path+"/"+sample_name+"/"+outp_ID+"/"+str(z_index).zfill(4),chunk)
         z_index+=128
 
     del chunk, block_0, block_1, block_2, x_data, y_data

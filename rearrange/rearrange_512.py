@@ -39,7 +39,7 @@ for z_block in range(12):
         block_1 = readData(box=[1],filename=filename)
         print(block_1.shape)
 
-        filename = folder_path+"/"+sample_name+"/"+outp_ID"/z"+str(z_block).zfill(4)+"y"+str(y_block).zfill(4)+"x"+str(2).zfill(4)+"/"+str(z_block).zfill(4)
+        filename = folder_path+"/"+sample_name+"/"+outp_ID+"/z"+str(z_block).zfill(4)+"y"+str(y_block).zfill(4)+"x"+str(2).zfill(4)+"/"+str(z_block).zfill(4)
         block_2 = readData(box=[1],filename=filename)
         print(block_2.shape)
 
