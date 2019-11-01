@@ -1,5 +1,6 @@
 #TODO
 
+ToDo:
 
 Questions:
 4. (Postponed - Should we run statistics on all of zebrafinch?)
@@ -7,4 +8,4 @@ Questions:
 6. Whats the maximum size of a neuron to expect?
 
 Comments:
-1. Current speed. 4.6 million voxels per second.
+1. Current speed. 2.6 million voxels per second.
