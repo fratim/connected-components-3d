@@ -6,6 +6,7 @@ Questions:
 4. (Postponed - Should we run statistics on all of zebrafinch?)
 5. Intro to thinning algorithm
 6. Whats the maximum size of a neuron to expect?
+7. How to compute skeletons? Keep principle of first transforming to a point cloud?
 
 Comments:
 1. Current speed. 2.6 million voxels per second.

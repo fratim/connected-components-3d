@@ -41,6 +41,10 @@ def loadViz(box, path, caption, res, printIDs, idRes, printCoods):
     print("-----------------------------------------------------------------")
     print ('loading ' + caption + "...")
     gt = readData(box, path)
+
+    if len(gt.shape)==2:
+        gt = np.expand_dims(gt, axis=0)
+
     print("dtype is: " + str(gt.dtype) + ", shape is: " + str(gt.shape))
     gt = gt.astype(np.uint16)
 
@@ -71,7 +75,12 @@ idRes = 1 #which resolution to use to search for IDs
 res=[20,18,18]; # resolution of the data
 data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
 sample_name= "ZF_concat_2to15_0256_0256"
-compare= "testwalls"
+compare= "NeighborLabel"
+
+# block to inspect walls
+bz = "2"
+by = "0"
+bx = "0"
 
 # box = [0,1152,0,1000,0,1000]
 box = [1]
@@ -83,16 +92,20 @@ fn_filled_compare =      data_path + sample_name + "/" + compare + "/" + "filled
 fn_wholes_compare =      data_path + sample_name + "/" + compare + "/" + "wholes.h5"
 fn_diff_wholes_compare = data_path + sample_name + "/" + compare + "/" + "diff_wholes.h5"
 
+fn_wall_zMin = data_path + sample_name + "/" + compare + "/" + "z" + bz.zfill(4) + "y" + by.zfill(4) + "x" + bx.zfill(4) + "/" + "zMinWall.h5"
+
 print("----------------------------HOST:---------------------------------")
 print("-----------------------------------------------------------------")
 print(viewer)
 
 loadViz(box=box, path=fn_org,                   caption="original",             res=res, printIDs = True, idRes=4*idRes,    printCoods=False)
-loadViz(box=box, path=fn_filled_gt,           caption="filled_gt",            res=res, printIDs = True, idRes=4*idRes,    printCoods=False)
+# loadViz(box=box, path=fn_filled_gt,             caption="filled_gt",            res=res, printIDs = True, idRes=4*idRes,    printCoods=False)
 loadViz(box=box, path=fn_wholes_gt,             caption="wholes_gt",            res=res, printIDs = True, idRes=idRes,      printCoods=False)
-loadViz(box=box, path=fn_filled_compare,        caption="filled_comp",          res=res, printIDs = True, idRes=idRes,      printCoods=False)
-loadViz(box=box, path=fn_wholes_compare,        caption="wholes_comp",          res=res, printIDs = True, idRes=idRes,      printCoods=False)
-loadViz(box=box, path=fn_diff_wholes_compare,   caption="diff_wholes_comp",     res=res, printIDs = True, idRes=idRes,      printCoods=True)
+# loadViz(box=box, path=fn_filled_compare,        caption="filled_comp",          res=res, printIDs = True, idRes=idRes,      printCoods=False)
+# loadViz(box=box, path=fn_wholes_compare,        caption="wholes_comp",          res=res, printIDs = True, idRes=idRes,      printCoods=False)
+# loadViz(box=box, path=fn_diff_wholes_compare,   caption="diff_wholes_comp",     res=res, printIDs = True, idRes=idRes,      printCoods=True)
+
+loadViz(box=box, path=fn_wall_zMin,             caption="zMinWall",             res=res, printIDs = True, idRes=idRes,    printCoods=False)
 
 print("----------------------------DONE---------------------------------")
 print("-----------------------------------------------------------------")
