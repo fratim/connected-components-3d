@@ -644,6 +644,24 @@ class dataBlock:
 
     def computeStepOne(self, label_start, output_path):
 
+        # correct block size if smaller than specified in param file, which happens for blocks on the boundary
+        if self.labels_in.shape[0]>param.max_bs_z or self.labels_in.shape[1]>param.max_bs_y or self.labels_in.shape[2]>param.max_bs_x:
+            raise ValueError("Block is larger than specified in param file! - aborting")
+
+        if self.labels_in.shape[0] < max_bs_z or self.labels_in.shape[1] < max_bs_y or self.labels_in.shape[2] < max_bs_x:
+
+            # labels_extended = np.zeros((max_bs_z,max_bs_y,max_bs_x), dtype=np.uint64)
+            # labels_extended[:self.labels_in.shape[0], :self.labels_in.shape[1], :self.labels_in.shape[2]] = self.labels_in.copy()
+
+            pad_z = param.max_bs_z - self.labels_in.shape[0]
+            pad_y = param.max_bs_y - self.labels_in.shape[1]
+            pad_x = param.max_bs_x - self.labels_in.shape[2]
+
+            self.labels_in = np.pad(self.labels_in, ((0,pad_z),(0,pad_y),(0,pad_x)), 'constant', constant_values=0)
+
+            if self.labels_in.shape[0]!=param.max_bs_z or self.labels_in.shape[1]!=param.max_bs_y or self.labels_in.shape[2]!=param.max_bs_x:
+                raise ValueError("Attempted to pad labels_in, unknown error, shape is:" + str(self.labels_in.shape) + " - aborting")
+
         start_time_cc_labels = time.time()
         # compute connected component labels
         cc_labels, n_comp = computeConnectedComp6(self.labels_in,label_start,param.max_labels_block)

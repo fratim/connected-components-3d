@@ -9,8 +9,8 @@ isCluster = True
 compute_statistics = True
 
 if isCluster:
-    output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
-    data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/"
+    output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/"
+    data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/"
     code_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
     sample_name = "stacked_256"
 
@@ -28,19 +28,6 @@ if isCluster:
     z_start = 0
     y_start = 0
     x_start = 0
-
-    # compute number of blocks and block size
-    #bs_z = 128
-    #n_blocks_z = 14
-    #bs_y = 128
-    #n_blocks_y = 2
-    #bs_x = 128
-    #n_blocks_x = 2
-
-    # this has to set here and in the bash script
-    #z_start = 2
-    #y_start = 0
-    #x_start = 0
 
 if not isCluster:
     output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
