@@ -69,7 +69,7 @@ def update_labels(keep_labels, labels_in, cc_labels):
 
     return labels_in
 
-filename = data_path+"/"+sample_name+"/"+"Zebrafinch-input_labels-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
+filename = param.data_path+"/"+param.sample_name+"/"+"Zebrafinch-input_labels-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
 box = [1]
 labels_in = readData(box, filename)
 
