@@ -75,11 +75,13 @@ template = template.replace('{HOURS}', param.run_hours)
 
 SLURM_OUTPUT_FOLDER = param.slurm_path
 
+step00folderpath = SLURM_OUTPUT_FOLDER+"step00/"
 step01folderpath = SLURM_OUTPUT_FOLDER+"step01/"
 step02Afolderpath = SLURM_OUTPUT_FOLDER+"step02A/"
 step02Bfolderpath = SLURM_OUTPUT_FOLDER+"step02B/"
 step03folderpath = SLURM_OUTPUT_FOLDER+"step03/"
 
+makeFolder(step00folderpath)
 makeFolder(step01folderpath)
 makeFolder(step02Afolderpath)
 makeFolder(step02Bfolderpath)
@@ -88,6 +90,25 @@ makeFolder(step03folderpath)
 # Write Slurm for preparations file
 command = "preparation.py"
 jobname = "step00"+"_"+param.outp_ID
+
+# write slurm for step zero
+for bz in range(param.z_start, param.z_start + param.n_blocks_z):
+    for by in range(param.y_start, param.y_start + param.n_blocks_y):
+        for bx in range(param.x_start, param.x_start + param.n_blocks_x):
+
+            command = "stepZero.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
+            jobname = "S00"+"_"+param.outp_ID+"_" +"z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
+
+            t = template
+            t = t.replace('{JOBNAME}', jobname)
+            t = t.replace('{COMMAND}', command)
+            t = t.replace('{ERROR_PATH}', param.error_path)
+            t = t.replace('{OUTPUT_PATH}', param.output_path)
+            t = t.replace('{MEMORY}', param.memory_step00)
+            t = t.replace('{PARTITION}', partitions[np.random.randint(0,n_part)])
+            filename = step00folderpath + jobname + ".slurm"
+            writeFile(filename, t)
+            files_written += 1
 
 # write slurm for step one
 for bz in range(param.z_start, param.z_start + param.n_blocks_z):

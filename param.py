@@ -87,6 +87,7 @@ component_equivalences_filepath  = folder_path+"component_equivalences.txt"
 
 # memory need per block (in MB)
 memory_step01_number = int(1.1*max_bs_z*max_bs_y*max_bs_x*(8+8+8)/1000/1000)
+memory_step00 = str(memory_step01_number)
 memory_step01 = str(memory_step01_number)
 memory_step02A = str(int(memory_step01_number*0.05))
 memory_step02B = str(int(memory_step01_number*0.5))
