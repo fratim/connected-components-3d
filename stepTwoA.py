@@ -113,5 +113,5 @@ g.close()
 if param.compute_statistics:
     g = open(param.component_equivalences_filepath, "a+")
     for entry in neighbor_label_set_border_global.keys():
-        g.write(str(entry[0]).zfill(8)+", "+str(entry[1]).zfill(8)+"\n")
+        g.write(str(int(entry[0])).zfill(25)+", "+str(int(entry[1])).zfill(25)+"\n")
     g.close()

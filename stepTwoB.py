@@ -100,5 +100,5 @@ g.close()
 if param.compute_statistics:
     g = open(param.hole_components_filepath, "a+")
     for entry in hole_components:
-        g.write(str(entry).zfill(8)+"\n")
+        g.write(str(int(entry)).zfill(25)+"\n")
     g.close()
