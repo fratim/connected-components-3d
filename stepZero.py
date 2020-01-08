@@ -30,7 +30,7 @@ else:
 float_array = types.int64[:]
 
 @njit
-def evaluateLabels(cc_labels, somae_raw, n_comp):
+def evaluateLabels(cc_labels, labels_in, n_comp):
 
     items_of_component = Dict.empty(key_type=types.int64,value_type=types.int64)
     label_to_cclabel = Dict.empty(key_type=types.int64,value_type=float_array)
@@ -49,12 +49,12 @@ def evaluateLabels(cc_labels, somae_raw, n_comp):
                     items_of_component[curr_comp]+=1
                     if curr_comp not in cc_labels_known:
                         cc_labels_known.add(curr_comp)
-                        if somae_raw[iz,iy,ix] in label_to_cclabel_keys:
+                        if labels_in[iz,iy,ix] in label_to_cclabel_keys:
                             add = np.array([curr_comp]).astype(np.int64)
-                            label_to_cclabel[somae_raw[iz,iy,ix]] = np.concatenate((label_to_cclabel[somae_raw[iz,iy,ix]].ravel(), add))
+                            label_to_cclabel[labels_in[iz,iy,ix]] = np.concatenate((label_to_cclabel[labels_in[iz,iy,ix]].ravel(), add))
                         else:
-                            label_to_cclabel[somae_raw[iz,iy,ix]] = np.array([curr_comp],dtype=np.int64).astype(np.int64)
-                            label_to_cclabel_keys.add(somae_raw[iz,iy,ix])
+                            label_to_cclabel[labels_in[iz,iy,ix]] = np.array([curr_comp],dtype=np.int64).astype(np.int64)
+                            label_to_cclabel_keys.add(labels_in[iz,iy,ix])
 
     return items_of_component, label_to_cclabel
 
@@ -82,8 +82,6 @@ cc_labels = cc3d.connected_components(currBlock.labels_in, connectivity=26)
 n_comp = np.max(cc_labels) + 1
 
 items_of_component, label_to_cclabel = evaluateLabels(cc_labels, currBlock.labels_in, n_comp)
-
-somae_refined = np.zeros((somae_raw.shape),dtype=np.uint16)
 
 keep_labels = set()
 
