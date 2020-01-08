@@ -519,6 +519,23 @@ def readFromFile(object_name, output_path, output_name):
 
     return object
 
+@njit
+def get_points_per_component(labels_in, n_points):
+
+    known_components = set()
+
+    for iz in range(labels_in.shape[0]):
+        for iy in range(labels_in.shape[1]):
+            for ix in range(labels_in.shape[2]):
+
+                if labels_in[iz,iy,ix] in known_components:
+                    n_points[labels_in[iz,iy,ix]]+=1
+                else:
+                    n_points[labels_in[iz,iy,ix]]=0
+                    known_components.add(labels_in[iz,iy,ix])
+
+    return n_points
+
 class dataBlock:
 
     def __init__(self,viz_wholes):
@@ -654,6 +671,10 @@ class dataBlock:
 
         self.time_AdjLabelLocal = time.time()-start_time_AdjLabelLocal
 
+        if param.compute_statistics:
+            n_points = Dict.empty(key_type=types.float64,value_type=types.float64)
+            self.points_per_component = get_points_per_component(cc_labels, n_points)
+
         del cc_labels
 
         start_time_assoc_labels = time.time()
@@ -678,6 +699,10 @@ class dataBlock:
         # remove alrady detected hole components from neighbor label set local and write the according neighbor label dict of components that are not yet determined
         self.size_label_set_inside = len(neighbor_label_set_inside_local)
         neighbor_label_set_inside_local_reduced  = removeDetComp(neighbor_label_set_inside_local, isHole, isNotHole)
+
+        if param.compute_statistics:
+            self.hole_components = isHole
+
         neighbor_label_dict_reduced = writeNeighborLabelDict(neighbor_label_dict=False, neighbor_label_set=neighbor_label_set_inside_local_reduced.copy())
         self.size_label_set_inside_reduced = len(neighbor_label_set_inside_local_reduced)
 

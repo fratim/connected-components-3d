@@ -70,6 +70,9 @@ neighbor_label_dict = writeNeighborLabelDict(neighbor_label_dict=neighbor_label_
 associated_label_global, undetermined_global, isHole, isNotHole = findAssociatedLabels(neighbor_label_dict, undetermined_global, associated_label_global)
 associated_label_global = setUndeterminedtoNonHole(undetermined_global.copy(), associated_label_global)
 
+if param.compute_statistics:
+    hole_components = isHole
+
 n_Holes = len(isHole)
 n_NotHoles = len(isNotHole)+len(undetermined_global)
 
@@ -93,3 +96,9 @@ g.write(    "total_time," + format(time_total, '.4f') + "," +
             "n_Holes," + str(n_Holes).zfill(16)+","+
             "n_NotHoles," + str(n_NotHoles).zfill(16)+"\n")
 g.close()
+
+if param.compute_statistics:
+    g = open(param.hole_components_filepath, "a+")
+    for entry in hole_components:
+        g.write(str(entry).zfill(8)+"\n")
+    g.close()
