@@ -13,7 +13,7 @@ import param
 import cc3d
 import numpy as np
 
-from functions import makeFolder, dataBlock
+from functions import makeFolder, dataBlock, readData
 
 # set will be deprecated soon on numba, but until now an alternative has not been implemented
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
@@ -67,19 +67,15 @@ def update_labels(keep_labels, labels_in, cc_labels):
 
     return labels_in
 
-# compute and save variables and data
-block_number = (bz)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx
-label_start = -1*block_number*param.max_labels_block
+filename = data_path+"/"+sample_name+"/"+"Zebrafinch-input_labels-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
+box = [1]
+labels_in = readData(box, filename)
 
-currBlock = dataBlock(viz_wholes=True)
-currBlock.readLabels(data_path=param.data_path, sample_name=param.sample_name,
-                        bz=bz, by=by, bx=bx)
-
-cc_labels = cc3d.connected_components(currBlock.labels_in, connectivity=26)
+cc_labels = cc3d.connected_components(labels_in, connectivity=26)
 
 n_comp = np.max(cc_labels) + 1
 
-items_of_component, label_to_cclabel = evaluateLabels(cc_labels, currBlock.labels_in, n_comp)
+items_of_component, label_to_cclabel = evaluateLabels(cc_labels, labels_in, n_comp)
 
 keep_labels = set()
 
@@ -97,4 +93,8 @@ for entry in label_to_cclabel.keys():
 
     keep_labels.add(largest_comp)
 
-currBlock.labels_in = update_labels(keep_labels, currBlock.labels_in, cc_labels)
+labels_in = update_labels(keep_labels, labels_in, cc_labels)
+
+filename = param.data_path+"/"+param.sample_name+"/"+"Zebrafinch-input_labels_discarded-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
+
+writeData(filename, labels_in)
