@@ -109,3 +109,9 @@ g.write(    "bz/by/bx,"+str(bz).zfill(4)+","+str(by).zfill(4)+","+str(bx).zfill(
             "AdjLabelGlobal_time," + format(time_AdjLabelGlobal, '.4f')+","+
             "picklewrite_time," + format(time_picklewrite, '.4f')+"\n")
 g.close()
+
+if param.compute_statistics:
+    g = open(param.component_equivalences_filepath, "a+")
+    for entry in neighbor_label_set_border_global.keys():
+        g.write(str(entry[0]).zfill(8)+", "+str(entry[1]).zfill(8)+"\n")
+    g.close()
