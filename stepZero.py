@@ -13,7 +13,7 @@ import param
 import cc3d
 import numpy as np
 
-from functions import makeFolder, dataBlock, readData
+from functions import makeFolder, dataBlock, readData, writeData
 
 # set will be deprecated soon on numba, but until now an alternative has not been implemented
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)

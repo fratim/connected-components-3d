@@ -648,7 +648,7 @@ class dataBlock:
         if self.labels_in.shape[0]>param.max_bs_z or self.labels_in.shape[1]>param.max_bs_y or self.labels_in.shape[2]>param.max_bs_x:
             raise ValueError("Block is larger than specified in param file! - aborting")
 
-        if self.labels_in.shape[0] < max_bs_z or self.labels_in.shape[1] < max_bs_y or self.labels_in.shape[2] < max_bs_x:
+        if self.labels_in.shape[0] < param.max_bs_z or self.labels_in.shape[1] < param.max_bs_y or self.labels_in.shape[2] < param.max_bs_x:
 
             # labels_extended = np.zeros((max_bs_z,max_bs_y,max_bs_x), dtype=np.uint64)
             # labels_extended[:self.labels_in.shape[0], :self.labels_in.shape[1], :self.labels_in.shape[2]] = self.labels_in.copy()
