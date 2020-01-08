@@ -27,6 +27,8 @@ else:
     by = int(sys.argv[2])
     bx = int(sys.argv[3])
 
+float_array = types.int64[:]
+
 @njit
 def evaluateLabels(cc_labels, labels_in, n_comp):
 
