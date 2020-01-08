@@ -21,9 +21,7 @@ else:
     by = int(sys.argv[2])
     bx = int(sys.argv[3])
 
-
 # STEP 3
-
 start_time_total = time.time()
 
 block_number = (bz)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_blocks_x)+by*(param.x_start+param.n_blocks_x)+bx

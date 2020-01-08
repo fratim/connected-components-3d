@@ -413,7 +413,7 @@ def removeDetComp(neighbor_label_set, isHole, isNotHole):
     return neighbor_label_set_reduced
 
 # fill detedted wholes and give non_wholes their ID (for visualization)
-def fillWholes(output_path,associated_label, bz):
+def fillWholes(output_path, associated_label, bz):
 
     # create filename
     input_name = "cc_labels"
@@ -426,8 +426,9 @@ def fillWholes(output_path,associated_label, bz):
 
     # use nopython to do actual computation
     cc_labels = fillwholesNoPython(box,cc_labels,associated_label)
-    output_name = "seg_filled"
-    writeData(output_path+output_name, cc_labels)
+    output_name = param.output_path_filled_segments + "Zebrafinch-labels_discarded_filled_padded-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
+
+    writeData(output_name, cc_labels)
 
 @njit
 def fillwholesNoPython(box,cc_labels,associated_label):
@@ -531,7 +532,7 @@ def get_points_per_component(labels_in, n_points):
                 if labels_in[iz,iy,ix] in known_components:
                     n_points[labels_in[iz,iy,ix]]+=1
                 else:
-                    n_points[labels_in[iz,iy,ix]]=0
+                    n_points[labels_in[iz,iy,ix]]=1
                     known_components.add(labels_in[iz,iy,ix])
 
     return n_points
