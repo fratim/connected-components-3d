@@ -1,6 +1,8 @@
 # Prerequisites
 *.d
 
+stat_output
+
 # Compiled Object files
 *.slo
 *.lo
