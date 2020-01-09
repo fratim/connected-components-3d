@@ -33,7 +33,7 @@ def IdentifySurfaces(seg, zblock, yblock, xblock):
                 	ycoord = yblock * block_size[OR_Y] + iy
                 	xcoord = xblock * block_size[OR_X] + ix
                 	index = zcoord * volume_size[OR_Y] * volume_size[OR_X] + ycoord * volume_size[OR_X] + xcoord
-                  surfaces.append((label, index))
+                	surfaces.append((label, index))
 
     return surfaces
 
@@ -42,26 +42,26 @@ surfaces = {}
 filenames = sorted(glob.glob(param.output_path_filled_segments+"*"))
 
 for filename in filenames:
-  start_time = time.time()
-	seg = dataIO.ReadH5File(filename)
-	labels = np.unique(seg)
-	for label in labels:
+    start_time = time.time()
+    seg = dataIO.ReadH5File(filename)
+    labels = np.unique(seg)
+    for label in labels:
     	if not label: continue
 
-	indices = filename.split('.')[0].split('-')
-	zindex = int(indices[2].strip('z'))
-	yindex = int(indices[3].strip('y'))
-	xindex = int(indices[4].strip('x'))
-	surface_points = IdentifySurfaces(seg, zindex, yindex, xindex)
+    indices = filename.split('.')[0].split('-')
+    zindex = int(indices[2].strip('z'))
+    yindex = int(indices[3].strip('y'))
+    xindex = int(indices[4].strip('x'))
+    surface_points = IdentifySurfaces(seg, zindex, yindex, xindex)
 
     print("loding file " + filename)
-   	print("block is " + str(z_index) + ", " + str(y_index) + ", " + str(x_index))
+    print("block is " + str(z_index) + ", " + str(y_index) + ", " + str(x_index))
 
-	for (label, index) in surface_points:
-		if not label in surfaces:
-			surfaces[label] = []
-		surfaces[label].append(index)
-	print ('Completed {} in {:0.2f} seconds'.format(filename, time.time() - start_time))
+    for (label, index) in surface_points:
+    	if not label in surfaces:
+    		surfaces[label] = []
+    	surfaces[label].append(index)
+    print ('Completed {} in {:0.2f} seconds'.format(filename, time.time() - start_time))
 
 for label in sorted(surfaces.keys()):
 	output_filename = param.output_path_neuron_surfaces+'Zebrafinch-{:06d}.pts'.format(label)
