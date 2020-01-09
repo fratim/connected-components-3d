@@ -4,6 +4,11 @@ import time
 import numpy as np
 from numba import njit
 import dataIO
+import param
+
+OR_Z=0
+OR_Y=1
+OR_X=2
 
 block_size = (param.max_bs_z, param.max_bs_y, param.max_bs_x)
 volume_size = (param.max_bs_z*param.n_blocks_z, param.max_bs_y*param.n_blocks_y, param.max_bs_x*param.n_blocks_x)
@@ -43,8 +48,9 @@ filenames = sorted(glob.glob(param.output_path_filled_segments+"*"))
 
 for filename in filenames:
     start_time = time.time()
-    seg = dataIO.ReadH5File(filename)
+    seg = dataIO.ReadH5File(filename, [1])
     labels = np.unique(seg)
+    print("shape is: " + str(seg.shape))
     for label in labels:
     	if not label: continue
 
@@ -55,7 +61,7 @@ for filename in filenames:
     surface_points = IdentifySurfaces(seg, zindex, yindex, xindex)
 
     print("loding file " + filename)
-    print("block is " + str(z_index) + ", " + str(y_index) + ", " + str(x_index))
+    print("block is " + str(zindex) + ", " + str(yindex) + ", " + str(xindex))
 
     for (label, index) in surface_points:
     	if not label in surfaces:
