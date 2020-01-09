@@ -14,25 +14,25 @@ def IdentifySurfaces(seg, zblock, yblock, xblock):
     surfaces = []
 
     for iz in range(1, zres - 1):
-		for iy in range(1, yres - 1):
-			for ix in range(1, xres - 1):
-				label = seg[iz,iy,ix]
-				if not label: continue
+        for iy in range(1, yres - 1):
+            for ix in range(1, xres - 1):
+                label = seg[iz,iy,ix]
+                if not label: continue
 
-				# see if this point belongs to the surface
-				surface = False
-				if not seg[iz,iy,ix-1]== label: surface = True
-				if not seg[iz,iy,ix+1]== label: surface = True
-				if not seg[iz,iy-1,ix]== label: surface = True
-				if not seg[iz,iy+1,ix]== label: surface = True
-				if not seg[iz-1,iy,ix]== label: surface = True
-				if not seg[iz+1,iy,ix]== label: surface = True
+                # see if this point belongs to the surface
+                surface = False
+                if not seg[iz,iy,ix-1]== label: surface = True
+                if not seg[iz,iy,ix+1]== label: surface = True
+                if not seg[iz,iy-1,ix]== label: surface = True
+                if not seg[iz,iy+1,ix]== label: surface = True
+                if not seg[iz-1,iy,ix]== label: surface = True
+                if not seg[iz+1,iy,ix]== label: surface = True
 
                 if surface:
-    				zcoord = zblock * block_size[OR_Z] + iz
-    				ycoord = yblock * block_size[OR_Y] + iy
-    				xcoord = xblock * block_size[OR_X] + ix
-    				index = zcoord * volume_size[OR_Y] * volume_size[OR_X] + ycoord * volume_size[OR_X] + xcoord
+                	zcoord = zblock * block_size[OR_Z] + iz
+                	ycoord = yblock * block_size[OR_Y] + iy
+                	xcoord = xblock * block_size[OR_X] + ix
+                	index = zcoord * volume_size[OR_Y] * volume_size[OR_X] + ycoord * volume_size[OR_X] + xcoord
                     surfaces.append((label, index))
 
 	return surfaces
