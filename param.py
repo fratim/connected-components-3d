@@ -53,7 +53,7 @@ if not isCluster:
 outp_ID = "padded_and_statistics"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
-output_path_filled_segments = folder_path+"output_files/"
+output_path_filled_segments = folder_path+"output_segments/"
 
 # folder to which the current code is copied and where it is run from
 code_run_path = folder_path + "code/"

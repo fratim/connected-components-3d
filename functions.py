@@ -413,7 +413,7 @@ def removeDetComp(neighbor_label_set, isHole, isNotHole):
     return neighbor_label_set_reduced
 
 # fill detedted wholes and give non_wholes their ID (for visualization)
-def fillWholes(output_path, associated_label, bz):
+def fillWholes(output_path, associated_label, bz, by, bx):
 
     # create filename
     input_name = "cc_labels"

@@ -40,7 +40,7 @@ time_cutdict = time.time()-start_time_cutdict
 
 start_time_fillWholes = time.time()
 output_folder = param.folder_path+"/z"+str(bz).zfill(4)+"y"+str(by).zfill(4)+"x"+str(bx).zfill(4)+"/"
-fillWholes(output_path=output_folder,associated_label=associated_label, bz=bz)
+fillWholes(output_path=output_folder,associated_label=associated_label, bz=bz, by=by, bx=bx)
 time_fillWholes = time.time() - start_time_fillWholes
 
 time_total = time.time()-start_time_total
