@@ -35,7 +35,7 @@ def IdentifySurfaces(seg, zblock, yblock, xblock):
                 	index = zcoord * volume_size[OR_Y] * volume_size[OR_X] + ycoord * volume_size[OR_X] + xcoord
                     surfaces.append((label, index))
 
-	return surfaces
+    return surfaces
 
 surfaces = {}
 
