@@ -1,18 +1,18 @@
 import glob
 import struct
 import time
-​import numpy as np
-​from numba import njit
-​import dataIO
-​
+import numpy as np
+from numba import njit
+import dataIO
+
 block_size = (param.max_bs_z, param.max_bs_y, param.max_bs_x)
-volume_size = (param.max_bs_z*param.n_blocks_z, param.max_bs_y*param.n_blocks_y, param.max_bs_x*param.n_blocks_x)​
-​
+volume_size = (param.max_bs_z*param.n_blocks_z, param.max_bs_y*param.n_blocks_y, param.max_bs_x*param.n_blocks_x)
+
 @njit
 def IdentifySurfaces(seg, zblock, yblock, xblock):
     zres, yres, xres = seg.shape
     surfaces = []
-​
+
     for iz in range(1, zres - 1):
 		for iy in range(1, yres - 1):
 			for ix in range(1, xres - 1):
@@ -40,11 +40,10 @@ def IdentifySurfaces(seg, zblock, yblock, xblock):
 surfaces = {}
 
 filenames = sorted(glob.glob(param.output_path_filled_segments+"*"))
-​
+
 for filename in filenames:
     start_time = time.time()
 	seg = dataIO.ReadH5File(filename)
-    ​
 	labels = np.unique(seg)
 	for label in labels:
     	if not label: continue
