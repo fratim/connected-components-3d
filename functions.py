@@ -721,6 +721,7 @@ class dataBlock:
 
         if param.compute_statistics:
             self.hole_components = isHole
+            self.undetermined = undetermined_local
 
         neighbor_label_dict_reduced = writeNeighborLabelDict(neighbor_label_dict=False, neighbor_label_set=neighbor_label_set_inside_local_reduced.copy())
         self.size_label_set_inside_reduced = len(neighbor_label_set_inside_local_reduced)

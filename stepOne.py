@@ -61,7 +61,8 @@ g.close()
 if param.compute_statistics:
     g = open(param.points_per_component_filepath, "a+")
     for entry in currBlock.points_per_component.keys():
-        g.write(str(int(entry)).zfill(25)+", "+str(int(currBlock.points_per_component[entry])).zfill(25)+"\n")
+        if entry in currBlock.hole_components or entry in currBlock.undetermined:
+            g.write(str(int(entry)).zfill(25)+", "+str(int(currBlock.points_per_component[entry])).zfill(25)+"\n")
     g.close()
 
     g = open(param.hole_components_filepath, "a+")

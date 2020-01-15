@@ -14,11 +14,21 @@ for k in range(hole_components_arr.shape[0]):
 for k in range(points_per_component_arr.shape[0]):
     points_per_component[points_per_component_arr[k,0]]=points_per_component_arr[k,1]
 
+nan_components = 0
+unknown_components = 0
+hole_components_correct = 0
+
 for component in hole_components:
     if math.isnan(component):
-        print("isNan")
+        nan_components+=1
     else:
         try:
             points_per_holecomponent[component] = points_per_component[component]
+            hole_components_correct += 1
         except:
-            print("unknown component: " + str(component))
+            unknown_components+=1
+
+print("nan_components: " + str(nan_components))
+print("unknown_components: " + str(unknown_components))
+print("hole_components_correct: " + str(hole_components_correct))
+print("hole_componentstotal: " + str(len(hole_components)))
