@@ -19,19 +19,13 @@ from functions import makeFolder, dataBlock, readData, writeData
 warnings.simplefilter('ignore', category=NumbaDeprecationWarning)
 warnings.simplefilter('ignore', category=NumbaPendingDeprecationWarning)
 
-# pass arguments
-if(len(sys.argv))!=4:
-    raise ValueError(" Scripts needs exactley 3 input arguments (bz by bx)")
-else:
-    bz = int(sys.argv[1])
-    by = int(sys.argv[2])
-    bx = int(sys.argv[3])
-
 float_array = types.int64[:]
+dsp_factor = 8
 
 @njit
 def evaluateLabels(cc_labels, labels_in, n_comp):
 
+    point_of_component = Dict.empty(key_type=types.int64,value_type=float_array)
     items_of_component = Dict.empty(key_type=types.int64,value_type=types.int64)
     label_to_cclabel = Dict.empty(key_type=types.int64,value_type=float_array)
     cc_labels_known = set()
@@ -48,6 +42,7 @@ def evaluateLabels(cc_labels, labels_in, n_comp):
                 if curr_comp!=0:
                     items_of_component[curr_comp]+=1
                     if curr_comp not in cc_labels_known:
+                        point_of_component[curr_comp] = np.array([iz*dsp_factor,iy*dsp_factor,ix*dsp_factor],dtype=np.int64).astype(np.int64)
                         cc_labels_known.add(curr_comp)
                         if labels_in[iz,iy,ix] in label_to_cclabel_keys:
                             add = np.array([curr_comp]).astype(np.int64)
@@ -56,7 +51,7 @@ def evaluateLabels(cc_labels, labels_in, n_comp):
                             label_to_cclabel[labels_in[iz,iy,ix]] = np.array([curr_comp],dtype=np.int64).astype(np.int64)
                             label_to_cclabel_keys.add(labels_in[iz,iy,ix])
 
-    return items_of_component, label_to_cclabel
+    return items_of_component, label_to_cclabel, point_of_component
 
 @njit
 def update_labels(keep_labels, labels_in, cc_labels):
@@ -69,7 +64,8 @@ def update_labels(keep_labels, labels_in, cc_labels):
 
     return labels_in
 
-filename = param.data_path+"/"+param.sample_name+"/"+"Zebrafinch-input_labels-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
+# filename = param.data_path+"/"+param.sample_name+"/"+"Zebrafinch-input_labels-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
+filename = segmentation_dsp8/Zebrafinch/Zebrafinch-seg-dsp_8"
 box = [1]
 labels_in = readData(box, filename)
 
@@ -77,7 +73,7 @@ cc_labels = cc3d.connected_components(labels_in, connectivity=26)
 
 n_comp = np.max(cc_labels) + 1
 
-items_of_component, label_to_cclabel = evaluateLabels(cc_labels, labels_in, n_comp)
+items_of_component, label_to_cclabel, point_of_component = evaluateLabels(cc_labels, labels_in, n_comp)
 
 keep_labels = set()
 
@@ -95,8 +91,13 @@ for entry in label_to_cclabel.keys():
 
     keep_labels.add(largest_comp)
 
-labels_in = update_labels(keep_labels, labels_in, cc_labels)
+g = open("segmentation_dsp8/Zebrafinch/component_anchors.txt", "w+")
+for entry in keep_labels:
+    g.write(str(int(point_of_component[entry][2])).zfill(10)+" "+ str(int(point_of_component[entry][1])).zfill(10)+" "+str(int(point_of_component[entry][0])).zfill(10)+"\n")
+g.close()
 
-filename = param.data_path+"/"+param.sample_name+"/"+"Zebrafinch-input_labels_discarded-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
+# labels_in = update_labels(keep_labels, labels_in, cc_labels)
 
-writeData(filename, labels_in)
+# filename = param.data_path+"/"+param.sample_name+"/"+"Zebrafinch-input_labels_discarded-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
+
+# writeData(filename, labels_in)

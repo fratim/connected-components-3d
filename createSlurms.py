@@ -96,7 +96,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
     for by in range(param.y_start, param.y_start + param.n_blocks_y):
         for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
-            command = "stepZero.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
+            command = "stepZeroB.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
             jobname = "S00"+"_"+param.outp_ID+"_" +"z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
 
             t = template

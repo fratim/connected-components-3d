@@ -1,3 +1,5 @@
+segmentation_dsp8/
+
 # Prerequisites
 *.d
 
@@ -32,7 +34,6 @@ stat_output
 *.exe
 *.out
 *.app
-
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
