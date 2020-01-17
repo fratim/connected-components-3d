@@ -111,7 +111,7 @@ g.write(    "bz/by/bx,"+str(bz).zfill(4)+","+str(by).zfill(4)+","+str(bx).zfill(
 g.close()
 
 if param.compute_statistics:
-    g = open(param.component_equivalences_filepath, "a+")
+    g = open(param.component_equivalences_filepath+"-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x.txt", "w+")
     for entry in neighbor_label_set_border_global:
         g.write(str(int(entry[0])).zfill(25)+", "+str(int(entry[1])).zfill(25)+"\n")
     g.close()

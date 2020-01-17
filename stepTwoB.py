@@ -98,7 +98,7 @@ g.write(    "total_time," + format(time_total, '.4f') + "," +
 g.close()
 
 if param.compute_statistics:
-    g = open(param.hole_components_filepath, "a+")
+    g = open(param.hole_components_filepath+"-global.txt", "a+")
     for entry in hole_components:
         g.write(str(int(entry)).zfill(25)+"\n")
     g.close()

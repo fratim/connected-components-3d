@@ -59,13 +59,13 @@ g.write(    "bz/by/bx,"+str(bz).zfill(4)+","+str(by).zfill(4)+","+str(bx).zfill(
 g.close()
 
 if param.compute_statistics:
-    g = open(param.points_per_component_filepath, "a+")
+    g = open(param.points_per_component_filepath+"-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x.txt", "w+")
     for entry in currBlock.points_per_component.keys():
         if entry in currBlock.hole_components or entry in currBlock.undetermined:
             g.write(str(int(entry)).zfill(25)+", "+str(int(currBlock.points_per_component[entry])).zfill(25)+"\n")
     g.close()
 
-    g = open(param.hole_components_filepath, "a+")
+    g = open(param.hole_components_filepath+"-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x.txt", "w+")
     for entry in currBlock.hole_components:
         g.write(str(int(entry)).zfill(25)+"\n")
     g.close()

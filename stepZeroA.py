@@ -29,10 +29,13 @@ def evaluateLabels(cc_labels, labels_in, n_comp):
     items_of_component = Dict.empty(key_type=types.int64,value_type=types.int64)
     label_to_cclabel = Dict.empty(key_type=types.int64,value_type=float_array)
     cc_labels_known = set()
+    cc_labels_known_block = set()
     label_to_cclabel_keys = set()
 
     for j in range(n_comp):
         items_of_component[j]=0
+
+    reset_counter = 0
 
     for iz in range(cc_labels.shape[0]):
         for iy in range(cc_labels.shape[1]):
@@ -42,7 +45,6 @@ def evaluateLabels(cc_labels, labels_in, n_comp):
                 if curr_comp!=0:
                     items_of_component[curr_comp]+=1
                     if curr_comp not in cc_labels_known:
-                        point_of_component[curr_comp] = np.array([iz*dsp_factor,iy*dsp_factor,ix*dsp_factor],dtype=np.int64).astype(np.int64)
                         cc_labels_known.add(curr_comp)
                         if labels_in[iz,iy,ix] in label_to_cclabel_keys:
                             add = np.array([curr_comp]).astype(np.int64)
@@ -50,6 +52,24 @@ def evaluateLabels(cc_labels, labels_in, n_comp):
                         else:
                             label_to_cclabel[labels_in[iz,iy,ix]] = np.array([curr_comp],dtype=np.int64).astype(np.int64)
                             label_to_cclabel_keys.add(labels_in[iz,iy,ix])
+
+                    if curr_comp not in cc_labels_known_block:
+                        point_of_component[curr_comp] = np.array([iz*dsp_factor,iy*dsp_factor,ix*dsp_factor],dtype=np.int64).astype(np.int64)
+                        cc_labels_known_block.add(curr_comp)
+
+                if ix == (param.max_bs_x-1):
+                    cc_labels_known_block = set()
+                    reset_counter += 1
+
+            if iy == (param.max_bs_y-1):
+                cc_labels_known_block = set()
+                reset_counter += 1
+
+        if iz == (param.max_bs_z-1):
+            cc_labels_known_block = set()
+            reset_counter += 1
+
+    print("Blocks: " + str(reset_counter))
 
     return items_of_component, label_to_cclabel, point_of_component
 
