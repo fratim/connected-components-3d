@@ -50,14 +50,14 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = "padded_and_statistics"
+outp_ID = "padded_discarded_statistics"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 output_path_filled_segments = folder_path+"output_segments/"
 output_path_neuron_surfaces = folder_path+"neuron_surfaces/"
 
 # folder to which the current code is copied and where it is run from
-code_run_path = folder_path + "code/"
+code_run_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
 slurm_path = folder_path + "slurm_files/"
 # these are created by the preparations folder
 error_path = folder_path+"error_files/"

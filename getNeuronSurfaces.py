@@ -44,7 +44,7 @@ def IdentifySurfaces(seg, zblock, yblock, xblock):
 
 surfaces = {}
 
-filenames = sorted(glob.glob(param.output_path_filled_segments+"*"))
+filenames = sorted(glob.glob("/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/stacked_256/padded_discarded_statistics/input_segments_discarded/"+"*"))
 
 for filename in filenames:
     start_time = time.time()

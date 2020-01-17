@@ -29,6 +29,7 @@ else:
 
 @njit
 def update_labels(keep_labels, labels_in, cc_labels):
+    
     for iz in range(labels_in.shape[0]):
         for iy in range(labels_in.shape[1]):
             for ix in range(labels_in.shape[2]):
@@ -50,6 +51,9 @@ bs_z = labels_in.shape[0]
 bs_y = labels_in.shape[1]
 bs_x = labels_in.shape[2]
 
+print("Blocksize:")
+print(bs_z,bs_y,bs_x)
+
 keep_labels = set()
 
 with open(filename_anchors, 'r') as fd:
@@ -64,13 +68,19 @@ with open(filename_anchors, 'r') as fd:
         point_ix_local = point_ix_gb - bs_x*bx
         point_iy_local = point_iy_gb - bs_y*by
         point_iz_local = point_iz_gb - bs_z*bz
-
-        if point_iz_local>0 and point_iz_local<bs_z:
-            if point_iy_local>0 and point_iy_local<bs_y:
-                if point_ix_local>0 and point_ix_local<bs_x:
+        
+        if point_iz_local>=0 and point_iz_local<bs_z:
+            if point_iy_local>=0 and point_iy_local<bs_y:
+                if point_ix_local>=0 and point_ix_local<bs_x:
                     keep_labels.add(cc_labels[point_iz_local,point_iy_local,point_ix_local])
+                    print("point added")
+                    print("global, local")
+                    print(point_iz_gb, point_iy_gb, point_ix_gb)
+                    print(point_iz_local, point_iy_local, point_ix_local)   
 
-labels_in = update_labels(keep_labels, labels_in, cc_labels)
+print(keep_labels)
+
+if len(keep_labels)>0: labels_in = update_labels(keep_labels, labels_in, cc_labels)
 
 filename = param.data_path+"/"+param.sample_name+"/"+"Zebrafinch-input_labels_discarded-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
 
