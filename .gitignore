@@ -3,7 +3,10 @@ segmentation_dsp8/
 # Prerequisites
 *.d
 
-stat_output
+stat_output/comp*
+stat_output/hole*
+stat_output/out*
+stat_output/points*
 
 # Compiled Object files
 *.slo

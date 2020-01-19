@@ -57,18 +57,6 @@ def evaluateLabels(cc_labels, labels_in, n_comp):
                         point_of_component[curr_comp] = np.array([iz*dsp_factor,iy*dsp_factor,ix*dsp_factor],dtype=np.int64).astype(np.int64)
                         cc_labels_known_block.add(curr_comp)
 
-                if ix == (param.max_bs_x-1):
-                    cc_labels_known_block = set()
-                    reset_counter += 1
-
-            if iy == (param.max_bs_y-1):
-                cc_labels_known_block = set()
-                reset_counter += 1
-
-        if iz == (param.max_bs_z-1):
-            cc_labels_known_block = set()
-            reset_counter += 1
-
     print("Blocks: " + str(reset_counter))
 
     return items_of_component, label_to_cclabel, point_of_component
