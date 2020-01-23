@@ -23,11 +23,7 @@ z_start = 0
 y_start = 0
 x_start = 0
 
-<<<<<<< HEAD
 outp_ID = "pad_dis_stat"
-=======
-outp_ID = "padded_stat"
->>>>>>> 5af71874aa53849832215467e8ac0a8728ebd01f
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 output_path_filled_segments = folder_path+"output_segments/"
