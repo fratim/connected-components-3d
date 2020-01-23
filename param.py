@@ -1,56 +1,29 @@
 import math
 
-# this exact code was used to computye Zebrafinch ground turth, which is saved (read-only)
-# in the folder /n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/allFilesFullSize/seg_filled
-
-
 # Header file for block processing, includes parameters and paths
-isCluster = True
 compute_statistics = True
 
-if isCluster:
-    output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/"
-    data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/"
-    code_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
-    sample_name = "stacked_256"
+output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/"
+data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/"
+code_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
+sample_name = "stacked_256"
 
-    # compute number of blocks and block size
-    max_bs_z = 256
-    n_blocks_z = 23
+# compute number of blocks and block size
+max_bs_z = 256
+n_blocks_z = 23
 
-    max_bs_y = 2048
-    n_blocks_y = 3
+max_bs_y = 2048
+n_blocks_y = 3
 
-    max_bs_x = 2048
-    n_blocks_x = 3
+max_bs_x = 2048
+n_blocks_x = 3
 
-    # start slice of zebrafinch block
-    z_start = 0
-    y_start = 0
-    x_start = 0
+# start slice of zebrafinch block
+z_start = 0
+y_start = 0
+x_start = 0
 
-if not isCluster:
-    output_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-    data_path = "/home/frtim/wiring/raw_data/segmentations/Zebrafinch/stacked_volumes/"
-    code_path = ""
-    sample_name = "ZF_concat_2to14_0256_0256"
-
-    # compute number of blocks and block size
-    max_bs_z= 128
-    n_blocks_z = 13
-
-    max_bs_y = 128
-    n_blocks_y = 2
-
-    max_bs_x = 128
-    n_blocks_x = 2
-
-    # this has to set here and in the bash script
-    z_start = 2
-    y_start = 0
-    x_start = 0
-
-outp_ID = "padded_discarded_statistics"
+outp_ID = "pad_dis_stat"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 output_path_filled_segments = folder_path+"output_segments/"
