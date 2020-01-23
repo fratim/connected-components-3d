@@ -50,7 +50,7 @@ if not isCluster:
     y_start = 0
     x_start = 0
 
-outp_ID = "padded_discarded_statistics"
+outp_ID = "padded_stat"
 
 folder_path = data_path + sample_name + "/" + outp_ID + "/"
 output_path_filled_segments = folder_path+"output_segments/"
