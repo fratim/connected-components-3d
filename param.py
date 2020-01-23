@@ -2,11 +2,13 @@ import math
 
 # Header file for block processing, includes parameters and paths
 compute_statistics = True
+prefix = "Zebrafinch"
 
-output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/"
-data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/"
+# output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/"
+data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1_discarded/"
+folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/holefilling/"
 code_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
-sample_name = "stacked_256"
+output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1_discarded/2_discarded_filled_padded/"
 
 # compute number of blocks and block size
 max_bs_z = 256
@@ -23,11 +25,7 @@ z_start = 0
 y_start = 0
 x_start = 0
 
-outp_ID = "pad_dis_stat"
-
-folder_path = data_path + sample_name + "/" + outp_ID + "/"
-output_path_filled_segments = folder_path+"output_segments/"
-output_path_neuron_surfaces = folder_path+"neuron_surfaces/"
+# output_path_neuron_surfaces = folder_path+"neuron_surfaces/"
 
 # folder to which the current code is copied and where it is run from
 code_run_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
