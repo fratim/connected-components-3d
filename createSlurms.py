@@ -87,7 +87,7 @@ makeFolder(step03folderpath)
 
 # Write Slurm for preparations file
 command = "preparation.py"
-jobname = "step00"+"_"+param.outp_ID
+jobname = "step00"
 
 # write slurm for step one
 for bz in range(param.z_start, param.z_start + param.n_blocks_z):
@@ -95,7 +95,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
         for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
             command = "stepOne.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
-            jobname = "S01"+"_"+param.outp_ID+"_" +"z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
+            jobname = "S01"+"_" +"z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
 
             t = template
             t = t.replace('{JOBNAME}', jobname)
@@ -114,7 +114,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
         for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
             command = "stepTwoA.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
-            jobname = "S2A"+param.outp_ID+"_" +"z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
+            jobname = "S2A_" +"z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
 
             t = template
             t = t.replace('{JOBNAME}', jobname)
@@ -130,7 +130,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
 
 # Write Slurm for step two B
 command = "stepTwoB.py"
-jobname = "step02B"+"_"+param.outp_ID
+jobname = "step02B"
 
 t = template
 t = t.replace('{JOBNAME}', jobname)
@@ -150,7 +150,7 @@ for bz in range(param.z_start, param.z_start + param.n_blocks_z):
         for bx in range(param.x_start, param.x_start + param.n_blocks_x):
 
             command = "stepThree.py" + " " + str(bz) + " " + str(by) + " " + str(bx)
-            jobname = "S3"+"_"+param.outp_ID+"_"+ "z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
+            jobname = "S3"+"_"+ "z"+str(bz).zfill(2)+"y"+str(by).zfill(2)+"x"+str(bx).zfill(2)
 
             t = template
             t = t.replace('{JOBNAME}', jobname)

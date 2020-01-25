@@ -8,7 +8,7 @@ prefix = "Zebrafinch"
 data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1_discarded/"
 folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/holefilling/"
 code_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
-output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1_discarded/2_discarded_filled_padded/"
+output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2_discarded_filled_padded/"
 
 # compute number of blocks and block size
 max_bs_z = 256
@@ -25,7 +25,7 @@ z_start = 0
 y_start = 0
 x_start = 0
 
-# output_path_neuron_surfaces = folder_path+"neuron_surfaces/"
+output_path_neuron_surfaces = folder_path+"neuron_surfaces/"
 
 # folder to which the current code is copied and where it is run from
 code_run_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
@@ -35,15 +35,22 @@ error_path = folder_path+"error_files/"
 output_path = folder_path+"output_files/"
 
 # create file no save n_comp (number of cc3d components) for each procesed block
-n_comp_filepath         = folder_path+"n_comp.txt"
-step01_info_filepath  = folder_path+"step01_info.txt"
-step02A_info_filepath = folder_path+"step02A_info.txt"
-step02B_info_filepath = folder_path+"step02B_info.txt"
-step03_info_filepath  = folder_path+"step03_info.txt"
+info_folder                 = folder_path+"info_files/"
+total_times_folder          = folder_path+"total_times/"
+n_comp_filepath             = info_folder+"n_comp.txt"
+step01_info_filepath        = info_folder+"step01_info.txt"
+step02A_info_filepath       = info_folder+"step02A_info.txt"
+step02B_info_filepath       = info_folder+"step02B_info.txt"
+step03_info_filepath        = info_folder+"step03_info.txt"
+total_time_filepath         = total_times_folder+"total_times"
 
-points_per_component_filepath  = folder_path+"points_per_component"
-hole_components_filepath  = folder_path+"hole_components"
-component_equivalences_filepath  = folder_path+"component_equivalences"
+points_per_component_folder  = folder_path+"points_per_component/"
+hole_components_folder  = folder_path+"hole_components/"
+component_equivalences_folder  = folder_path+"component_equivalences/"
+
+points_per_component_filepath  = points_per_component_folder+"points_per_component"
+hole_components_filepath  = hole_components_folder+"hole_components"
+component_equivalences_filepath  = component_equivalences_folder+"/component_equivalences"
 
 # memory need per block (in MB)
 memory_step01_number = int(1.1*max_bs_z*max_bs_y*max_bs_x*(8+8+8)/1000/1000)

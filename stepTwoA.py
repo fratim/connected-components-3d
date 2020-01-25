@@ -110,6 +110,10 @@ g.write(    "bz/by/bx,"+str(bz).zfill(4)+","+str(by).zfill(4)+","+str(bx).zfill(
             "picklewrite_time," + format(time_picklewrite, '.4f')+"\n")
 g.close()
 
+g = open(param.total_time_filepath+"-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x.txt", "a+")
+g.write(format(time_total, '.4f') + "\n")
+g.close()
+
 if param.compute_statistics:
     g = open(param.component_equivalences_filepath+"-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x.txt", "w+")
     for entry in neighbor_label_set_border_global:

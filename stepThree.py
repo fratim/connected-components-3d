@@ -45,6 +45,10 @@ time_fillWholes = time.time() - start_time_fillWholes
 
 time_total = time.time()-start_time_total
 
+g = open(param.total_time_filepath+"-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x.txt", "a+")
+g.write(format(time_total, '.4f') + "\n")
+g.close()
+
 g = open(param.step03_info_filepath, "a+")
 g.write(    "bz/by/bx,"+str(bz).zfill(4)+","+str(by).zfill(4)+","+str(bx).zfill(4)+","
             "total_time," + format(time_total, '.4f') + "," +

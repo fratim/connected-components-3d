@@ -33,7 +33,7 @@ block_number = (bz)*(param.y_start+param.n_blocks_y)*(param.x_start+param.n_bloc
 label_start = -1*block_number*param.max_labels_block
 
 currBlock = dataBlock(viz_wholes=True)
-currBlock.readLabels(data_path=param.data_path, sample_name=param.sample_name,
+currBlock.readLabels(data_path=param.data_path,
                         bz=bz, by=by, bx=bx)
 
 time_read_labels = time.time()-start_time_read_labels
@@ -56,6 +56,11 @@ g.write(    "bz/by/bx,"+str(bz).zfill(4)+","+str(by).zfill(4)+","+str(bx).zfill(
             "n_NotHoles," + str(currBlock.n_NotHoles).zfill(8)+","+
             "len_label_set_inside," + str(currBlock.size_label_set_inside).zfill(8)+","+
             "len_label_set_inside_reduced," + str(currBlock.size_label_set_inside_reduced).zfill(8)+"\n")
+g.close()
+
+# write total time to file
+g = open(param.total_time_filepath+"-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x.txt", "w+")
+g.write(format(time_total, '.4f') + "\n")
 g.close()
 
 if param.compute_statistics:

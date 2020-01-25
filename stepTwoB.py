@@ -97,6 +97,11 @@ g.write(    "total_time," + format(time_total, '.4f') + "," +
             "n_NotHoles," + str(n_NotHoles).zfill(16)+"\n")
 g.close()
 
+
+g = open(param.total_time_filepath+"-step_2B.txt", "a+")
+g.write(format(time_total, '.4f') + "\n")
+g.close()
+
 if param.compute_statistics:
     g = open(param.hole_components_filepath+"-global.txt", "a+")
     for entry in hole_components:

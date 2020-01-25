@@ -426,7 +426,7 @@ def fillWholes(output_path, associated_label, bz, by, bx):
 
     # use nopython to do actual computation
     cc_labels = fillwholesNoPython(box,cc_labels,associated_label)
-    output_name = param.output_path_filled_segments+param.prefix+"-labels_discarded_filled_padded-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
+    output_name = param.output_path_filled_segments+"/"+param.prefix+"/"+param.prefix+"-labels_discarded_filled_padded-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
 
     writeData(output_name, cc_labels)
 
@@ -628,10 +628,10 @@ class dataBlock:
 
         del diff
 
-    def readLabels(self, data_path, sample_name, bz, by, bx):
+    def readLabels(self, data_path, bz, by, bx):
 
-        #filename = data_path+"/"+sample_name+"/"+str(bz*128).zfill(4)
-        filename = data_path+"/"+param.prefix"/"+param.prefix+"-labels_discarded-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
+        #filename = data_path+"/"+"/"+str(bz*128).zfill(4)
+        filename = data_path+"/"+param.prefix+"/"+param.prefix+"-labels_discarded-"+str(bz).zfill(4)+"z-"+str(by).zfill(4)+"y-"+str(bx).zfill(4)+"x"
 
         box = [1]
         self.labels_in = readData(box, filename)
