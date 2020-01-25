@@ -1,24 +1,24 @@
 import math
 
 # Header file for block processing, includes parameters and paths
-compute_statistics = True
+compute_statistics = False
 prefix = "Zebrafinch"
 
 # output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/"
-data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1_discarded/"
-folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/holefilling/"
+data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x1024/1_discarded_1024x1024x1024/"
+folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x1024/holefilling/"
 code_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
-output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2_discarded_filled_padded/"
+output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x1024/2_discarded_filled_padded_1024x1024x1024/"
 
 # compute number of blocks and block size
-max_bs_z = 256
-n_blocks_z = 23
+max_bs_z = 1024
+n_blocks_z = 6
 
-max_bs_y = 2048
-n_blocks_y = 3
+max_bs_y = 1024
+n_blocks_y = 6
 
-max_bs_x = 2048
-n_blocks_x = 3
+max_bs_x = 1024
+n_blocks_x = 6
 
 # start slice of zebrafinch block
 z_start = 0
@@ -28,7 +28,6 @@ x_start = 0
 output_path_neuron_surfaces = folder_path+"neuron_surfaces/"
 
 # folder to which the current code is copied and where it is run from
-code_run_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
 slurm_path = folder_path + "slurm_files/"
 # these are created by the preparations folder
 error_path = folder_path+"error_files/"
