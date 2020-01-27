@@ -1,17 +1,18 @@
-import math
-
-# Header file for block processing, includes parameters and paths
+############################################################################################################################################
+############################################################################################################################################
+##PARAMETERS THAT NEED TO BE SET IN ADVANCE
+############################################################################################################################################
+############################################################################################################################################
 compute_statistics = False
 prefix = "Zebrafinch"
 
-# output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/"
 data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/1_discarded_2048x2048x2048/"
 folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/holefilling/"
 code_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
 output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/2_discarded_filled_padded_2048x2048x2048/"
 output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/d_seg_discarded_filled_surfaces/"
 
-# compute number of blocks and block size
+# number of blocks and block size
 max_bs_z = 2048
 n_blocks_z = 3
 
@@ -26,6 +27,8 @@ z_start = 0
 y_start = 0
 x_start = 0
 
+############################################################################################################################################
+############################################################################################################################################
 
 # folder to which the current code is copied and where it is run from
 slurm_path = folder_path + "slurm_files/"

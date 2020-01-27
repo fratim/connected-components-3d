@@ -23,7 +23,6 @@ makeFolder(param.output_path_neuron_surfaces)
 makeFolder(param.output_path_neuron_surfaces+param.prefix+"/")
 
 makeFolder(param.folder_path)
-makeFolder(param.output_path_neuron_surfaces)
 makeFolder(param.error_path)
 makeFolder(param.output_path)
 makeFolder(param.slurm_path)
