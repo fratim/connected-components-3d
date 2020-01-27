@@ -16,8 +16,13 @@ from functions import makeFolder
 
 
 # make these folders and give error if they exist
+makeFolder(param.output_path_filled_segments)
+makeFolder(param.output_path_filled_segments+param.prefix+"/")
+
+makeFolder(param.output_path_neuron_surfaces)
+makeFolder(param.output_path_neuron_surfaces+param.prefix+"/")
+
 makeFolder(param.folder_path)
-# makeFolder(param.output_path_filled_segments)
 makeFolder(param.output_path_neuron_surfaces)
 makeFolder(param.error_path)
 makeFolder(param.output_path)

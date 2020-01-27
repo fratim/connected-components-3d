@@ -10,6 +10,8 @@ OR_Z=0
 OR_Y=1
 OR_X=2
 
+prefix = "Zebrafinch"
+
 block_size = (param.max_bs_z, param.max_bs_y, param.max_bs_x)
 volume_size = (param.max_bs_z*param.n_blocks_z, param.max_bs_y*param.n_blocks_y, param.max_bs_x*param.n_blocks_x)
 
@@ -44,13 +46,14 @@ def IdentifySurfaces(seg, zblock, yblock, xblock):
 
 surfaces = {}
 
-filenames = sorted(glob.glob("/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/stacked_256/padded_discarded_statistics/input_segments_discarded/"+"*"))
+filenames = sorted(glob.glob("/n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x1024/2_discarded_filled_padded_1024x1024x1024/"+prefix+"/*"))
 
 for filename in filenames:
     start_time = time.time()
     seg = dataIO.ReadH5File(filename, [1])
     labels = np.unique(seg)
-    print("shape is: " + str(seg.shape))
+    print(filename)
+    print("shape is: " + str(seg.shape), flush=True)
     for label in labels:
     	if not label: continue
 
@@ -70,7 +73,7 @@ for filename in filenames:
     print ('Completed {} in {:0.2f} seconds'.format(filename, time.time() - start_time))
 
 for label in sorted(surfaces.keys()):
-	output_filename = param.output_path_neuron_surfaces+'Zebrafinch-{:06d}.pts'.format(label)
+	output_filename = param.output_path_neuron_surfaces+prefix+"/"+prefix+'-{:06d}.pts'.format(label)
 	with open(output_filename, 'wb') as fd:
 		fd.write(struct.pack('qqq', volume_size[OR_Z], volume_size[OR_Y], volume_size[OR_X]))
 		fd.write(struct.pack('qqq', block_size[OR_Z], block_size[OR_Y], block_size[OR_X]))
