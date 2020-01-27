@@ -5,20 +5,20 @@ compute_statistics = False
 prefix = "Zebrafinch"
 
 # output_path = "/n/pfister_lab2/Lab/tfranzmeyer/Zebrafinch/original_data/"
-data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x1024/1_discarded_1024x1024x1024/"
-folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x1024/holefilling/"
+data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/1_discarded_2048x2048x2048/"
+folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/holefilling/"
 code_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
-output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x1024/2_discarded_filled_padded_1024x1024x1024/"
+output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/2_discarded_filled_padded_2048x2048x2048/"
 
 # compute number of blocks and block size
-max_bs_z = 1024
-n_blocks_z = 6
+max_bs_z = 2048
+n_blocks_z = 3
 
-max_bs_y = 1024
-n_blocks_y = 6
+max_bs_y = 2048
+n_blocks_y = 3
 
-max_bs_x = 1024
-n_blocks_x = 6
+max_bs_x = 2048
+n_blocks_x = 3
 
 # start slice of zebrafinch block
 z_start = 0

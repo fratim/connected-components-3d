@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 holes_of_size = dict()
 
-hole_single = np.genfromtxt("single_holes.txt", delimiter=',',invalid_raise=True)
-hole_multi = np.genfromtxt("multi_holes.txt", delimiter=',',invalid_raise=True)
+hole_single = np.genfromtxt("output_files/single_holes.txt", delimiter=',',invalid_raise=True)
+hole_multi = np.genfromtxt("output_files/multi_holes.txt", delimiter=',',invalid_raise=True)
 
 hole = np.concatenate((hole_multi,hole_single),axis=0)
 
