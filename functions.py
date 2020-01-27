@@ -324,8 +324,6 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
     while len(undetermined)>0:
 
         counter = counter + 1
-        if counter%1000==0:
-            print("Counter is: " + str(counter), flush=True)
         query_comp = undetermined.pop()
 
         #check if it has only one neighbor and this neighbor is a neuron
