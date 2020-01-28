@@ -3,12 +3,15 @@
 ToDo:
 
 Questions:
-4. (Postponed - Should we run statistics on all of zebrafinch?)
-5. Intro to thinning algorithm
-6. Whats the maximum size of a neuron to expect?
-7. How to compute skeletons? Keep principle of first transforming to a point cloud?
-
-test 
 
 Comments:
-1. Current speed. 2.6 million voxels per second.
+
+Instructions:
+
+1. set parameters in param.py and copy input data to param.data_path+"prefix"
+2 .cd param.code_path
+3. python preparation.py
+4. python createSlurms.py "Partition_1" "Partition_2" "Partition_3" "Partition_4"
+5. cd param.slurm_path
+6. cd step01
+7. for slurm_file in *; do    sbatch $slurm_file; done

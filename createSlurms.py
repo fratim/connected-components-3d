@@ -22,7 +22,7 @@ module load Anaconda3/5.0.1-fasrc02
 
 source activate fillholes
 
-export PYTHONPATH=$PYTHONPATH:/n/home12/tfranzmeyer/
+export PYTHONPATH=$PYTHONPATH:{RUNCODEDIRECTORY}
 
 cd {RUNCODEDIRECTORY}
 
