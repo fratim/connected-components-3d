@@ -10,7 +10,7 @@ data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/1_discarded_204
 folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/holefilling/"
 code_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
 output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/2_discarded_filled_padded_2048x2048x2048/"
-output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/d_seg_discarded_filled_surfaces/"
+output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/512x512x512/d_seg_discarded_filled_surfaces/"
 
 # number of blocks and block size
 max_bs_z = 2048
