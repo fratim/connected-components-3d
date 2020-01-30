@@ -6,21 +6,21 @@
 compute_statistics = False
 prefix = "Zebrafinch"
 
-data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/1_discarded_2048x2048x2048/"
-folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/holefilling/"
-code_path = "/n/home12/tfranzmeyer/Code/connected-components-3d/"
-output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/2_discarded_filled_padded_2048x2048x2048/"
-output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/2048x2048x2048/d_seg_discarded_filled_surfaces/"
+data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/512x512x512/1_discarded_512x512x512/"
+folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/512x512x512/holefilling/"
+code_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/512x512x512/Code/"
+output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/512x512x512/2_discarded_filled_padded_512x512x512/"
+output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/512x512x512/d_seg_discarded_filled_surfaces/"
 
 # number of blocks and block size
-max_bs_z = 2048
-n_blocks_z = 3
+max_bs_z = 512
+n_blocks_z = 12
 
-max_bs_y = 2048
-n_blocks_y = 3
+max_bs_y = 512
+n_blocks_y = 12
 
-max_bs_x = 2048
-n_blocks_x = 3
+max_bs_x = 512
+n_blocks_x = 12
 
 # start slice of zebrafinch block
 z_start = 0
@@ -59,8 +59,8 @@ memory_step01_number = int(1.1*max_bs_z*max_bs_y*max_bs_x*(8+8+8)/1000/1000)
 memory_step00 = str(memory_step01_number)
 memory_step01 = str(memory_step01_number)
 memory_step02A = str(int(memory_step01_number*0.05))
-memory_step02B = str(int(memory_step01_number*0.5))
-memory_step03 = str(int(memory_step01_number*1))
+memory_step02B = str(int(memory_step01_number*5))
+memory_step03 = str(int(memory_step01_number*2))
 
 run_hours = str(4)
 
