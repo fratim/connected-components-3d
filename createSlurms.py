@@ -22,7 +22,7 @@ template = '''#!/bin/bash
 
 source activate fillholes
 
-export PYTHONPATH=$PYTHONPATH:{RUNCODEDIRECTORY}
+export PYTHONPATH=$PYTHONPATH:{RUNCODEDIRECTORY}connected-components-3d/
 
 cd {RUNCODEDIRECTORY}
 
