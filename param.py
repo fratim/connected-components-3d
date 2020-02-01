@@ -15,11 +15,11 @@ z_start = 0
 y_start = 0
 x_start = 0
 
-data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}/1_discarded_{}x{}x{}/".format(blocksize[2],blocksize[1],blocksize[0],blocksize[2],blocksize[1],blocksize[0])
-folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}/holefilling/".format(blocksize[2],blocksize[1],blocksize[0])
-code_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}/Code/".format(blocksize[2],blocksize[1],blocksize[0])
-output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}/2_discarded_filled_padded_{}x{}x{}/".format(blocksize[2],blocksize[1],blocksize[0],blocksize[2],blocksize[1],blocksize[0])
-output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}/d_seg_discarded_filled_surfaces/".format(blocksize[2],blocksize[1],blocksize[0])
+data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/1_discarded_{}x{}x{}/".format(blocksize[2],blocksize[1],blocksize[0],blocksize[2],blocksize[1],blocksize[0])
+folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/holefilling/".format(blocksize[2],blocksize[1],blocksize[0])
+code_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/Code/".format(blocksize[2],blocksize[1],blocksize[0])
+output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/2_discarded_filled_padded_{}x{}x{}/".format(blocksize[2],blocksize[1],blocksize[0],blocksize[2],blocksize[1],blocksize[0])
+output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/d_seg_discarded_filled_surfaces/".format(blocksize[2],blocksize[1],blocksize[0])
 
 # number of blocks and block size
 max_bs_z = blocksize[0]
