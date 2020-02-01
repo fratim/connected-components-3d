@@ -6,26 +6,31 @@
 compute_statistics = False
 prefix = "Zebrafinch"
 
-data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x1024/1_discarded_1024x1024x1024/"
-folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x1024/holefilling/"
-code_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x1024/Code/"
-output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x1024/2_discarded_filled_padded_1024x1024x1024/"
-output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x1024/d_seg_discarded_filled_surfaces/"
-
-# number of blocks and block size
-max_bs_z = 1024
-n_blocks_z = 6
-
-max_bs_y = 1024
-n_blocks_y = 6
-
-max_bs_x = 1024
-n_blocks_x = 6
+# (size_z, size_y, size_x)
+blocksize = (256,2048,2048)
+volumesize = (6144,6144,6144)
 
 # start slice of zebrafinch block
 z_start = 0
 y_start = 0
 x_start = 0
+
+data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}/1_discarded_{}x{}x{}/".format(blocksize[2],blocksize[1],blocksize[0],blocksize[2],blocksize[1],blocksize[0])
+folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}/holefilling/".format(blocksize[2],blocksize[1],blocksize[0])
+code_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}/Code/".format(blocksize[2],blocksize[1],blocksize[0])
+output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}/2_discarded_filled_padded_{}x{}x{}/".format(blocksize[2],blocksize[1],blocksize[0],blocksize[2],blocksize[1],blocksize[0])
+output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}/d_seg_discarded_filled_surfaces/".format(blocksize[2],blocksize[1],blocksize[0])
+
+# number of blocks and block size
+max_bs_z = blocksize[0]
+n_blocks_z = volumesize[0]//blocksize[0]
+
+max_bs_y = blocksize[1]
+n_blocks_y = volumesize[1]//blocksize[1]
+
+max_bs_x = blocksize[2]
+n_blocks_x = volumesize[2]//blocksize[2]
+
 
 ############################################################################################################################################
 ############################################################################################################################################
