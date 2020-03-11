@@ -10,8 +10,16 @@ hole_multi = np.genfromtxt("output_files/multi_holes.txt", delimiter=',',invalid
 
 hole = np.concatenate((hole_multi,hole_single),axis=0)
 
+total_points = sum(hole)
+
+
 print("Data read in")
 print("Total Holes: " + str(len(hole)))
+# print("Holes of size 1: " + str(sum(hole==1)))
+# print("Holes of size 2-5: " + str(sum(hole==2)+sum(hole==3)+sum(hole==4)+sum(hole==5)))
+# print("Holes of size 6-10: " + str(sum(hole==6)+sum(hole==7)+sum(hole==8)+sum(hole==9)+sum(hole==10)))
+print("Total Points that are Hole: " + str(total_points))
+print("Largest Hole: " + str(np.max(hole)))
 
 std_ = np.std(hole)
 mean_ = np.mean(hole)
