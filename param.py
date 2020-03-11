@@ -5,9 +5,10 @@
 ############################################################################################################################################
 compute_statistics = False
 prefix = "Zebrafinch"
+cluster_id = "play"
 
 # (size_z, size_y, size_x)
-blocksize = (256,2048,2048)
+blocksize = (1024,1024,1024)
 volumesize = (6144,6144,6144)
 
 # start slice of zebrafinch block
@@ -15,21 +16,24 @@ z_start = 0
 y_start = 0
 x_start = 0
 
-data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/1_discarded_{}x{}x{}/".format(blocksize[2],blocksize[1],blocksize[0],blocksize[2],blocksize[1],blocksize[0])
-folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/holefilling/".format(blocksize[2],blocksize[1],blocksize[0])
-code_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/Code/".format(blocksize[2],blocksize[1],blocksize[0])
-output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/2_discarded_filled_padded_{}x{}x{}/".format(blocksize[2],blocksize[1],blocksize[0],blocksize[2],blocksize[1],blocksize[0])
-output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/d_seg_discarded_filled_surfaces/".format(blocksize[2],blocksize[1],blocksize[0])
+data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_{}/1_discarded_{}x{}x{}/".format(blocksize[2],blocksize[1],blocksize[0],cluster_id,blocksize[2],blocksize[1],blocksize[0])
+folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_{}/holefilling/".format(blocksize[2],blocksize[1],blocksize[0],cluster_id)
+code_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_{}/Code/".format(blocksize[2],blocksize[1],blocksize[0],cluster_id)
+output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_{}/2_discarded_filled_padded_{}x{}x{}/".format(blocksize[2],blocksize[1],blocksize[0],cluster_id,blocksize[2],blocksize[1],blocksize[0])
+output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_{}/d_seg_discarded_filled_surfaces/".format(blocksize[2],blocksize[1],blocksize[0],cluster_id)
 
 # number of blocks and block size
 max_bs_z = blocksize[0]
 n_blocks_z = volumesize[0]//blocksize[0]
+n_blocks_z = 2
 
 max_bs_y = blocksize[1]
 n_blocks_y = volumesize[1]//blocksize[1]
+n_blocks_y = 2
 
 max_bs_x = blocksize[2]
 n_blocks_x = volumesize[2]//blocksize[2]
+n_blocks_x = 2
 
 
 ############################################################################################################################################
