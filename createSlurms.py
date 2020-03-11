@@ -18,13 +18,13 @@ template = '''#!/bin/bash
 #SBATCH -e {ERROR_PATH}/{JOBNAME}.err                        # where to write the error files
 #SBATCH -J fillholes{JOBNAME}                               # jobname given to job
 
-
+module load Anaconda3/5.0.1-fasrc02
 
 source activate fillholes
 
 export PYTHONPATH=$PYTHONPATH:{RUNCODEDIRECTORY}
 
-cd {RUNCODEDIRECTORY}
+cd {RUNCODEDIRECTORY}connected-components-3d/
 
 python {COMMAND}
 

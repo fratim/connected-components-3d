@@ -6,30 +6,31 @@
 compute_statistics = False
 prefix = "Zebrafinch"
 
-data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/512x512x512/1_discarded_512x512x512/"
-folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/512x512x512/holefilling/"
-<<<<<<< HEAD
-code_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/512x512x512/Code/"
-=======
-code_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/512x512x512/Code/connected-components-3d/"
->>>>>>> efad17900af1b1564df38a71c05ec9b6a3645c23
-output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/512x512x512/2_discarded_filled_padded_512x512x512/"
-output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/512x512x512/d_seg_discarded_filled_surfaces/"
-
-# number of blocks and block size
-max_bs_z = 512
-n_blocks_z = 12
-
-max_bs_y = 512
-n_blocks_y = 12
-
-max_bs_x = 512
-n_blocks_x = 12
+# (size_z, size_y, size_x)
+blocksize = (256,2048,2048)
+volumesize = (6144,6144,6144)
 
 # start slice of zebrafinch block
 z_start = 0
 y_start = 0
 x_start = 0
+
+data_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/1_discarded_{}x{}x{}/".format(blocksize[2],blocksize[1],blocksize[0],blocksize[2],blocksize[1],blocksize[0])
+folder_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/holefilling/".format(blocksize[2],blocksize[1],blocksize[0])
+code_path = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/Code/".format(blocksize[2],blocksize[1],blocksize[0])
+output_path_filled_segments = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/2_discarded_filled_padded_{}x{}x{}/".format(blocksize[2],blocksize[1],blocksize[0],blocksize[2],blocksize[1],blocksize[0])
+output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_dgx/d_seg_discarded_filled_surfaces/".format(blocksize[2],blocksize[1],blocksize[0])
+
+# number of blocks and block size
+max_bs_z = blocksize[0]
+n_blocks_z = volumesize[0]//blocksize[0]
+
+max_bs_y = blocksize[1]
+n_blocks_y = volumesize[1]//blocksize[1]
+
+max_bs_x = blocksize[2]
+n_blocks_x = volumesize[2]//blocksize[2]
+
 
 ############################################################################################################################################
 ############################################################################################################################################
@@ -63,13 +64,10 @@ memory_step01_number = int(1.1*max_bs_z*max_bs_y*max_bs_x*(8+8+8)/1000/1000)
 memory_step00 = str(memory_step01_number)
 memory_step01 = str(memory_step01_number)
 memory_step02A = str(int(memory_step01_number*0.05))
-<<<<<<< HEAD
 memory_step02B = str(int(memory_step01_number*5))
-=======
 memory_step02B = str(int(memory_step01_number))
->>>>>>> efad17900af1b1564df38a71c05ec9b6a3645c23
 memory_step03 = str(int(memory_step01_number*2))
 
-run_hours = str(4)
+run_hours = str(2)
 
 max_labels_block = max_bs_z*max_bs_y*max_bs_x
