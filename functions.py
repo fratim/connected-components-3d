@@ -380,11 +380,12 @@ def findAssociatedLabels(neighbor_label_dict, undetermined, associated_label):
                             isHole.add(elem)
                 else:
                     associated_label[query_comp] = 0
+                    isNotHole.add(query_comp)
                     for elem in neighbor_label_dict[query_comp]:
                         if elem < 0:
                             associated_label[elem]=0
                             undetermined.discard(elem)
-                            isNotHole.add(query_comp)
+                            isNotHole.add(elem)
             # delte open set
             del open
 
@@ -403,6 +404,8 @@ def removeDetComp(neighbor_label_set, isHole, isNotHole):
         elem = neighbor_label_set.pop()
         if elem[0] in isHole or elem[0] in isNotHole:
             # print("removed: " + str(elem), flush=True)
+            continue
+        elif elem[1] in isHole or elem[1] in isNotHole:
             continue
         else:
             neighbor_label_set_reduced.add(elem)
