@@ -5,10 +5,10 @@
 ############################################################################################################################################
 compute_statistics = False
 prefix = "Zebrafinch"
-cluster_id = "play"
+cluster_id = "spark"
 
 # (size_z, size_y, size_x)
-blocksize = (1024,1024,1024)
+blocksize = (128,1024,1024)
 volumesize = (6144,6144,6144)
 
 # start slice of zebrafinch block
@@ -24,8 +24,8 @@ output_path_neuron_surfaces = "/n/pfister_lab2/Lab/tfranzmeyer/Data/{}x{}x{}_{}/
 
 # number of blocks and block size
 max_bs_z = blocksize[0]
-n_blocks_z = volumesize[0]//blocksize[0]
-n_blocks_z = 2
+#n_blocks_z = volumesize[0]//blocksize[0]
+n_blocks_z = 8
 
 max_bs_y = blocksize[1]
 n_blocks_y = volumesize[1]//blocksize[1]

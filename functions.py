@@ -89,7 +89,7 @@ def conntectWalls(label_set, output_path, bz, by, bx, axis):
     else:
         raise ValueError("Unknown axis!")
 
-    print("making forward connection in " + axis, flush=True)
+    #print("making forward connection in " + axis, flush=True)
 
     # load wall of current block
     output_folder_max = blockFolderPath(output_path,bz,by,bx)
@@ -111,7 +111,7 @@ def conntectWalltoBorder(label_set, output_path, bz, by, bx, axis, direction):
     if direction != "Max" and direction != "Min":
         raise ValueError("Direction must be Max or Min")
 
-    print("making "  + direction + " connection in " + axis, flush=True)
+    #print("making "  + direction + " connection in " + axis, flush=True)
 
     output_folder_max = blockFolderPath(output_path,bz,by,bx)
     wall = readData(box=[1], filename=output_folder_max+axis+direction+"Wall")
@@ -457,7 +457,7 @@ def concatFiles(box, slices_s, slices_e, output_path, data_path):
             labels_concat = np.concatenate((labels_old,labels_temp),axis=0)
             del labels_temp
 
-    print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape), flush=True)
+    #print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape), flush=True)
     writeData(output_path, labels_concat)
 
     del labels_concat
@@ -465,7 +465,7 @@ def concatFiles(box, slices_s, slices_e, output_path, data_path):
 def concatBlocks(z_start, y_start, x_start, n_blocks_z, n_blocks_y, n_blocks_x, bs_z, bs_y, bs_x, output_path):
 
     for bz in range(z_start, z_start+n_blocks_z):
-        print("processing z block " + str(bz), flush=True)
+        #print("processing z block " + str(bz), flush=True)
         for by in range(y_start, y_start+n_blocks_y):
             for bx in range(x_start, x_start+n_blocks_x):
 
@@ -476,7 +476,7 @@ def concatBlocks(z_start, y_start, x_start, n_blocks_z, n_blocks_y, n_blocks_x, 
                     labels_concat =  np.zeros((bs_z*n_blocks_z,bs_y*n_blocks_y,bs_x*n_blocks_x),dtype=np.uint16)
                 box=[0,bs_z,0,bs_y,0,bs_x]
                 labels_concat[(bz-z_start)*bs_z:((bz-z_start)+1)*bs_z,(by-y_start)*bs_y:(by-y_start+1)*bs_y,(bx-x_start)*bs_x:(bx-x_start+1)*bs_x] = readData(box, filename=output_path+input_name)
-    print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape), flush=True)
+    #print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape), flush=True)
     output_name = "filled"
     writeData(output_path+output_name, labels_concat)
 
@@ -562,13 +562,13 @@ class dataBlock:
                 labels_concat = np.concatenate((labels_old,labels_temp),axis=0)
                 del labels_temp
 
-        print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape), flush=True)
+        #print("Concat size/ shape: " + str(labels_concat.nbytes) + '/ ' + str(labels_concat.shape), flush=True)
         writeData(self.folder_path+self.sample_name, labels_concat)
 
         del labels_concat
 
     def evaluateWholes(self, ID_A, ID_B):
-        print("Evaluating wholes...", flush=True)
+        #print("Evaluating wholes...", flush=True)
         # load gt wholes
         gt_wholes_filepath = self.folder_path+"/"+ID_A+"/"+"wholes"
         box = [1]

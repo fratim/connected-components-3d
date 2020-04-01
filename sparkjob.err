@@ -1,0 +1,502 @@
+20/04/01 03:54:59 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+20/04/01 03:55:01 INFO SparkContext: Running Spark version 2.4.5
+20/04/01 03:55:01 INFO SparkContext: Submitted application: FillBubbles
+20/04/01 03:55:01 INFO SecurityManager: Changing view acls to: tfranzmeyer
+20/04/01 03:55:01 INFO SecurityManager: Changing modify acls to: tfranzmeyer
+20/04/01 03:55:01 INFO SecurityManager: Changing view acls groups to: 
+20/04/01 03:55:01 INFO SecurityManager: Changing modify acls groups to: 
+20/04/01 03:55:01 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users  with view permissions: Set(tfranzmeyer); groups with view permissions: Set(); users  with modify permissions: Set(tfranzmeyer); groups with modify permissions: Set()
+20/04/01 03:55:02 INFO Utils: Successfully started service 'sparkDriver' on port 35577.
+20/04/01 03:55:02 INFO SparkEnv: Registering MapOutputTracker
+20/04/01 03:55:02 INFO SparkEnv: Registering BlockManagerMaster
+20/04/01 03:55:02 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+20/04/01 03:55:02 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+20/04/01 03:55:02 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-c16e9807-d536-4000-8f7f-bfba72486e56
+20/04/01 03:55:02 INFO MemoryStore: MemoryStore started with capacity 366.3 MB
+20/04/01 03:55:02 INFO SparkEnv: Registering OutputCommitCoordinator
+20/04/01 03:55:03 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+20/04/01 03:55:03 INFO SparkUI: Bound SparkUI to 0.0.0.0, and started at http://coxgpu05.rc.fas.harvard.edu:4040
+20/04/01 03:55:04 INFO Executor: Starting executor ID driver on host localhost
+20/04/01 03:55:04 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 43722.
+20/04/01 03:55:04 INFO NettyBlockTransferService: Server created on coxgpu05.rc.fas.harvard.edu:43722
+20/04/01 03:55:04 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+20/04/01 03:55:04 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, coxgpu05.rc.fas.harvard.edu, 43722, None)
+20/04/01 03:55:04 INFO BlockManagerMasterEndpoint: Registering block manager coxgpu05.rc.fas.harvard.edu:43722 with 366.3 MB RAM, BlockManagerId(driver, coxgpu05.rc.fas.harvard.edu, 43722, None)
+20/04/01 03:55:04 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, coxgpu05.rc.fas.harvard.edu, 43722, None)
+20/04/01 03:55:04 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, coxgpu05.rc.fas.harvard.edu, 43722, None)
+20/04/01 03:55:06 INFO SparkContext: Starting job: reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:11
+20/04/01 03:55:06 INFO DAGScheduler: Got job 0 (reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:11) with 24 output partitions
+20/04/01 03:55:06 INFO DAGScheduler: Final stage: ResultStage 0 (reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:11)
+20/04/01 03:55:06 INFO DAGScheduler: Parents of final stage: List()
+20/04/01 03:55:06 INFO DAGScheduler: Missing parents: List()
+20/04/01 03:55:06 INFO DAGScheduler: Submitting ResultStage 0 (PythonRDD[1] at reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:11), which has no missing parents
+20/04/01 03:55:06 INFO MemoryStore: Block broadcast_0 stored as values in memory (estimated size 5.8 KB, free 366.3 MB)
+20/04/01 03:55:06 INFO MemoryStore: Block broadcast_0_piece0 stored as bytes in memory (estimated size 3.9 KB, free 366.3 MB)
+20/04/01 03:55:06 INFO BlockManagerInfo: Added broadcast_0_piece0 in memory on coxgpu05.rc.fas.harvard.edu:43722 (size: 3.9 KB, free: 366.3 MB)
+20/04/01 03:55:06 INFO SparkContext: Created broadcast 0 from broadcast at DAGScheduler.scala:1163
+20/04/01 03:55:06 INFO DAGScheduler: Submitting 24 missing tasks from ResultStage 0 (PythonRDD[1] at reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:11) (first 15 tasks are for partitions Vector(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))
+20/04/01 03:55:06 INFO TaskSchedulerImpl: Adding task set 0.0 with 24 tasks
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 0.0 in stage 0.0 (TID 0, localhost, executor driver, partition 0, PROCESS_LOCAL, 7852 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 1.0 in stage 0.0 (TID 1, localhost, executor driver, partition 1, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 2.0 in stage 0.0 (TID 2, localhost, executor driver, partition 2, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 3.0 in stage 0.0 (TID 3, localhost, executor driver, partition 3, PROCESS_LOCAL, 7852 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 4.0 in stage 0.0 (TID 4, localhost, executor driver, partition 4, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 5.0 in stage 0.0 (TID 5, localhost, executor driver, partition 5, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 6.0 in stage 0.0 (TID 6, localhost, executor driver, partition 6, PROCESS_LOCAL, 7852 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 7.0 in stage 0.0 (TID 7, localhost, executor driver, partition 7, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 8.0 in stage 0.0 (TID 8, localhost, executor driver, partition 8, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 9.0 in stage 0.0 (TID 9, localhost, executor driver, partition 9, PROCESS_LOCAL, 7852 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 10.0 in stage 0.0 (TID 10, localhost, executor driver, partition 10, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 11.0 in stage 0.0 (TID 11, localhost, executor driver, partition 11, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 12.0 in stage 0.0 (TID 12, localhost, executor driver, partition 12, PROCESS_LOCAL, 7852 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 13.0 in stage 0.0 (TID 13, localhost, executor driver, partition 13, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 14.0 in stage 0.0 (TID 14, localhost, executor driver, partition 14, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 15.0 in stage 0.0 (TID 15, localhost, executor driver, partition 15, PROCESS_LOCAL, 7852 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 16.0 in stage 0.0 (TID 16, localhost, executor driver, partition 16, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 17.0 in stage 0.0 (TID 17, localhost, executor driver, partition 17, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 18.0 in stage 0.0 (TID 18, localhost, executor driver, partition 18, PROCESS_LOCAL, 7852 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 19.0 in stage 0.0 (TID 19, localhost, executor driver, partition 19, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 20.0 in stage 0.0 (TID 20, localhost, executor driver, partition 20, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 21.0 in stage 0.0 (TID 21, localhost, executor driver, partition 21, PROCESS_LOCAL, 7852 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 22.0 in stage 0.0 (TID 22, localhost, executor driver, partition 22, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO TaskSetManager: Starting task 23.0 in stage 0.0 (TID 23, localhost, executor driver, partition 23, PROCESS_LOCAL, 7878 bytes)
+20/04/01 03:55:07 INFO Executor: Running task 0.0 in stage 0.0 (TID 0)
+20/04/01 03:55:07 INFO Executor: Running task 1.0 in stage 0.0 (TID 1)
+20/04/01 03:55:07 INFO Executor: Running task 2.0 in stage 0.0 (TID 2)
+20/04/01 03:55:07 INFO Executor: Running task 3.0 in stage 0.0 (TID 3)
+20/04/01 03:55:07 INFO Executor: Running task 4.0 in stage 0.0 (TID 4)
+20/04/01 03:55:07 INFO Executor: Running task 5.0 in stage 0.0 (TID 5)
+20/04/01 03:55:07 INFO Executor: Running task 6.0 in stage 0.0 (TID 6)
+20/04/01 03:55:07 INFO Executor: Running task 7.0 in stage 0.0 (TID 7)
+20/04/01 03:55:07 INFO Executor: Running task 8.0 in stage 0.0 (TID 8)
+20/04/01 03:55:07 INFO Executor: Running task 9.0 in stage 0.0 (TID 9)
+20/04/01 03:55:07 INFO Executor: Running task 10.0 in stage 0.0 (TID 10)
+20/04/01 03:55:07 INFO Executor: Running task 11.0 in stage 0.0 (TID 11)
+20/04/01 03:55:07 INFO Executor: Running task 12.0 in stage 0.0 (TID 12)
+20/04/01 03:55:07 INFO Executor: Running task 13.0 in stage 0.0 (TID 13)
+20/04/01 03:55:07 INFO Executor: Running task 14.0 in stage 0.0 (TID 14)
+20/04/01 03:55:07 INFO Executor: Running task 15.0 in stage 0.0 (TID 15)
+20/04/01 03:55:07 INFO Executor: Running task 16.0 in stage 0.0 (TID 16)
+20/04/01 03:55:07 INFO Executor: Running task 17.0 in stage 0.0 (TID 17)
+20/04/01 03:55:07 INFO Executor: Running task 18.0 in stage 0.0 (TID 18)
+20/04/01 03:55:07 INFO Executor: Running task 19.0 in stage 0.0 (TID 19)
+20/04/01 03:55:07 INFO Executor: Running task 20.0 in stage 0.0 (TID 20)
+20/04/01 03:55:07 INFO Executor: Running task 21.0 in stage 0.0 (TID 21)
+20/04/01 03:55:07 INFO Executor: Running task 22.0 in stage 0.0 (TID 22)
+20/04/01 03:55:07 INFO Executor: Running task 23.0 in stage 0.0 (TID 23)
+STEP 1: running for bz,by: 2, 0
+STEP 1: running for bz,by: 1, 0
+20/04/01 03:55:16 INFO PythonRunner: Times: total = 8797, boot = 1036, init = 7761, finish = 0
+20/04/01 03:55:16 INFO Executor: Finished task 0.0 in stage 0.0 (TID 0). 1386 bytes result sent to driver
+20/04/01 03:55:16 INFO TaskSetManager: Finished task 0.0 in stage 0.0 (TID 0) in 9565 ms on localhost (executor driver) (1/24)
+20/04/01 03:55:16 INFO PythonAccumulatorV2: Connected to AccumulatorServer at host: 127.0.0.1 port: 49362
+STEP 1: running for bz,by: 7, 1
+STEP 1: running for bz,by: 3, 0
+STEP 1: running for bz,by: 4, 0
+STEP 1: running for bz,by: 7, 0
+STEP 1: running for bz,by: 6, 0
+20/04/01 03:55:17 INFO PythonRunner: Times: total = 9519, boot = 1077, init = 8442, finish = 0
+20/04/01 03:55:17 INFO Executor: Finished task 9.0 in stage 0.0 (TID 9). 1386 bytes result sent to driver
+20/04/01 03:55:17 INFO PythonRunner: Times: total = 9620, boot = 1052, init = 8568, finish = 0
+STEP 1: running for bz,by: 5, 0
+20/04/01 03:55:17 INFO Executor: Finished task 6.0 in stage 0.0 (TID 6). 1386 bytes result sent to driver
+20/04/01 03:55:17 INFO TaskSetManager: Finished task 6.0 in stage 0.0 (TID 6) in 10301 ms on localhost (executor driver) (2/24)
+20/04/01 03:55:17 INFO TaskSetManager: Finished task 9.0 in stage 0.0 (TID 9) in 10281 ms on localhost (executor driver) (3/24)
+STEP 1: running for bz,by: 2, 1
+20/04/01 03:55:18 INFO PythonRunner: Times: total = 10540, boot = 1312, init = 9228, finish = 0
+20/04/01 03:55:18 INFO Executor: Finished task 15.0 in stage 0.0 (TID 15). 1386 bytes result sent to driver
+STEP 1: running for bz,by: 5, 1
+STEP 1: running for bz,by: 3, 1
+20/04/01 03:55:18 INFO PythonRunner: Times: total = 10590, boot = 1131, init = 9459, finish = 0
+20/04/01 03:55:18 INFO Executor: Finished task 3.0 in stage 0.0 (TID 3). 1386 bytes result sent to driver
+20/04/01 03:55:18 INFO TaskSetManager: Finished task 3.0 in stage 0.0 (TID 3) in 11195 ms on localhost (executor driver) (4/24)
+20/04/01 03:55:18 INFO TaskSetManager: Finished task 15.0 in stage 0.0 (TID 15) in 11127 ms on localhost (executor driver) (5/24)
+STEP 1: running for bz,by: 0, 1
+20/04/01 03:55:18 INFO PythonRunner: Times: total = 11297, boot = 1482, init = 9815, finish = 0
+20/04/01 03:55:18 INFO Executor: Finished task 18.0 in stage 0.0 (TID 18). 1386 bytes result sent to driver
+20/04/01 03:55:18 INFO TaskSetManager: Finished task 18.0 in stage 0.0 (TID 18) in 11795 ms on localhost (executor driver) (6/24)
+STEP 1: running for bz,by: 0, 0
+STEP 1: running for bz,by: 1, 1
+STEP 1: running for bz,by: 6, 1
+20/04/01 03:55:18 INFO PythonRunner: Times: total = 11324, boot = 1732, init = 9592, finish = 0
+20/04/01 03:55:18 INFO Executor: Finished task 21.0 in stage 0.0 (TID 21). 1429 bytes result sent to driver
+20/04/01 03:55:18 INFO TaskSetManager: Finished task 21.0 in stage 0.0 (TID 21) in 11804 ms on localhost (executor driver) (7/24)
+STEP 1: running for bz,by: 4, 1
+20/04/01 03:55:19 INFO PythonRunner: Times: total = 11464, boot = 1256, init = 10208, finish = 0
+20/04/01 03:55:19 INFO Executor: Finished task 12.0 in stage 0.0 (TID 12). 1386 bytes result sent to driver
+20/04/01 03:55:19 INFO TaskSetManager: Finished task 12.0 in stage 0.0 (TID 12) in 11976 ms on localhost (executor driver) (8/24)
+20/04/01 04:05:31 INFO PythonRunner: Times: total = 624343, boot = 1766, init = 9548, finish = 613029
+20/04/01 04:05:31 INFO Executor: Finished task 22.0 in stage 0.0 (TID 22). 1418 bytes result sent to driver
+20/04/01 04:05:31 INFO TaskSetManager: Finished task 22.0 in stage 0.0 (TID 22) in 624823 ms on localhost (executor driver) (9/24)
+20/04/01 04:05:33 INFO PythonRunner: Times: total = 625365, boot = 1037, init = 7996, finish = 616332
+20/04/01 04:05:33 INFO Executor: Finished task 5.0 in stage 0.0 (TID 5). 1418 bytes result sent to driver
+20/04/01 04:05:33 INFO TaskSetManager: Finished task 5.0 in stage 0.0 (TID 5) in 625922 ms on localhost (executor driver) (10/24)
+20/04/01 04:05:34 INFO PythonRunner: Times: total = 626409, boot = 1227, init = 8283, finish = 616899
+20/04/01 04:05:34 INFO Executor: Finished task 11.0 in stage 0.0 (TID 11). 1418 bytes result sent to driver
+20/04/01 04:05:34 INFO TaskSetManager: Finished task 11.0 in stage 0.0 (TID 11) in 626925 ms on localhost (executor driver) (11/24)
+20/04/01 04:05:34 INFO PythonRunner: Times: total = 627220, boot = 1057, init = 8123, finish = 618040
+20/04/01 04:05:34 INFO Executor: Finished task 7.0 in stage 0.0 (TID 7). 1418 bytes result sent to driver
+20/04/01 04:05:34 INFO TaskSetManager: Finished task 7.0 in stage 0.0 (TID 7) in 627774 ms on localhost (executor driver) (12/24)
+20/04/01 04:05:35 INFO PythonRunner: Times: total = 628059, boot = 1061, init = 8565, finish = 618433
+20/04/01 04:05:35 INFO Executor: Finished task 8.0 in stage 0.0 (TID 8). 1418 bytes result sent to driver
+20/04/01 04:05:35 INFO TaskSetManager: Finished task 8.0 in stage 0.0 (TID 8) in 628612 ms on localhost (executor driver) (13/24)
+20/04/01 04:05:36 INFO PythonRunner: Times: total = 629160, boot = 1567, init = 8987, finish = 618606
+20/04/01 04:05:36 INFO Executor: Finished task 20.0 in stage 0.0 (TID 20). 1418 bytes result sent to driver
+20/04/01 04:05:36 INFO TaskSetManager: Finished task 20.0 in stage 0.0 (TID 20) in 629654 ms on localhost (executor driver) (14/24)
+20/04/01 04:05:37 INFO PythonRunner: Times: total = 629635, boot = 1003, init = 7498, finish = 621134
+20/04/01 04:05:37 INFO Executor: Finished task 4.0 in stage 0.0 (TID 4). 1418 bytes result sent to driver
+20/04/01 04:05:37 INFO TaskSetManager: Finished task 4.0 in stage 0.0 (TID 4) in 630202 ms on localhost (executor driver) (15/24)
+20/04/01 04:05:38 INFO PythonRunner: Times: total = 630438, boot = 1148, init = 8366, finish = 620924
+20/04/01 04:05:38 INFO Executor: Finished task 10.0 in stage 0.0 (TID 10). 1418 bytes result sent to driver
+20/04/01 04:05:38 INFO TaskSetManager: Finished task 10.0 in stage 0.0 (TID 10) in 630957 ms on localhost (executor driver) (16/24)
+20/04/01 04:05:39 INFO PythonRunner: Times: total = 631511, boot = 1279, init = 9367, finish = 620865
+20/04/01 04:05:39 INFO Executor: Finished task 13.0 in stage 0.0 (TID 13). 1418 bytes result sent to driver
+20/04/01 04:05:39 INFO TaskSetManager: Finished task 13.0 in stage 0.0 (TID 13) in 632021 ms on localhost (executor driver) (17/24)
+20/04/01 04:05:39 INFO PythonRunner: Times: total = 631597, boot = 1691, init = 9618, finish = 620288
+20/04/01 04:05:39 INFO Executor: Finished task 1.0 in stage 0.0 (TID 1). 1418 bytes result sent to driver
+20/04/01 04:05:39 INFO TaskSetManager: Finished task 1.0 in stage 0.0 (TID 1) in 632180 ms on localhost (executor driver) (18/24)
+20/04/01 04:05:40 INFO PythonRunner: Times: total = 632531, boot = 1031, init = 7980, finish = 623520
+20/04/01 04:05:40 INFO Executor: Finished task 23.0 in stage 0.0 (TID 23). 1418 bytes result sent to driver
+20/04/01 04:05:40 INFO TaskSetManager: Finished task 23.0 in stage 0.0 (TID 23) in 633007 ms on localhost (executor driver) (19/24)
+20/04/01 04:05:40 INFO PythonRunner: Times: total = 633139, boot = 998, init = 7749, finish = 624392
+20/04/01 04:05:40 INFO Executor: Finished task 2.0 in stage 0.0 (TID 2). 1418 bytes result sent to driver
+20/04/01 04:05:40 INFO TaskSetManager: Finished task 2.0 in stage 0.0 (TID 2) in 633745 ms on localhost (executor driver) (20/24)
+20/04/01 04:05:41 INFO PythonRunner: Times: total = 634156, boot = 1620, init = 9691, finish = 622845
+20/04/01 04:05:41 INFO Executor: Finished task 14.0 in stage 0.0 (TID 14). 1418 bytes result sent to driver
+20/04/01 04:05:41 INFO TaskSetManager: Finished task 14.0 in stage 0.0 (TID 14) in 634665 ms on localhost (executor driver) (21/24)
+20/04/01 04:05:42 INFO PythonRunner: Times: total = 634378, boot = 1546, init = 9814, finish = 623018
+20/04/01 04:05:42 INFO Executor: Finished task 19.0 in stage 0.0 (TID 19). 1418 bytes result sent to driver
+20/04/01 04:05:42 INFO TaskSetManager: Finished task 19.0 in stage 0.0 (TID 19) in 634873 ms on localhost (executor driver) (22/24)
+20/04/01 04:05:42 INFO PythonRunner: Times: total = 635019, boot = 1348, init = 9186, finish = 624485
+20/04/01 04:05:42 INFO Executor: Finished task 16.0 in stage 0.0 (TID 16). 1418 bytes result sent to driver
+20/04/01 04:05:42 INFO TaskSetManager: Finished task 16.0 in stage 0.0 (TID 16) in 635528 ms on localhost (executor driver) (23/24)
+20/04/01 04:05:42 INFO PythonRunner: Times: total = 635072, boot = 1369, init = 9219, finish = 624484
+20/04/01 04:05:42 INFO Executor: Finished task 17.0 in stage 0.0 (TID 17). 1418 bytes result sent to driver
+20/04/01 04:05:42 INFO TaskSetManager: Finished task 17.0 in stage 0.0 (TID 17) in 635570 ms on localhost (executor driver) (24/24)
+20/04/01 04:05:42 INFO TaskSchedulerImpl: Removed TaskSet 0.0, whose tasks have all completed, from pool 
+20/04/01 04:05:42 INFO DAGScheduler: ResultStage 0 (reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:11) finished in 636,586 s
+20/04/01 04:05:42 INFO DAGScheduler: Job 0 finished: reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:11, took 636,702946 s
+20/04/01 04:05:42 INFO SparkContext: Starting job: reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:15
+20/04/01 04:05:42 INFO DAGScheduler: Got job 1 (reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:15) with 24 output partitions
+20/04/01 04:05:42 INFO DAGScheduler: Final stage: ResultStage 1 (reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:15)
+20/04/01 04:05:42 INFO DAGScheduler: Parents of final stage: List()
+20/04/01 04:05:42 INFO DAGScheduler: Missing parents: List()
+20/04/01 04:05:42 INFO DAGScheduler: Submitting ResultStage 1 (PythonRDD[2] at reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:15), which has no missing parents
+20/04/01 04:05:42 INFO MemoryStore: Block broadcast_1 stored as values in memory (estimated size 5.8 KB, free 366.3 MB)
+20/04/01 04:05:42 INFO MemoryStore: Block broadcast_1_piece0 stored as bytes in memory (estimated size 3.9 KB, free 366.3 MB)
+20/04/01 04:05:42 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on coxgpu05.rc.fas.harvard.edu:43722 (size: 3.9 KB, free: 366.3 MB)
+20/04/01 04:05:42 INFO SparkContext: Created broadcast 1 from broadcast at DAGScheduler.scala:1163
+20/04/01 04:05:42 INFO DAGScheduler: Submitting 24 missing tasks from ResultStage 1 (PythonRDD[2] at reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:15) (first 15 tasks are for partitions Vector(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))
+20/04/01 04:05:42 INFO TaskSchedulerImpl: Adding task set 1.0 with 24 tasks
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 0.0 in stage 1.0 (TID 24, localhost, executor driver, partition 0, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 1.0 in stage 1.0 (TID 25, localhost, executor driver, partition 1, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 2.0 in stage 1.0 (TID 26, localhost, executor driver, partition 2, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 3.0 in stage 1.0 (TID 27, localhost, executor driver, partition 3, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 4.0 in stage 1.0 (TID 28, localhost, executor driver, partition 4, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 5.0 in stage 1.0 (TID 29, localhost, executor driver, partition 5, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 6.0 in stage 1.0 (TID 30, localhost, executor driver, partition 6, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 7.0 in stage 1.0 (TID 31, localhost, executor driver, partition 7, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 8.0 in stage 1.0 (TID 32, localhost, executor driver, partition 8, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 9.0 in stage 1.0 (TID 33, localhost, executor driver, partition 9, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 10.0 in stage 1.0 (TID 34, localhost, executor driver, partition 10, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 11.0 in stage 1.0 (TID 35, localhost, executor driver, partition 11, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 12.0 in stage 1.0 (TID 36, localhost, executor driver, partition 12, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 13.0 in stage 1.0 (TID 37, localhost, executor driver, partition 13, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 14.0 in stage 1.0 (TID 38, localhost, executor driver, partition 14, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 15.0 in stage 1.0 (TID 39, localhost, executor driver, partition 15, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 16.0 in stage 1.0 (TID 40, localhost, executor driver, partition 16, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 17.0 in stage 1.0 (TID 41, localhost, executor driver, partition 17, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 18.0 in stage 1.0 (TID 42, localhost, executor driver, partition 18, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 19.0 in stage 1.0 (TID 43, localhost, executor driver, partition 19, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 20.0 in stage 1.0 (TID 44, localhost, executor driver, partition 20, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 21.0 in stage 1.0 (TID 45, localhost, executor driver, partition 21, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 22.0 in stage 1.0 (TID 46, localhost, executor driver, partition 22, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO TaskSetManager: Starting task 23.0 in stage 1.0 (TID 47, localhost, executor driver, partition 23, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:05:42 INFO Executor: Running task 0.0 in stage 1.0 (TID 24)
+20/04/01 04:05:42 INFO Executor: Running task 1.0 in stage 1.0 (TID 25)
+20/04/01 04:05:42 INFO Executor: Running task 2.0 in stage 1.0 (TID 26)
+20/04/01 04:05:42 INFO Executor: Running task 3.0 in stage 1.0 (TID 27)
+20/04/01 04:05:42 INFO Executor: Running task 4.0 in stage 1.0 (TID 28)
+20/04/01 04:05:42 INFO Executor: Running task 5.0 in stage 1.0 (TID 29)
+20/04/01 04:05:42 INFO Executor: Running task 6.0 in stage 1.0 (TID 30)
+20/04/01 04:05:42 INFO Executor: Running task 7.0 in stage 1.0 (TID 31)
+20/04/01 04:05:42 INFO Executor: Running task 8.0 in stage 1.0 (TID 32)
+20/04/01 04:05:42 INFO Executor: Running task 9.0 in stage 1.0 (TID 33)
+20/04/01 04:05:42 INFO Executor: Running task 10.0 in stage 1.0 (TID 34)
+20/04/01 04:05:42 INFO Executor: Running task 11.0 in stage 1.0 (TID 35)
+20/04/01 04:05:42 INFO Executor: Running task 12.0 in stage 1.0 (TID 36)
+20/04/01 04:05:42 INFO Executor: Running task 13.0 in stage 1.0 (TID 37)
+20/04/01 04:05:42 INFO Executor: Running task 14.0 in stage 1.0 (TID 38)
+20/04/01 04:05:42 INFO Executor: Running task 15.0 in stage 1.0 (TID 39)
+20/04/01 04:05:42 INFO Executor: Running task 16.0 in stage 1.0 (TID 40)
+20/04/01 04:05:42 INFO Executor: Running task 17.0 in stage 1.0 (TID 41)
+20/04/01 04:05:42 INFO Executor: Running task 18.0 in stage 1.0 (TID 42)
+20/04/01 04:05:42 INFO Executor: Running task 19.0 in stage 1.0 (TID 43)
+20/04/01 04:05:42 INFO Executor: Running task 20.0 in stage 1.0 (TID 44)
+20/04/01 04:05:42 INFO Executor: Running task 21.0 in stage 1.0 (TID 45)
+20/04/01 04:05:42 INFO Executor: Running task 22.0 in stage 1.0 (TID 46)
+20/04/01 04:05:42 INFO Executor: Running task 23.0 in stage 1.0 (TID 47)
+20/04/01 04:05:42 INFO PythonRunner: Times: total = 99, boot = 48, init = 51, finish = 0
+STEP 2A: running for bz,by: 0, 0
+20/04/01 04:05:42 INFO PythonRunner: Times: total = 134, boot = -4288, init = 4422, finish = 0
+20/04/01 04:05:42 INFO PythonRunner: Times: total = 142, boot = -6232, init = 6374, finish = 0
+STEP 2A: running for bz,by: 1, 0
+STEP 2A: running for bz,by: 2, 0
+STEP 2A: running for bz,by: 4, 0
+STEP 2A: running for bz,by: 6, 0
+STEP 2A: running for bz,by: 0, 1
+20/04/01 04:05:42 INFO PythonRunner: Times: total = 125, boot = -2575, init = 2700, finish = 0
+STEP 2A: running for bz,by: 7, 0
+STEP 2A: running for bz,by: 3, 0
+20/04/01 04:05:42 INFO PythonRunner: Times: total = 141, boot = -632, init = 773, finish = 0
+STEP 2A: running for bz,by: 1, 1
+STEP 2A: running for bz,by: 5, 0
+20/04/01 04:05:43 INFO PythonRunner: Times: total = 307, boot = -10331, init = 10638, finish = 0
+20/04/01 04:05:43 INFO PythonRunner: Times: total = 719, boot = 718, init = 1, finish = 0
+STEP 2A: running for bz,by: 5, 1
+STEP 2A: running for bz,by: 6, 1
+STEP 2A: running for bz,by: 7, 1
+STEP 2A: running for bz,by: 4, 1
+20/04/01 04:05:44 INFO PythonRunner: Times: total = 797, boot = 700, init = 97, finish = 0
+20/04/01 04:05:44 INFO Executor: Finished task 0.0 in stage 1.0 (TID 24). 1386 bytes result sent to driver
+20/04/01 04:05:44 INFO Executor: Finished task 9.0 in stage 1.0 (TID 33). 1386 bytes result sent to driver
+20/04/01 04:05:44 INFO Executor: Finished task 12.0 in stage 1.0 (TID 36). 1386 bytes result sent to driver
+20/04/01 04:05:44 INFO TaskSetManager: Finished task 0.0 in stage 1.0 (TID 24) in 1425 ms on localhost (executor driver) (1/24)
+20/04/01 04:05:44 INFO TaskSetManager: Finished task 9.0 in stage 1.0 (TID 33) in 1424 ms on localhost (executor driver) (2/24)
+20/04/01 04:05:44 INFO TaskSetManager: Finished task 12.0 in stage 1.0 (TID 36) in 1423 ms on localhost (executor driver) (3/24)
+20/04/01 04:05:44 INFO Executor: Finished task 6.0 in stage 1.0 (TID 30). 1386 bytes result sent to driver
+20/04/01 04:05:44 INFO TaskSetManager: Finished task 6.0 in stage 1.0 (TID 30) in 1425 ms on localhost (executor driver) (4/24)
+20/04/01 04:05:44 INFO Executor: Finished task 3.0 in stage 1.0 (TID 27). 1386 bytes result sent to driver
+20/04/01 04:05:44 INFO TaskSetManager: Finished task 3.0 in stage 1.0 (TID 27) in 1427 ms on localhost (executor driver) (5/24)
+20/04/01 04:05:44 INFO Executor: Finished task 15.0 in stage 1.0 (TID 39). 1386 bytes result sent to driver
+20/04/01 04:05:44 INFO TaskSetManager: Finished task 15.0 in stage 1.0 (TID 39) in 1426 ms on localhost (executor driver) (6/24)
+20/04/01 04:05:44 INFO Executor: Finished task 18.0 in stage 1.0 (TID 42). 1386 bytes result sent to driver
+20/04/01 04:05:44 INFO TaskSetManager: Finished task 18.0 in stage 1.0 (TID 42) in 1431 ms on localhost (executor driver) (7/24)
+20/04/01 04:05:44 INFO Executor: Finished task 21.0 in stage 1.0 (TID 45). 1386 bytes result sent to driver
+20/04/01 04:05:44 INFO TaskSetManager: Finished task 21.0 in stage 1.0 (TID 45) in 1436 ms on localhost (executor driver) (8/24)
+STEP 2A: running for bz,by: 2, 1
+STEP 2A: running for bz,by: 3, 1
+20/04/01 04:05:59 INFO PythonRunner: Times: total = 17008, boot = -5494, init = 5638, finish = 16864
+20/04/01 04:05:59 INFO Executor: Finished task 11.0 in stage 1.0 (TID 35). 1418 bytes result sent to driver
+20/04/01 04:05:59 INFO TaskSetManager: Finished task 11.0 in stage 1.0 (TID 35) in 17026 ms on localhost (executor driver) (9/24)
+20/04/01 04:06:00 INFO PythonRunner: Times: total = 17193, boot = 659, init = 305, finish = 16229
+20/04/01 04:06:00 INFO Executor: Finished task 23.0 in stage 1.0 (TID 47). 1418 bytes result sent to driver
+20/04/01 04:06:00 INFO TaskSetManager: Finished task 23.0 in stage 1.0 (TID 47) in 17316 ms on localhost (executor driver) (10/24)
+20/04/01 04:06:00 INFO PythonRunner: Times: total = 17790, boot = -7883, init = 8042, finish = 17631
+20/04/01 04:06:00 INFO Executor: Finished task 14.0 in stage 1.0 (TID 38). 1418 bytes result sent to driver
+20/04/01 04:06:00 INFO TaskSetManager: Finished task 14.0 in stage 1.0 (TID 38) in 17804 ms on localhost (executor driver) (11/24)
+20/04/01 04:06:00 INFO PythonRunner: Times: total = 17847, boot = -2473, init = 2616, finish = 17704
+20/04/01 04:06:00 INFO Executor: Finished task 5.0 in stage 1.0 (TID 29). 1418 bytes result sent to driver
+20/04/01 04:06:00 INFO TaskSetManager: Finished task 5.0 in stage 1.0 (TID 29) in 17873 ms on localhost (executor driver) (12/24)
+20/04/01 04:06:00 INFO PythonRunner: Times: total = 17916, boot = -2690, init = 2820, finish = 17786
+20/04/01 04:06:00 INFO Executor: Finished task 7.0 in stage 1.0 (TID 31). 1418 bytes result sent to driver
+20/04/01 04:06:00 INFO TaskSetManager: Finished task 7.0 in stage 1.0 (TID 31) in 17936 ms on localhost (executor driver) (13/24)
+20/04/01 04:06:00 INFO PythonRunner: Times: total = 17947, boot = -5685, init = 5824, finish = 17808
+20/04/01 04:06:00 INFO Executor: Finished task 10.0 in stage 1.0 (TID 34). 1418 bytes result sent to driver
+20/04/01 04:06:00 INFO TaskSetManager: Finished task 10.0 in stage 1.0 (TID 34) in 17962 ms on localhost (executor driver) (14/24)
+20/04/01 04:06:00 INFO PythonRunner: Times: total = 18043, boot = -737, init = 855, finish = 17925
+20/04/01 04:06:00 INFO Executor: Finished task 2.0 in stage 1.0 (TID 26). 1418 bytes result sent to driver
+20/04/01 04:06:00 INFO TaskSetManager: Finished task 2.0 in stage 1.0 (TID 26) in 18069 ms on localhost (executor driver) (15/24)
+20/04/01 04:06:01 INFO PythonRunner: Times: total = 18156, boot = -3614, init = 3765, finish = 18005
+20/04/01 04:06:01 INFO Executor: Finished task 8.0 in stage 1.0 (TID 32). 1418 bytes result sent to driver
+20/04/01 04:06:01 INFO TaskSetManager: Finished task 8.0 in stage 1.0 (TID 32) in 18175 ms on localhost (executor driver) (16/24)
+20/04/01 04:06:01 INFO PythonRunner: Times: total = 18182, boot = -1444, init = 1565, finish = 18061
+20/04/01 04:06:01 INFO Executor: Finished task 4.0 in stage 1.0 (TID 28). 1418 bytes result sent to driver
+20/04/01 04:06:01 INFO TaskSetManager: Finished task 4.0 in stage 1.0 (TID 28) in 18207 ms on localhost (executor driver) (17/24)
+20/04/01 04:06:01 INFO PythonRunner: Times: total = 18194, boot = 656, init = 99, finish = 17439
+20/04/01 04:06:01 INFO Executor: Finished task 20.0 in stage 1.0 (TID 44). 1418 bytes result sent to driver
+20/04/01 04:06:01 INFO TaskSetManager: Finished task 20.0 in stage 1.0 (TID 44) in 18309 ms on localhost (executor driver) (18/24)
+20/04/01 04:06:01 INFO PythonRunner: Times: total = 18152, boot = 589, init = 385, finish = 17178
+20/04/01 04:06:01 INFO Executor: Finished task 19.0 in stage 1.0 (TID 43). 1418 bytes result sent to driver
+20/04/01 04:06:01 INFO TaskSetManager: Finished task 19.0 in stage 1.0 (TID 43) in 18323 ms on localhost (executor driver) (19/24)
+20/04/01 04:06:01 INFO PythonRunner: Times: total = 18281, boot = 698, init = 178, finish = 17405
+20/04/01 04:06:01 INFO Executor: Finished task 22.0 in stage 1.0 (TID 46). 1418 bytes result sent to driver
+20/04/01 04:06:01 INFO TaskSetManager: Finished task 22.0 in stage 1.0 (TID 46) in 18398 ms on localhost (executor driver) (20/24)
+20/04/01 04:06:01 INFO PythonRunner: Times: total = 18967, boot = -7007, init = 7152, finish = 18822
+20/04/01 04:06:01 INFO Executor: Finished task 13.0 in stage 1.0 (TID 37). 1461 bytes result sent to driver
+20/04/01 04:06:01 INFO TaskSetManager: Finished task 13.0 in stage 1.0 (TID 37) in 18978 ms on localhost (executor driver) (21/24)
+20/04/01 04:06:02 INFO PythonRunner: Times: total = 19181, boot = -153, init = 265, finish = 19069
+20/04/01 04:06:02 INFO Executor: Finished task 1.0 in stage 1.0 (TID 25). 1418 bytes result sent to driver
+20/04/01 04:06:02 INFO TaskSetManager: Finished task 1.0 in stage 1.0 (TID 25) in 19208 ms on localhost (executor driver) (22/24)
+20/04/01 04:06:03 INFO PythonRunner: Times: total = 20604, boot = 389, init = 7448, finish = 12767
+20/04/01 04:06:03 INFO Executor: Finished task 16.0 in stage 1.0 (TID 40). 1375 bytes result sent to driver
+20/04/01 04:06:03 INFO TaskSetManager: Finished task 16.0 in stage 1.0 (TID 40) in 20704 ms on localhost (executor driver) (23/24)
+20/04/01 04:06:03 INFO PythonRunner: Times: total = 20627, boot = 468, init = 7369, finish = 12790
+20/04/01 04:06:03 INFO Executor: Finished task 17.0 in stage 1.0 (TID 41). 1418 bytes result sent to driver
+20/04/01 04:06:03 INFO TaskSetManager: Finished task 17.0 in stage 1.0 (TID 41) in 20734 ms on localhost (executor driver) (24/24)
+20/04/01 04:06:03 INFO TaskSchedulerImpl: Removed TaskSet 1.0, whose tasks have all completed, from pool 
+20/04/01 04:06:03 INFO DAGScheduler: ResultStage 1 (reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:15) finished in 20,749 s
+20/04/01 04:06:03 INFO DAGScheduler: Job 1 finished: reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:15, took 20,754681 s
+20/04/01 04:06:09 INFO SparkContext: Starting job: reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:24
+20/04/01 04:06:09 INFO DAGScheduler: Got job 2 (reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:24) with 24 output partitions
+20/04/01 04:06:09 INFO DAGScheduler: Final stage: ResultStage 2 (reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:24)
+20/04/01 04:06:09 INFO DAGScheduler: Parents of final stage: List()
+20/04/01 04:06:09 INFO DAGScheduler: Missing parents: List()
+20/04/01 04:06:09 INFO DAGScheduler: Submitting ResultStage 2 (PythonRDD[3] at reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:24), which has no missing parents
+20/04/01 04:06:09 INFO MemoryStore: Block broadcast_2 stored as values in memory (estimated size 5.8 KB, free 366.3 MB)
+20/04/01 04:06:09 INFO MemoryStore: Block broadcast_2_piece0 stored as bytes in memory (estimated size 3.9 KB, free 366.3 MB)
+20/04/01 04:06:09 INFO BlockManagerInfo: Added broadcast_2_piece0 in memory on coxgpu05.rc.fas.harvard.edu:43722 (size: 3.9 KB, free: 366.3 MB)
+20/04/01 04:06:09 INFO SparkContext: Created broadcast 2 from broadcast at DAGScheduler.scala:1163
+20/04/01 04:06:09 INFO DAGScheduler: Submitting 24 missing tasks from ResultStage 2 (PythonRDD[3] at reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:24) (first 15 tasks are for partitions Vector(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14))
+20/04/01 04:06:09 INFO TaskSchedulerImpl: Adding task set 2.0 with 24 tasks
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 0.0 in stage 2.0 (TID 48, localhost, executor driver, partition 0, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 1.0 in stage 2.0 (TID 49, localhost, executor driver, partition 1, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 2.0 in stage 2.0 (TID 50, localhost, executor driver, partition 2, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 3.0 in stage 2.0 (TID 51, localhost, executor driver, partition 3, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 4.0 in stage 2.0 (TID 52, localhost, executor driver, partition 4, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 5.0 in stage 2.0 (TID 53, localhost, executor driver, partition 5, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 6.0 in stage 2.0 (TID 54, localhost, executor driver, partition 6, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 7.0 in stage 2.0 (TID 55, localhost, executor driver, partition 7, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 8.0 in stage 2.0 (TID 56, localhost, executor driver, partition 8, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 9.0 in stage 2.0 (TID 57, localhost, executor driver, partition 9, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 10.0 in stage 2.0 (TID 58, localhost, executor driver, partition 10, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 11.0 in stage 2.0 (TID 59, localhost, executor driver, partition 11, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 12.0 in stage 2.0 (TID 60, localhost, executor driver, partition 12, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 13.0 in stage 2.0 (TID 61, localhost, executor driver, partition 13, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 14.0 in stage 2.0 (TID 62, localhost, executor driver, partition 14, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 15.0 in stage 2.0 (TID 63, localhost, executor driver, partition 15, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 16.0 in stage 2.0 (TID 64, localhost, executor driver, partition 16, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 17.0 in stage 2.0 (TID 65, localhost, executor driver, partition 17, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 18.0 in stage 2.0 (TID 66, localhost, executor driver, partition 18, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 19.0 in stage 2.0 (TID 67, localhost, executor driver, partition 19, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 20.0 in stage 2.0 (TID 68, localhost, executor driver, partition 20, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 21.0 in stage 2.0 (TID 69, localhost, executor driver, partition 21, PROCESS_LOCAL, 7852 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 22.0 in stage 2.0 (TID 70, localhost, executor driver, partition 22, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO TaskSetManager: Starting task 23.0 in stage 2.0 (TID 71, localhost, executor driver, partition 23, PROCESS_LOCAL, 7878 bytes)
+20/04/01 04:06:09 INFO Executor: Running task 0.0 in stage 2.0 (TID 48)
+20/04/01 04:06:09 INFO Executor: Running task 1.0 in stage 2.0 (TID 49)
+20/04/01 04:06:09 INFO Executor: Running task 2.0 in stage 2.0 (TID 50)
+20/04/01 04:06:09 INFO Executor: Running task 3.0 in stage 2.0 (TID 51)
+20/04/01 04:06:09 INFO Executor: Running task 4.0 in stage 2.0 (TID 52)
+20/04/01 04:06:09 INFO Executor: Running task 5.0 in stage 2.0 (TID 53)
+20/04/01 04:06:09 INFO Executor: Running task 6.0 in stage 2.0 (TID 54)
+20/04/01 04:06:09 INFO Executor: Running task 7.0 in stage 2.0 (TID 55)
+20/04/01 04:06:09 INFO Executor: Running task 8.0 in stage 2.0 (TID 56)
+20/04/01 04:06:09 INFO Executor: Running task 9.0 in stage 2.0 (TID 57)
+20/04/01 04:06:09 INFO Executor: Running task 10.0 in stage 2.0 (TID 58)
+20/04/01 04:06:09 INFO Executor: Running task 11.0 in stage 2.0 (TID 59)
+20/04/01 04:06:09 INFO Executor: Running task 12.0 in stage 2.0 (TID 60)
+20/04/01 04:06:09 INFO Executor: Running task 13.0 in stage 2.0 (TID 61)
+20/04/01 04:06:09 INFO Executor: Running task 14.0 in stage 2.0 (TID 62)
+20/04/01 04:06:09 INFO Executor: Running task 15.0 in stage 2.0 (TID 63)
+20/04/01 04:06:09 INFO Executor: Running task 16.0 in stage 2.0 (TID 64)
+20/04/01 04:06:09 INFO Executor: Running task 17.0 in stage 2.0 (TID 65)
+20/04/01 04:06:09 INFO Executor: Running task 18.0 in stage 2.0 (TID 66)
+20/04/01 04:06:09 INFO Executor: Running task 19.0 in stage 2.0 (TID 67)
+20/04/01 04:06:09 INFO Executor: Running task 20.0 in stage 2.0 (TID 68)
+20/04/01 04:06:09 INFO Executor: Running task 21.0 in stage 2.0 (TID 69)
+20/04/01 04:06:09 INFO Executor: Running task 22.0 in stage 2.0 (TID 70)
+20/04/01 04:06:09 INFO Executor: Running task 23.0 in stage 2.0 (TID 71)
+STEP 3: running for bz,by: 7, 1
+20/04/01 04:06:09 INFO PythonRunner: Times: total = 185, boot = -7795, init = 7980, finish = 0
+20/04/01 04:06:09 INFO Executor: Finished task 9.0 in stage 2.0 (TID 57). 1386 bytes result sent to driver
+20/04/01 04:06:09 INFO PythonRunner: Times: total = 199, boot = -8133, init = 8332, finish = 0
+20/04/01 04:06:09 INFO Executor: Finished task 15.0 in stage 2.0 (TID 63). 1386 bytes result sent to driver
+20/04/01 04:06:09 INFO PythonRunner: Times: total = 208, boot = -8333, init = 8541, finish = 0
+20/04/01 04:06:09 INFO PythonRunner: Times: total = 214, boot = -9027, init = 9241, finish = 0
+20/04/01 04:06:09 INFO Executor: Finished task 21.0 in stage 2.0 (TID 69). 1386 bytes result sent to driver
+STEP 3: running for bz,by: 4, 0
+STEP 3: running for bz,by: 6, 0
+STEP 3: running for bz,by: 7, 0
+STEP 3: running for bz,by: 0, 1
+STEP 3: running for bz,by: 2, 1
+STEP 3: running for bz,by: 4, 1
+20/04/01 04:06:09 INFO TaskSetManager: Finished task 9.0 in stage 2.0 (TID 57) in 257 ms on localhost (executor driver) (1/24)
+20/04/01 04:06:09 INFO TaskSetManager: Finished task 15.0 in stage 2.0 (TID 63) in 256 ms on localhost (executor driver) (2/24)
+20/04/01 04:06:09 INFO TaskSetManager: Finished task 21.0 in stage 2.0 (TID 69) in 255 ms on localhost (executor driver) (3/24)
+STEP 3: running for bz,by: 5, 0
+20/04/01 04:06:09 INFO PythonRunner: Times: total = 218, boot = -8031, init = 8249, finish = 0
+20/04/01 04:06:09 INFO Executor: Finished task 12.0 in stage 2.0 (TID 60). 1386 bytes result sent to driver
+20/04/01 04:06:09 INFO TaskSetManager: Finished task 12.0 in stage 2.0 (TID 60) in 261 ms on localhost (executor driver) (4/24)
+STEP 3: running for bz,by: 1, 1
+STEP 3: running for bz,by: 5, 1
+20/04/01 04:06:09 INFO PythonRunner: Times: total = 218, boot = -6070, init = 6288, finish = 0
+20/04/01 04:06:09 INFO Executor: Finished task 6.0 in stage 2.0 (TID 54). 1386 bytes result sent to driver
+STEP 3: running for bz,by: 3, 1
+STEP 3: running for bz,by: 6, 1
+20/04/01 04:06:10 INFO TaskSetManager: Finished task 6.0 in stage 2.0 (TID 54) in 327 ms on localhost (executor driver) (5/24)
+20/04/01 04:06:10 INFO Executor: Finished task 18.0 in stage 2.0 (TID 66). 1386 bytes result sent to driver
+20/04/01 04:06:10 INFO TaskSetManager: Finished task 18.0 in stage 2.0 (TID 66) in 542 ms on localhost (executor driver) (6/24)
+STEP 3: running for bz,by: 2, 0
+20/04/01 04:06:16 INFO PythonRunner: Times: total = 6810, boot = 46, init = 6764, finish = 0
+20/04/01 04:06:16 INFO Executor: Finished task 0.0 in stage 2.0 (TID 48). 1386 bytes result sent to driver
+20/04/01 04:06:16 INFO TaskSetManager: Finished task 0.0 in stage 2.0 (TID 48) in 6869 ms on localhost (executor driver) (7/24)
+20/04/01 04:06:16 INFO PythonRunner: Times: total = 6829, boot = 75, init = 6754, finish = 0
+20/04/01 04:06:16 INFO Executor: Finished task 3.0 in stage 2.0 (TID 51). 1386 bytes result sent to driver
+20/04/01 04:06:16 INFO TaskSetManager: Finished task 3.0 in stage 2.0 (TID 51) in 6885 ms on localhost (executor driver) (8/24)
+STEP 3: running for bz,by: 0, 0
+STEP 3: running for bz,by: 3, 0
+STEP 3: running for bz,by: 1, 0
+20/04/01 04:13:01 INFO PythonRunner: Times: total = 411855, boot = -25464, init = 25723, finish = 411596
+20/04/01 04:13:01 INFO Executor: Finished task 22.0 in stage 2.0 (TID 70). 1418 bytes result sent to driver
+20/04/01 04:13:01 INFO TaskSetManager: Finished task 22.0 in stage 2.0 (TID 70) in 411887 ms on localhost (executor driver) (9/24)
+20/04/01 04:13:04 INFO PythonRunner: Times: total = 414559, boot = -25400, init = 25594, finish = 414365
+20/04/01 04:13:04 INFO Executor: Finished task 23.0 in stage 2.0 (TID 71). 1418 bytes result sent to driver
+20/04/01 04:13:04 INFO TaskSetManager: Finished task 23.0 in stage 2.0 (TID 71) in 414590 ms on localhost (executor driver) (10/24)
+20/04/01 04:13:06 INFO PythonRunner: Times: total = 417212, boot = -8775, init = 9010, finish = 416977
+20/04/01 04:13:06 INFO Executor: Finished task 20.0 in stage 2.0 (TID 68). 1418 bytes result sent to driver
+20/04/01 04:13:06 INFO TaskSetManager: Finished task 20.0 in stage 2.0 (TID 68) in 417246 ms on localhost (executor driver) (11/24)
+20/04/01 04:13:19 INFO PythonRunner: Times: total = 430208, boot = -8338, init = 8550, finish = 429996
+20/04/01 04:13:19 INFO Executor: Finished task 19.0 in stage 2.0 (TID 67). 1418 bytes result sent to driver
+20/04/01 04:13:19 INFO TaskSetManager: Finished task 19.0 in stage 2.0 (TID 67) in 430241 ms on localhost (executor driver) (12/24)
+20/04/01 04:13:29 INFO PythonRunner: Times: total = 439543, boot = -8083, init = 8312, finish = 439314
+20/04/01 04:13:29 INFO Executor: Finished task 14.0 in stage 2.0 (TID 62). 1418 bytes result sent to driver
+20/04/01 04:13:29 INFO TaskSetManager: Finished task 14.0 in stage 2.0 (TID 62) in 439582 ms on localhost (executor driver) (13/24)
+20/04/01 04:13:30 INFO PythonRunner: Times: total = 441132, boot = -8070, init = 8266, finish = 440936
+20/04/01 04:13:30 INFO Executor: Finished task 13.0 in stage 2.0 (TID 61). 1418 bytes result sent to driver
+20/04/01 04:13:30 INFO TaskSetManager: Finished task 13.0 in stage 2.0 (TID 61) in 441174 ms on localhost (executor driver) (14/24)
+20/04/01 04:13:31 INFO PythonRunner: Times: total = 441548, boot = -8210, init = 8447, finish = 441311
+20/04/01 04:13:31 INFO Executor: Finished task 17.0 in stage 2.0 (TID 65). 1418 bytes result sent to driver
+20/04/01 04:13:31 INFO TaskSetManager: Finished task 17.0 in stage 2.0 (TID 65) in 441584 ms on localhost (executor driver) (15/24)
+20/04/01 04:13:31 INFO PythonRunner: Times: total = 441978, boot = -8020, init = 8213, finish = 441785
+20/04/01 04:13:31 INFO Executor: Finished task 11.0 in stage 2.0 (TID 59). 1418 bytes result sent to driver
+20/04/01 04:13:31 INFO TaskSetManager: Finished task 11.0 in stage 2.0 (TID 59) in 442021 ms on localhost (executor driver) (16/24)
+20/04/01 04:13:32 INFO PythonRunner: Times: total = 442450, boot = -7997, init = 8187, finish = 442260
+20/04/01 04:13:32 INFO Executor: Finished task 10.0 in stage 2.0 (TID 58). 1418 bytes result sent to driver
+20/04/01 04:13:32 INFO TaskSetManager: Finished task 10.0 in stage 2.0 (TID 58) in 442496 ms on localhost (executor driver) (17/24)
+20/04/01 04:13:32 INFO PythonRunner: Times: total = 442483, boot = -7606, init = 7813, finish = 442276
+20/04/01 04:13:32 INFO Executor: Finished task 8.0 in stage 2.0 (TID 56). 1418 bytes result sent to driver
+20/04/01 04:13:32 INFO TaskSetManager: Finished task 8.0 in stage 2.0 (TID 56) in 442536 ms on localhost (executor driver) (18/24)
+20/04/01 04:13:36 INFO PythonRunner: Times: total = 446769, boot = -6081, init = 6258, finish = 446592
+20/04/01 04:13:36 INFO Executor: Finished task 7.0 in stage 2.0 (TID 55). 1418 bytes result sent to driver
+20/04/01 04:13:36 INFO TaskSetManager: Finished task 7.0 in stage 2.0 (TID 55) in 446819 ms on localhost (executor driver) (19/24)
+20/04/01 04:13:36 INFO PythonRunner: Times: total = 446925, boot = -8224, init = 8429, finish = 446720
+20/04/01 04:13:36 INFO Executor: Finished task 16.0 in stage 2.0 (TID 64). 1418 bytes result sent to driver
+20/04/01 04:13:36 INFO TaskSetManager: Finished task 16.0 in stage 2.0 (TID 64) in 446962 ms on localhost (executor driver) (20/24)
+20/04/01 04:13:37 INFO PythonRunner: Times: total = 447567, boot = 71, init = 6799, finish = 440697
+20/04/01 04:13:37 INFO Executor: Finished task 2.0 in stage 2.0 (TID 50). 1418 bytes result sent to driver
+20/04/01 04:13:37 INFO TaskSetManager: Finished task 2.0 in stage 2.0 (TID 50) in 447626 ms on localhost (executor driver) (21/24)
+20/04/01 04:13:37 INFO PythonRunner: Times: total = 447594, boot = 88, init = 6713, finish = 440793
+20/04/01 04:13:37 INFO Executor: Finished task 4.0 in stage 2.0 (TID 52). 1418 bytes result sent to driver
+20/04/01 04:13:37 INFO TaskSetManager: Finished task 4.0 in stage 2.0 (TID 52) in 447650 ms on localhost (executor driver) (22/24)
+20/04/01 04:13:37 INFO PythonRunner: Times: total = 448142, boot = 48, init = 6825, finish = 441269
+20/04/01 04:13:37 INFO Executor: Finished task 5.0 in stage 2.0 (TID 53). 1418 bytes result sent to driver
+20/04/01 04:13:37 INFO TaskSetManager: Finished task 5.0 in stage 2.0 (TID 53) in 448195 ms on localhost (executor driver) (23/24)
+20/04/01 04:13:38 INFO PythonRunner: Times: total = 449198, boot = 59, init = 6799, finish = 442340
+20/04/01 04:13:38 INFO Executor: Finished task 1.0 in stage 2.0 (TID 49). 1418 bytes result sent to driver
+20/04/01 04:13:38 INFO TaskSetManager: Finished task 1.0 in stage 2.0 (TID 49) in 449258 ms on localhost (executor driver) (24/24)
+20/04/01 04:13:38 INFO TaskSchedulerImpl: Removed TaskSet 2.0, whose tasks have all completed, from pool 
+20/04/01 04:13:38 INFO DAGScheduler: ResultStage 2 (reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:24) finished in 449,283 s
+20/04/01 04:13:38 INFO DAGScheduler: Job 2 finished: reduce at /net/coxfs01/srv/export/coxfs01/pfister_lab2/share_root/Lab/tfranzmeyer/Data/1024x1024x128_spark/Code/connected-components-3d/runspark.py:24, took 449,285922 s
+20/04/01 04:13:39 INFO ContextCleaner: Cleaned accumulator 63
+20/04/01 04:13:39 INFO ContextCleaner: Cleaned accumulator 35
+20/04/01 04:13:39 INFO ContextCleaner: Cleaned accumulator 48
+20/04/01 04:13:39 INFO ContextCleaner: Cleaned accumulator 55
+20/04/01 04:13:39 INFO ContextCleaner: Cleaned accumulator 31
+20/04/01 04:13:39 INFO ContextCleaner: Cleaned accumulator 33
+20/04/01 04:13:39 INFO ContextCleaner: Cleaned accumulator 68
+20/04/01 04:13:39 INFO ContextCleaner: Cleaned accumulator 70
+20/04/01 04:13:39 INFO SparkContext: Invoking stop() from shutdown hook
+20/04/01 04:13:39 INFO SparkUI: Stopped Spark web UI at http://coxgpu05.rc.fas.harvard.edu:4040
+20/04/01 04:13:39 INFO BlockManagerInfo: Removed broadcast_2_piece0 on coxgpu05.rc.fas.harvard.edu:43722 in memory (size: 3.9 KB, free: 366.3 MB)
+20/04/01 04:13:39 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!
+20/04/01 04:13:39 INFO MemoryStore: MemoryStore cleared
+20/04/01 04:13:39 INFO BlockManager: BlockManager stopped
+20/04/01 04:13:39 INFO BlockManagerMaster: BlockManagerMaster stopped
+20/04/01 04:13:39 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!
+20/04/01 04:13:39 INFO SparkContext: Successfully stopped SparkContext
+20/04/01 04:13:39 INFO ShutdownHookManager: Shutdown hook called
+20/04/01 04:13:39 INFO ShutdownHookManager: Deleting directory /tmp/spark-0cc97101-3f09-4657-bb6d-2da2e234cc48/pyspark-bcf7549c-bbae-4c19-bf89-94dd9940b29d
+20/04/01 04:13:39 INFO ShutdownHookManager: Deleting directory /tmp/spark-73c67f11-f24a-40a7-8949-8bf389a472ac
+20/04/01 04:13:39 INFO ShutdownHookManager: Deleting directory /tmp/spark-0cc97101-3f09-4657-bb6d-2da2e234cc48
