@@ -24,11 +24,6 @@ inp_file = open(out_file_S2B)
 inp_text = inp_file.read()
 inp_file.close()
 
-print(out_file_S2B)
-print("TEXT:")
-print(inp_text)
-print("TEXT END")
-
 if inp_text[0]!="0":
     print(inp_text)
     raise ValueError("Execution Stopped: Wrong Error Code (!=0)")
