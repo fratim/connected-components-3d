@@ -1,0 +1,120 @@
+# FILE 1585918166848822 holefilling.jx.batchlog 1 0
+# STARTED 1585918166855946
+# FILE 1585918166860997 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-7z.txt 1 1073741824
+1585918166861123 7 1 249371 24 1 0 0 0 25
+# FILE 1585918166861157 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-6z.txt 1 1073741824
+1585918166861252 6 1 249372 23 2 0 0 0 25
+# FILE 1585918166861278 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-5z.txt 1 1073741824
+1585918166861376 5 1 249373 22 3 0 0 0 25
+# FILE 1585918166861401 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-4z.txt 1 1073741824
+1585918166861506 4 1 249374 21 4 0 0 0 25
+# FILE 1585918166861530 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-3z.txt 1 1073741824
+1585918166861661 3 1 249375 20 5 0 0 0 25
+# FILE 1585918166861683 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-2z.txt 1 1073741824
+1585918166861779 2 1 249376 19 6 0 0 0 25
+# FILE 1585918166861805 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-1z.txt 1 1073741824
+1585918166861915 1 1 249377 18 7 0 0 0 25
+# FILE 1585918166861939 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-0z.txt 1 1073741824
+1585918166862029 0 1 249378 17 8 0 0 0 25
+# FILE 1585918271696433 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-5z.txt 2 2
+1585918271698638 5 2 249373 17 7 1 0 0 25
+# FILE 1585918271698675 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-5z.txt 1 1073741824
+1585918271698801 13 1 249640 16 8 1 0 0 25
+# FILE 1585918275502150 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-4z.txt 2 2
+1585918275502163 4 2 249374 16 7 2 0 0 25
+# FILE 1585918275502216 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-4z.txt 1 1073741824
+1585918275502358 12 1 249651 15 8 2 0 0 25
+# FILE 1585918278533592 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-7z.txt 2 2
+1585918278533605 7 2 249371 15 7 3 0 0 25
+# FILE 1585918278533655 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-7z.txt 1 1073741824
+1585918278533788 15 1 249659 14 8 3 0 0 25
+# FILE 1585918283062015 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-5z.txt 2 2
+# FILE 1585918283062026 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-5z.txt 3 2
+1585918283062032 13 2 249640 14 7 4 0 0 25
+# FILE 1585918284125289 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-3z.txt 2 2
+1585918284125303 3 2 249375 14 6 5 0 0 25
+# FILE 1585918284125345 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-3z.txt 1 1073741824
+1585918284125484 11 1 249668 13 7 5 0 0 25
+# FILE 1585918286205464 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-2z.txt 2 2
+1585918286205478 2 2 249376 13 6 6 0 0 25
+# FILE 1585918286205529 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-2z.txt 1 1073741824
+1585918286205671 10 1 249673 12 7 6 0 0 25
+# FILE 1585918286537800 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-4z.txt 2 2
+# FILE 1585918286537812 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-4z.txt 3 2
+1585918286537819 12 2 249651 12 6 7 0 0 25
+# FILE 1585918288782689 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-0z.txt 2 2
+1585918288782702 0 2 249378 12 5 8 0 0 25
+# FILE 1585918288782739 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-0z.txt 1 1073741824
+1585918288782876 8 1 249681 11 6 8 0 0 25
+# FILE 1585918288956155 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-7z.txt 2 2
+# FILE 1585918288956168 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-7z.txt 3 2
+1585918288956175 15 2 249659 11 5 9 0 0 25
+# FILE 1585918290969863 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-6z.txt 2 2
+1585918290969877 6 2 249372 11 4 10 0 0 25
+# FILE 1585918290969912 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-6z.txt 1 1073741824
+1585918290970041 14 1 249687 10 5 10 0 0 25
+# FILE 1585918292177947 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-1z.txt 2 2
+1585918292177959 1 2 249377 10 4 11 0 0 25
+# FILE 1585918292178019 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-1z.txt 1 1073741824
+1585918292178153 9 1 249690 9 5 11 0 0 25
+# FILE 1585918293861813 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-3z.txt 2 2
+# FILE 1585918293861825 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-3z.txt 3 2
+1585918293861832 11 2 249668 9 4 12 0 0 25
+# FILE 1585918295409540 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-2z.txt 2 2
+# FILE 1585918295409551 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-2z.txt 3 2
+1585918295409557 10 2 249673 9 3 13 0 0 25
+# FILE 1585918297454948 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-0z.txt 2 2
+# FILE 1585918297454963 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-0z.txt 3 2
+1585918297454969 8 2 249681 9 2 14 0 0 25
+# FILE 1585918299297585 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-6z.txt 2 2
+# FILE 1585918299297598 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-6z.txt 3 2
+1585918299297604 14 2 249687 9 1 15 0 0 25
+# FILE 1585918300201729 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-1z.txt 2 2
+# FILE 1585918300201743 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S1-out-1z.txt 3 2
+1585918300201748 9 2 249690 9 0 16 0 0 25
+# FILE 1585918300201791 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2B-out.txt 1 1073741824
+1585918300201943 16 1 249707 8 1 16 0 0 25
+# FILE 1585918306756037 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2B-out.txt 2 47
+# FILE 1585918306756701 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-7z.txt 3 2
+# FILE 1585918306756714 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-6z.txt 3 2
+# FILE 1585918306756724 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-5z.txt 3 2
+# FILE 1585918306756733 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-4z.txt 3 2
+# FILE 1585918306756742 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-3z.txt 3 2
+# FILE 1585918306756758 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-2z.txt 3 2
+# FILE 1585918306756768 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-1z.txt 3 2
+# FILE 1585918306756787 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2A-out-0z.txt 3 2
+1585918306756791 16 2 249707 8 0 17 0 0 25
+# FILE 1585918306756819 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-7z.txt 1 1073741824
+1585918306756950 24 1 249718 7 1 17 0 0 25
+# FILE 1585918306756984 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-6z.txt 1 1073741824
+1585918306757077 23 1 249719 6 2 17 0 0 25
+# FILE 1585918306757105 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-5z.txt 1 1073741824
+1585918306757201 22 1 249720 5 3 17 0 0 25
+# FILE 1585918306757227 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-4z.txt 1 1073741824
+1585918306757349 21 1 249721 4 4 17 0 0 25
+# FILE 1585918306757376 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-3z.txt 1 1073741824
+1585918306757465 20 1 249722 3 5 17 0 0 25
+# FILE 1585918306757497 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-2z.txt 1 1073741824
+1585918306757584 19 1 249723 2 6 17 0 0 25
+# FILE 1585918306757609 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-1z.txt 1 1073741824
+1585918306757715 18 1 249724 1 7 17 0 0 25
+# FILE 1585918306757741 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-0z.txt 1 1073741824
+1585918306757846 17 1 249725 0 8 17 0 0 25
+# FILE 1585918350216897 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-6z.txt 2 175
+1585918350218958 23 2 249719 0 7 18 0 0 25
+# FILE 1585918351727337 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-7z.txt 2 175
+1585918351727352 24 2 249718 0 6 19 0 0 25
+# FILE 1585918352413678 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-5z.txt 2 175
+1585918352413693 22 2 249720 0 5 20 0 0 25
+# FILE 1585918354968029 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-4z.txt 2 175
+1585918354968042 21 2 249721 0 4 21 0 0 25
+# FILE 1585918356011414 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-3z.txt 2 175
+1585918356011427 20 2 249722 0 3 22 0 0 25
+# FILE 1585918357500318 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-2z.txt 2 175
+1585918357500340 19 2 249723 0 2 23 0 0 25
+# FILE 1585918359588180 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-1z.txt 2 175
+1585918359588190 18 2 249724 0 1 24 0 0 25
+# FILE 1585918359955555 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S3-out-0z.txt 2 175
+# FILE 1585918359955564 /n/pfister_lab2/Lab/tfranzmeyer/Data/1024x1024x128_mflow/Code/connected-components-3d/mfoutput/mf-S2B-out.txt 3 47
+1585918359955569 17 2 249725 0 0 25 0 0 25
+# COMPLETED 1585918359955587
