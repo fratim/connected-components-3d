@@ -5,7 +5,7 @@
 ############################################################################################################################################
 compute_statistics = False
 prefix = "Zebrafinch"
-cluster_id = "mflow"
+cluster_id = "spark"
 
 # (size_z, size_y, size_x)
 blocksize = (128,1024,1024)

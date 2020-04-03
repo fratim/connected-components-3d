@@ -1,5 +1,0 @@
-0 0 0
-undetermined
-0 0 0
-neighbor label dict
-0
