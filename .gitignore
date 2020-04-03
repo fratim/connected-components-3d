@@ -1,4 +1,5 @@
 mfoutput/*
+*makeflowlog
 segmentation_dsp8/
 
 # Prerequisites

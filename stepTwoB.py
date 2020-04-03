@@ -14,6 +14,20 @@ import math
 
 from functions import readFromFile, writeNeighborLabelDict, findAssociatedLabels, setUndeterminedtoNonHole, dumpNumbaDictToFile, blockFolderPath
 
+# pass arguments
+if(len(sys.argv)!=(param.n_blocks_z+1)):
+    raise ValueError(" Unexpected error: too few input files from step2A ")
+
+for out_file_S2A in sys.argv[1:]:
+
+    inp_file = open(out_file_S2A)
+    inp_text = inp_file.read()
+    inp_file.close()
+
+    if inp_text[0]!="0":
+        print(inp_text)
+        raise ValueError("Execution Stopped: Wrong Error Code (!=0)")
+
 start_time_total = time.time()
 
 # final step
@@ -36,22 +50,6 @@ for bz in range(param.z_start, param.z_start+param.n_blocks_z):
             associated_label_local = readFromFile("associated_label_local", output_folder, "")
             undetermined_local = readFromFile("undetermined_local", output_folder, "")
             neighbor_label_dict_reduced_local = readFromFile("neighbor_label_dict_reduced", output_folder, "")
-
-            if -2 in undetermined_local:
-                print(bz,by,bx)
-                print("undetermined")
-
-            if -2 in neighbor_label_dict_reduced_local.keys():
-                print(bz,by,bx)
-                print("neighbor label dict")
-
-            if -2 in associated_label_local.keys():
-                print(bz,by,bx)
-                print("assoc label")
-
-            if -2 in neighbor_label_set_border_global:
-                print(bz,by,bx)
-                print("neighbor_label_set_border_global")
 
             neighbor_label_set_border_global_combined = neighbor_label_set_border_global_combined.union(neighbor_label_set_border_global)
             associated_label_global.update(associated_label_local)
@@ -107,3 +105,5 @@ if param.compute_statistics:
     for entry in hole_components:
         g.write(str(int(entry)).zfill(25)+"\n")
     g.close()
+
+print("0")
